@@ -16,6 +16,15 @@ import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminActivityLogs from "./pages/AdminActivityLogs";
 import AdminSettings from "./pages/AdminSettings";
 import AdminSupport from "./pages/AdminSupport";
+import RecruiterLayout from "./components/recruiter/RecruiterLayout";
+import RecruiterDashboard from "./pages/RecruiterDashboard";
+import RecruiterScrapeJobs from "./pages/RecruiterScrapeJobs";
+import RecruiterScrapedJobs from "./pages/RecruiterScrapedJobs";
+import RecruiterCVManagement from "./pages/RecruiterCVManagement";
+import RecruiterCandidates from "./pages/RecruiterCandidates";
+import RecruiterApplications from "./pages/RecruiterApplications";
+import RecruiterSettingsPage from "./pages/RecruiterSettingsPage";
+import RecruiterSupportPage from "./pages/RecruiterSupportPage";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +50,18 @@ const App = () => (
             <Route path="activity-logs" element={<AdminActivityLogs />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route path="support" element={<AdminSupport />} />
+          </Route>
+
+          {/* Recruiter Dashboard Routes */}
+          <Route path="/recruiter" element={<RecruiterLayout />}>
+            <Route path="dashboard" element={<RecruiterDashboard />} />
+            <Route path="scrape-jobs" element={<RecruiterScrapeJobs />} />
+            <Route path="scraped-jobs" element={<RecruiterScrapedJobs />} />
+            <Route path="cv-management" element={<RecruiterCVManagement />} />
+            <Route path="candidates" element={<RecruiterCandidates />} />
+            <Route path="applications" element={<RecruiterApplications />} />
+            <Route path="settings" element={<RecruiterSettingsPage />} />
+            <Route path="support" element={<RecruiterSupportPage />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />
