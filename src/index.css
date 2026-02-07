@@ -39,40 +39,66 @@
 
     --radius: 0.75rem;
 
-    /* Extended palette */
+    /* Extended Primary (Teal) palette */
     --primary-50: 174 60% 96%;
     --primary-100: 174 55% 90%;
+    --primary-200: 174 48% 82%;
+    --primary-300: 174 52% 68%;
     --primary-400: 174 65% 42%;
     --primary-500: 174 72% 33%;
     --primary-600: 174 75% 28%;
     --primary-700: 174 78% 23%;
+    --primary-800: 174 80% 18%;
+    --primary-900: 174 82% 14%;
 
+    /* Extended Secondary (Navy) palette */
+    --secondary-50: 215 30% 96%;
     --secondary-100: 215 30% 90%;
+    --secondary-200: 215 28% 82%;
+    --secondary-300: 215 30% 68%;
+    --secondary-400: 215 38% 48%;
+    --secondary-500: 215 45% 32%;
+    --secondary-600: 215 50% 26%;
     --secondary-700: 215 55% 22%;
     --secondary-800: 215 58% 16%;
     --secondary-900: 215 60% 14%;
 
+    /* Extended Neutral palette */
     --neutral-50: 200 20% 98%;
+    --neutral-100: 210 18% 96%;
     --neutral-200: 210 15% 90%;
     --neutral-300: 210 12% 82%;
+    --neutral-400: 212 10% 65%;
     --neutral-500: 215 10% 55%;
     --neutral-600: 215 12% 45%;
     --neutral-700: 215 15% 35%;
+    --neutral-800: 215 18% 26%;
+    --neutral-900: 215 20% 20%;
 
+    /* Extended Success palette */
     --success-50: 142 50% 95%;
+    --success-100: 142 45% 88%;
     --success-500: 142 71% 45%;
     --success-600: 142 65% 38%;
     --success-700: 142 60% 30%;
 
+    /* Extended Warning palette */
     --warning-50: 38 90% 96%;
+    --warning-100: 38 85% 88%;
     --warning-500: 38 92% 50%;
     --warning-600: 38 85% 42%;
     --warning-700: 38 80% 35%;
 
+    /* Extended Error palette */
     --error-50: 0 80% 96%;
+    --error-100: 0 75% 90%;
     --error-500: 0 84% 60%;
+    --error-600: 0 72% 51%;
+    --error-700: 0 65% 42%;
 
+    /* Extended Info palette */
     --info-50: 210 80% 96%;
+    --info-100: 210 75% 90%;
     --info-500: 210 70% 50%;
     --info-600: 210 65% 42%;
     --info-700: 210 60% 35%;
@@ -84,10 +110,15 @@
     --gradient-bg: linear-gradient(180deg, hsl(200, 20%, 98%), hsl(0, 0%, 100%));
 
     /* Shadows */
+    --shadow-xs: 0 1px 2px 0 hsl(215 60% 14% / 0.03);
     --shadow-sm: 0 1px 2px 0 hsl(215 60% 14% / 0.05);
     --shadow-md: 0 4px 6px -1px hsl(215 60% 14% / 0.08), 0 2px 4px -2px hsl(215 60% 14% / 0.05);
     --shadow-lg: 0 10px 15px -3px hsl(215 60% 14% / 0.1), 0 4px 6px -4px hsl(215 60% 14% / 0.05);
     --shadow-xl: 0 20px 25px -5px hsl(215 60% 14% / 0.1), 0 8px 10px -6px hsl(215 60% 14% / 0.05);
+    --shadow-2xl: 0 25px 50px -12px hsl(215 60% 14% / 0.25);
+    --shadow-inner: inset 0 2px 4px 0 hsl(215 60% 14% / 0.06);
+    --shadow-focus: 0 0 0 3px hsl(174 72% 33% / 0.3);
+    --shadow-glow: 0 0 20px hsl(174 72% 33% / 0.4);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
