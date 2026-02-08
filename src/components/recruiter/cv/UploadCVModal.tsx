@@ -49,6 +49,42 @@ const UploadCVModal = ({ open, onClose, candidates }: UploadCVModalProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragActive, setIsDragActive] = useState(false);
 
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragActive(false);
+    if (e.dataTransfer.files.length > 0) {
+      const newFiles = e.dataTransfer.files;
+      const errs: string[] = [];
+      const valid: SelectedFile[] = [];
+
+      Array.from(newFiles).forEach((file) => {
+        const ext = "." + file.name.split(".").pop()?.toLowerCase();
+        if (!ALLOWED_EXTENSIONS.includes(ext) && !ALLOWED_TYPES.includes(file.type)) {
+          errs.push(`File type not supported: ${ext}`);
+        } else if (file.size > MAX_SIZE) {
+          errs.push(`File too large: ${file.name} (${formatBytes(file.size)}) exceeds 10 MB limit`);
+        } else {
+          valid.push({
+            id: Math.random().toString(36).slice(2),
+            file,
+            isPrimary: false,
+            progress: 0,
+            status: "pending",
+          });
+        }
+      });
+
+      if (errs.length > 0) setErrors(errs);
+      if (valid.length > 0) setFiles((prev) => {
+        const combined = [...prev, ...valid];
+        if (!combined.some(f => f.isPrimary) && combined.length > 0) {
+          combined[0].isPrimary = true;
+        }
+        return combined;
+      });
+    }
+  }, []);
+
   if (!open) return null;
 
   const filteredCandidates = candidates.filter((c) =>
@@ -92,12 +128,6 @@ const UploadCVModal = ({ open, onClose, candidates }: UploadCVModalProps) => {
     if (errs.length > 0) setErrors(errs);
     if (valid.length > 0) setFiles((prev) => [...prev, ...valid]);
   };
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragActive(false);
-    if (e.dataTransfer.files.length > 0) addFiles(e.dataTransfer.files);
-  }, [files]);
 
   const removeFile = (id: string) => {
     setFiles((prev) => {
