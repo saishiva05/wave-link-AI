@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FileText, Download, Eye, Star, HardDrive, Calendar, Mail } from "lucide-react";
+import { FileText, Download, Eye, Star, HardDrive, Calendar, Mail, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useCandidateDashboard } from "@/hooks/useCandidateDashboard";
-import { format, formatDistanceToNow } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { formatDistanceToNow } from "date-fns";
 
 function formatBytes(bytes: number) {
   if (bytes < 1024) return `${bytes} B`;
@@ -14,7 +16,37 @@ function formatBytes(bytes: number) {
 
 const CandidateCVsPage = () => {
   const navigate = useNavigate();
-  const { cvs, recruiter } = useCandidateDashboard();
+  const { cvs, recruiter, isLoading } = useCandidateDashboard();
+  const { toast } = useToast();
+
+  const handleDownload = async (cv: typeof cvs[0]) => {
+    try {
+      const urlParts = cv.file_url.split("/cvs-bucket/");
+      if (urlParts[1]) {
+        const { data, error } = await supabase.storage.from("cvs-bucket").download(urlParts[1]);
+        if (error) throw error;
+        const url = URL.createObjectURL(data);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = cv.file_name;
+        a.click();
+        URL.revokeObjectURL(url);
+      } else {
+        window.open(cv.file_url, "_blank");
+      }
+    } catch {
+      toast({ title: "Download failed", variant: "destructive" });
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+        <span className="ml-3 text-muted-foreground">Loading CVs...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-[1400px] mx-auto">
@@ -34,12 +66,14 @@ const CandidateCVsPage = () => {
             <div className="w-20 h-20 rounded-full bg-neutral-100 flex items-center justify-center mb-4"><FileText className="w-10 h-10 text-neutral-400" /></div>
             <h3 className="text-xl font-semibold text-neutral-700 font-display">No CVs uploaded yet</h3>
             <p className="text-base text-neutral-600 mt-2 max-w-md">Your recruiter hasn't uploaded any CVs for you yet. Contact them if you need to update your resume.</p>
-            <Button variant="portal" className="mt-6" onClick={() => window.open(`mailto:${recruiter.email}`)}><Mail className="w-4 h-4" /> Contact Recruiter</Button>
+            {recruiter.email && (
+              <Button variant="portal" className="mt-6" onClick={() => window.open(`mailto:${recruiter.email}`)}><Mail className="w-4 h-4" /> Contact Recruiter</Button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {cvs.map((cv) => {
-              const isPdf = cv.file_type === "pdf";
+              const isPdf = cv.file_type === "pdf" || cv.file_name.toLowerCase().endsWith(".pdf");
               return (
                 <div key={cv.cv_id} className="bg-card border border-border rounded-xl p-6 shadow-xs hover:shadow-card hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
                   <div className="flex justify-center mb-4">
@@ -56,11 +90,11 @@ const CandidateCVsPage = () => {
                     {cv.is_primary && (
                       <span className="flex items-center gap-1 bg-success-100 text-success-700 text-xs font-medium px-2.5 py-1 rounded-full"><Star className="w-3 h-3 fill-success-500" /> Primary CV</span>
                     )}
-                    <span className={cn("text-xs font-medium px-2.5 py-1 rounded-full", isPdf ? "bg-info-100 text-info-700" : "bg-primary-100 text-primary-700")}>{cv.file_type.toUpperCase()}</span>
+                    <span className={cn("text-xs font-medium px-2.5 py-1 rounded-full", isPdf ? "bg-info-100 text-info-700" : "bg-primary-100 text-primary-700")}>{(cv.file_type || "file").toUpperCase()}</span>
                   </div>
                   <div className="mt-auto pt-4 border-t border-border flex items-center justify-center gap-3">
                     <button className="flex items-center gap-1.5 text-xs font-medium text-primary border border-primary px-3 py-1.5 rounded-md hover:bg-primary-50 transition-colors"><Eye className="w-3.5 h-3.5" /> Preview</button>
-                    <button className="flex items-center gap-1.5 text-xs font-medium text-primary-foreground bg-primary px-3 py-1.5 rounded-md hover:bg-primary-600 transition-colors"><Download className="w-3.5 h-3.5" /> Download</button>
+                    <button onClick={() => handleDownload(cv)} className="flex items-center gap-1.5 text-xs font-medium text-primary-foreground bg-primary px-3 py-1.5 rounded-md hover:bg-primary-600 transition-colors"><Download className="w-3.5 h-3.5" /> Download</button>
                   </div>
                 </div>
               );
