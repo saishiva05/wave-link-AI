@@ -5,21 +5,30 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import WavePattern from "@/components/WavePattern";
 import wavelynkLogo from "@/assets/wavelynk-logo.jpeg";
+import { useAuth } from "@/hooks/useAuth";
 
 const ForgotPassword = () => {
   const { role } = useParams<{ role: string }>();
+  const { resetPassword } = useAuth();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!email) return;
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    setError(null);
+
+    const { error: resetError } = await resetPassword(email);
+
+    setIsLoading(false);
+    if (resetError) {
+      setError(resetError);
+    } else {
       setIsSubmitted(true);
-    }, 1500);
+    }
   };
 
   const loginPath = role ? `/${role}/login` : "/";
@@ -48,6 +57,12 @@ const ForgotPassword = () => {
             <p className="text-muted-foreground text-center mb-10">
               Enter your email address and we'll send you instructions to reset your password.
             </p>
+
+            {error && (
+              <div className="notice-error flex items-start gap-3 mb-6 p-4 rounded-lg">
+                <span className="text-sm text-destructive">{error}</span>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>

@@ -2,6 +2,7 @@ import { useState, FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ArrowRight, Mail, Lock, Eye, EyeOff, Loader2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 
 interface LoginFormProps {
   role: "admin" | "recruiter" | "candidate";
@@ -29,6 +30,7 @@ const LoginForm = ({
   helpText,
 }: LoginFormProps) => {
   const navigate = useNavigate();
+  const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -48,12 +50,38 @@ const LoginForm = ({
 
     setIsLoading(true);
 
-    // Simulate login (no backend yet)
-    setTimeout(() => {
-      setIsLoading(false);
-      setError("Invalid email or password. Please try again.");
+    try {
+      const { error: signInError, role: userRole } = await signIn(email, password);
+
+      if (signInError) {
+        setError(signInError);
+        triggerShake();
+        setIsLoading(false);
+        return;
+      }
+
+      // Check if the user's role matches the login page they're on
+      if (userRole && userRole !== role) {
+        setError(`This account is registered as a ${userRole}. Please use the ${userRole} login page.`);
+        triggerShake();
+        setIsLoading(false);
+        return;
+      }
+
+      // Redirect based on role
+      const redirectMap = {
+        admin: "/admin/dashboard",
+        recruiter: "/recruiter/dashboard",
+        candidate: "/candidate/dashboard",
+      };
+
+      navigate(redirectMap[userRole || role]);
+    } catch {
+      setError("An unexpected error occurred. Please try again.");
       triggerShake();
-    }, 1500);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const triggerShake = () => {
