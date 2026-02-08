@@ -20,6 +20,8 @@ interface AuthContextType {
   role: AppRole | null;
   recruiterId: string | null;
   candidateId: string | null;
+  fullName: string | null;
+  email: string | null;
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null; role: AppRole | null }>;
   signOut: () => Promise<void>;
@@ -171,6 +173,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         role,
         recruiterId,
         candidateId,
+        fullName: profile?.full_name ?? null,
+        email: profile?.email ?? null,
         isLoading,
         signIn,
         signOut,
