@@ -13,6 +13,7 @@ import {
   CheckCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 interface AdminHeaderProps {
   onMenuClick: () => void;
@@ -35,6 +36,8 @@ const mockNotifications = [
 
 const AdminHeader = ({ onMenuClick }: AdminHeaderProps) => {
   const location = useLocation();
+  const { fullName, email, signOut } = useAuth();
+  const initials = fullName ? fullName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) : "AD";
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [notifications, setNotifications] = useState(mockNotifications);
@@ -142,14 +145,14 @@ const AdminHeader = ({ onMenuClick }: AdminHeaderProps) => {
             onClick={() => { setShowUserMenu(!showUserMenu); setShowNotifications(false); }}
             className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white text-sm font-semibold border-2 border-white shadow-sm hover:ring-2 hover:ring-primary/30 transition-all cursor-pointer"
           >
-            AD
+            {initials}
           </button>
 
           {showUserMenu && (
             <div className="absolute right-0 top-12 w-56 bg-card rounded-xl border border-border shadow-elevated overflow-hidden animate-scale-in">
               <div className="px-4 py-3 border-b border-border">
-                <p className="text-sm font-semibold text-secondary-900">Admin User</p>
-                <p className="text-xs text-muted-foreground">admin@wavelynk.ai</p>
+                <p className="text-sm font-semibold text-secondary-900">{fullName || "Admin"}</p>
+                <p className="text-xs text-muted-foreground">{email || ""}</p>
               </div>
               <div className="p-1.5">
                 {[
@@ -166,13 +169,13 @@ const AdminHeader = ({ onMenuClick }: AdminHeaderProps) => {
                   </button>
                 ))}
                 <div className="my-1 border-t border-border" />
-                <Link
-                  to="/"
+                <button
+                  onClick={() => signOut()}
                   className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-md text-sm text-destructive hover:bg-destructive/5 transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
                   Logout
-                </Link>
+                </button>
               </div>
             </div>
           )}

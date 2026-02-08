@@ -7,10 +7,12 @@ import StatsCard from "@/components/admin/StatsCard";
 import DashboardCharts from "@/components/admin/DashboardCharts";
 import RecruitersTable from "@/components/admin/RecruitersTable";
 import CreateRecruiterModal from "@/components/admin/CreateRecruiterModal";
+import { useAdminStats } from "@/hooks/useAdminData";
 
 const AdminDashboard = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const navigate = useNavigate();
+  const { data: stats, isLoading } = useAdminStats();
 
   return (
     <div className="space-y-8">
@@ -46,9 +48,9 @@ const AdminDashboard = () => {
       >
         <StatsCard
           title="Total Recruiters"
-          value="24"
-          trend="+4 this month"
-          trendUp
+          value={isLoading ? "..." : String(stats?.totalRecruiters ?? 0)}
+          trend={`+${stats?.recruitersThisMonth ?? 0} this month`}
+          trendUp={(stats?.recruitersThisMonth ?? 0) >= 0}
           icon={Users}
           iconBg="bg-primary-50"
           iconColor="text-primary"
@@ -57,9 +59,9 @@ const AdminDashboard = () => {
         />
         <StatsCard
           title="Active Candidates"
-          value="187"
-          trend="+23 this week"
-          trendUp
+          value={isLoading ? "..." : String(stats?.totalCandidates ?? 0)}
+          trend={`+${stats?.candidatesThisWeek ?? 0} this week`}
+          trendUp={(stats?.candidatesThisWeek ?? 0) >= 0}
           icon={User}
           iconBg="bg-success-50"
           iconColor="text-success-500"
@@ -67,9 +69,9 @@ const AdminDashboard = () => {
         />
         <StatsCard
           title="Jobs Scraped (Total)"
-          value="1,284"
-          trend="+156 today"
-          trendUp
+          value={isLoading ? "..." : (stats?.totalJobs ?? 0).toLocaleString()}
+          trend={`+${stats?.jobsToday ?? 0} today`}
+          trendUp={(stats?.jobsToday ?? 0) >= 0}
           icon={Briefcase}
           iconBg="bg-info-50"
           iconColor="text-info-500"
@@ -77,9 +79,9 @@ const AdminDashboard = () => {
           onFooterClick={() => navigate("/admin/analytics")}
         />
         <StatsCard
-          title="Platform Activity"
-          value="94%"
-          trend="+5% vs last week"
+          title="Total Applications"
+          value={isLoading ? "..." : String(stats?.totalApplications ?? 0)}
+          trend="All time"
           trendUp
           icon={Activity}
           iconBg="bg-warning-50"
