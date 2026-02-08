@@ -2,12 +2,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sparkles, ArrowRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 
 const DISMISS_KEY = "recruiter-welcome-dismissed";
 
 const WelcomeBanner = () => {
   const [dismissed, setDismissed] = useState(() => localStorage.getItem(DISMISS_KEY) === "true");
   const navigate = useNavigate();
+  const { fullName } = useAuth();
 
   if (dismissed) return null;
 
@@ -40,7 +42,7 @@ const WelcomeBanner = () => {
       <div className="relative z-10 max-w-xl">
         <Sparkles className="w-8 h-8 mb-4" />
         <h2 className="text-2xl md:text-3xl font-bold font-display mb-3">
-          Welcome back, John!
+          Welcome back, {fullName?.split(" ")[0] || "there"}!
         </h2>
         <p className="text-base md:text-lg text-white/90 mb-6 leading-relaxed">
           You're making great progress. Here's what's happening with your recruitment efforts.

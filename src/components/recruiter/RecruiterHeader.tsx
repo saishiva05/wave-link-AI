@@ -18,6 +18,7 @@ import {
   Sliders,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 interface RecruiterHeaderProps {
   onMenuClick: () => void;
@@ -37,10 +38,12 @@ const mockNotifications = [
 ];
 
 const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
+  const { fullName, email, signOut } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(false);
   const [notifications, setNotifications] = useState(mockNotifications);
+  const initials = fullName ? fullName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) : "R";
   const notifRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
   const quickRef = useRef<HTMLDivElement>(null);
@@ -79,10 +82,10 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
 
         <div>
           <h1 className="text-lg md:text-xl font-bold text-secondary-900 font-display">
-            {getGreeting()}, John
+            {getGreeting()}, {fullName?.split(" ")[0] || "there"}
           </h1>
           <p className="text-xs md:text-sm text-muted-foreground">
-            You've scraped 45 jobs this week
+            Manage your recruitment pipeline
           </p>
         </div>
       </div>
@@ -183,15 +186,14 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
             onClick={() => { setShowUserMenu(!showUserMenu); setShowNotifications(false); setShowQuickActions(false); }}
             className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground text-sm font-semibold border-2 border-primary-400 shadow-sm hover:ring-2 hover:ring-primary/30 transition-all cursor-pointer"
           >
-            JS
+            {initials}
           </button>
 
           {showUserMenu && (
             <div className="absolute right-0 top-12 w-56 bg-card rounded-xl border border-border shadow-elevated overflow-hidden animate-scale-in z-50">
               <div className="px-4 py-3 border-b border-border">
-                <p className="text-sm font-semibold text-secondary-900">John Smith</p>
-                <p className="text-xs text-muted-foreground">john.smith@company.com</p>
-                <p className="text-xs text-neutral-500 mt-0.5">TechCorp Inc.</p>
+                <p className="text-sm font-semibold text-secondary-900">{fullName || "Recruiter"}</p>
+                <p className="text-xs text-muted-foreground">{email || ""}</p>
               </div>
               <div className="p-1.5">
                 {[
@@ -217,13 +219,13 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
                   Help & Support
                 </Link>
                 <div className="my-1 border-t border-border" />
-                <Link
-                  to="/"
+                <button
+                  onClick={() => signOut()}
                   className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-md text-sm text-destructive hover:bg-error-50 transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
                   Logout
-                </Link>
+                </button>
               </div>
             </div>
           )}

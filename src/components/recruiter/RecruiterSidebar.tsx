@@ -17,6 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import wavelynkLogo from "@/assets/wavelynk-logo.jpeg";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useAuth } from "@/hooks/useAuth";
 
 const mainMenuItems = [
   { title: "Dashboard", icon: LayoutDashboard, route: "/recruiter/dashboard" },
@@ -48,6 +49,8 @@ const badgeStyles = {
 const RecruiterSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: RecruiterSidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { fullName, signOut } = useAuth();
+  const initials = fullName ? fullName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) : "R";
 
   const isActive = (route: string) => location.pathname === route;
 
@@ -152,15 +155,14 @@ const RecruiterSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Re
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-semibold shrink-0 border-2 border-card">
-                JS
+                {initials}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-secondary-900 truncate">John Smith</p>
-                <p className="text-xs text-neutral-500 truncate">TechCorp Inc.</p>
+                <p className="text-sm font-semibold text-secondary-900 truncate">{fullName || "Recruiter"}</p>
               </div>
             </div>
             <button
-              onClick={() => navigate("/")}
+              onClick={() => signOut()}
               className="flex items-center gap-2 text-sm text-destructive hover:bg-error-50 w-full px-2 py-2 rounded-md transition-colors"
             >
               <LogOut className="w-4 h-4" />
@@ -171,14 +173,14 @@ const RecruiterSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Re
           <Tooltip delayDuration={200}>
             <TooltipTrigger asChild>
               <button
-                onClick={() => navigate("/")}
+                onClick={() => signOut()}
                 className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-semibold mx-auto hover:ring-2 hover:ring-primary-400 transition-all"
               >
-                JS
+                {initials}
               </button>
             </TooltipTrigger>
             <TooltipContent side="right" className="bg-secondary-900 text-white border-secondary-800">
-              John Smith - TechCorp
+              {fullName || "Recruiter"}
             </TooltipContent>
           </Tooltip>
         )}

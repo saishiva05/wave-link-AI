@@ -16,6 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import wavelynkLogo from "@/assets/wavelynk-logo.jpeg";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useAuth } from "@/hooks/useAuth";
 
 const mainMenuItems = [
   { title: "Dashboard", icon: LayoutDashboard, route: "/admin/dashboard" },
@@ -39,6 +40,8 @@ interface AdminSidebarProps {
 const AdminSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: AdminSidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { fullName, email, signOut } = useAuth();
+  const initials = fullName ? fullName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) : "AD";
 
   const isActive = (route: string) => location.pathname === route;
 
@@ -133,15 +136,15 @@ const AdminSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: AdminS
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white text-sm font-semibold shrink-0">
-                AD
+                {initials}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-medium text-white truncate">Admin User</p>
-                <p className="text-xs text-neutral-400 truncate">admin@wavelynk.ai</p>
+                <p className="text-sm font-medium text-white truncate">{fullName || "Admin"}</p>
+                <p className="text-xs text-neutral-400 truncate">{email || ""}</p>
               </div>
             </div>
             <button
-              onClick={() => navigate("/")}
+              onClick={() => signOut()}
               className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 w-full px-2 py-2 rounded-md transition-colors"
             >
               <LogOut className="w-4 h-4" />
@@ -152,14 +155,14 @@ const AdminSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: AdminS
           <Tooltip delayDuration={200}>
             <TooltipTrigger asChild>
               <button
-                onClick={() => navigate("/")}
+                onClick={() => signOut()}
                 className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white text-sm font-semibold mx-auto hover:ring-2 hover:ring-primary-400 transition-all"
               >
-                AD
+                {initials}
               </button>
             </TooltipTrigger>
             <TooltipContent side="right" className="bg-secondary-800 text-white border-secondary-700">
-              Admin User
+              {fullName || "Admin"}
             </TooltipContent>
           </Tooltip>
         )}

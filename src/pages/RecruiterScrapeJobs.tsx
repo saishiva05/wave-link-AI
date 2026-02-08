@@ -21,6 +21,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { useScrapeHistory } from "@/hooks/useRecruiterData";
 import ScrapeFormField from "@/components/recruiter/ScrapeFormField";
 import ScrapeFormSelect from "@/components/recruiter/ScrapeFormSelect";
 import PlatformSelector from "@/components/recruiter/PlatformSelector";
@@ -69,6 +71,8 @@ const mockHistory: ScrapeHistory[] = [
 const RecruiterScrapeJobs = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { recruiterId } = useAuth();
+  const { data: scrapeHistory } = useScrapeHistory();
 
   const [jobTitle, setJobTitle] = useState("");
   const [jobLocation, setJobLocation] = useState("");
@@ -111,7 +115,7 @@ const RecruiterScrapeJobs = () => {
       WorkType: workType || undefined,
       ContractType: contractType || undefined,
       platform,
-      recruiter_id: "demo-recruiter-id",
+      recruiter_id: recruiterId || "",
     };
 
     try {
@@ -321,18 +325,18 @@ const RecruiterScrapeJobs = () => {
         >
           <h2 className="text-xl font-bold text-secondary-900 font-display mb-5">Recent Scraping Activity</h2>
           <div className="bg-card border border-border rounded-xl shadow-card overflow-hidden">
-            {mockHistory.length === 0 ? (
+            {(scrapeHistory || []).length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <Search className="w-12 h-12 text-neutral-300 mb-3" />
                 <p className="text-sm text-muted-foreground">No scraping activity yet</p>
               </div>
             ) : (
-              mockHistory.map((item, i) => (
+              (scrapeHistory || []).map((item: any, i: number) => (
                 <div
-                  key={item.id}
+                  key={i}
                   className={cn(
                     "flex items-center gap-4 p-5 hover:bg-muted/50 transition-colors",
-                    i < mockHistory.length - 1 && "border-b border-border"
+                    i < (scrapeHistory || []).length - 1 && "border-b border-border"
                   )}
                 >
                   <div className={cn(
