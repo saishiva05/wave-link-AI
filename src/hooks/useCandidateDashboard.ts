@@ -1,4 +1,7 @@
 import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 export interface CandidateApplication {
   application_id: string;
@@ -48,129 +51,165 @@ export interface CandidateNotification {
   read: boolean;
 }
 
-const mockApplications: CandidateApplication[] = [
-  {
-    application_id: "a1", job_id: "j1", job_title: "Senior Frontend Developer", company_name: "TechCorp Inc.",
-    location: "Hyderabad, India", contract_type: "Full-time", work_type: "Hybrid", experience_level: "Senior",
-    job_description: "We are looking for a Senior Frontend Developer to join our growing team. You will be responsible for building and maintaining our web applications using React, TypeScript, and modern frontend technologies.\n\nRequirements:\n- 5+ years of frontend development experience\n- Strong proficiency in React and TypeScript\n- Experience with state management (Redux, Zustand)\n- Knowledge of modern CSS frameworks\n- Experience with testing frameworks",
-    job_apply_url: "https://linkedin.com/jobs/123", application_status: "interview_scheduled", applied_at: "2026-01-28T10:00:00Z", status_updated_at: "2026-02-03T14:00:00Z",
-    cv_file_name: "john_smith_resume_v2.pdf", cv_id: "cv1", recruiter_notes: "Interview scheduled for Feb 15 at 2:00 PM", platform_type: "linkedin",
-    timeline: [
-      { status: "Interview Scheduled", date: "2026-02-03T14:00:00Z", notes: "Interview scheduled for Feb 15 at 2:00 PM" },
-      { status: "In Review", date: "2026-02-01T09:00:00Z" },
-      { status: "Application Submitted", date: "2026-01-28T10:00:00Z" },
-    ],
-  },
-  {
-    application_id: "a2", job_id: "j2", job_title: "Full Stack Engineer", company_name: "StartupXYZ",
-    location: "Remote", contract_type: "Full-time", work_type: "Remote", experience_level: "Mid-Senior",
-    job_description: "Join our fast-paced startup as a Full Stack Engineer...",
-    job_apply_url: "https://jsearch.com/jobs/456", application_status: "submitted", applied_at: "2026-02-01T08:00:00Z", status_updated_at: "2026-02-01T08:00:00Z",
-    cv_file_name: "john_smith_resume_v2.pdf", cv_id: "cv1", recruiter_notes: null, platform_type: "jsearch",
-    timeline: [{ status: "Application Submitted", date: "2026-02-01T08:00:00Z" }],
-  },
-  {
-    application_id: "a3", job_id: "j3", job_title: "React Developer", company_name: "BigCo Solutions",
-    location: "Bangalore, India", contract_type: "Full-time", work_type: "On-site", experience_level: "Senior",
-    job_description: "BigCo Solutions is hiring a React Developer...",
-    job_apply_url: "https://linkedin.com/jobs/789", application_status: "offer_received", applied_at: "2026-01-15T12:00:00Z", status_updated_at: "2026-02-08T10:00:00Z",
-    cv_file_name: "john_smith_resume.pdf", cv_id: "cv2", recruiter_notes: "Offer: ₹25 LPA", platform_type: "linkedin",
-    timeline: [
-      { status: "Offer Received", date: "2026-02-08T10:00:00Z", notes: "Offer: ₹25 LPA" },
-      { status: "Interview Completed", date: "2026-02-05T16:00:00Z" },
-      { status: "Interview Scheduled", date: "2026-02-01T09:00:00Z", notes: "Technical round on Feb 5" },
-      { status: "In Review", date: "2026-01-20T11:00:00Z" },
-      { status: "Application Submitted", date: "2026-01-15T12:00:00Z" },
-    ],
-  },
-  {
-    application_id: "a4", job_id: "j4", job_title: "UI/UX Developer", company_name: "DesignHub",
-    location: "London, UK", contract_type: "Contract", work_type: "Remote", experience_level: "Mid",
-    job_description: "DesignHub is seeking a UI/UX Developer...",
-    job_apply_url: "https://jsearch.com/jobs/101", application_status: "rejected", applied_at: "2026-01-10T14:00:00Z", status_updated_at: "2026-01-25T09:00:00Z",
-    cv_file_name: "john_smith_resume_v2.pdf", cv_id: "cv1", recruiter_notes: "Position filled internally", platform_type: "jsearch",
-    timeline: [
-      { status: "Rejected", date: "2026-01-25T09:00:00Z", notes: "Position filled internally" },
-      { status: "In Review", date: "2026-01-15T10:00:00Z" },
-      { status: "Application Submitted", date: "2026-01-10T14:00:00Z" },
-    ],
-  },
-  {
-    application_id: "a5", job_id: "j5", job_title: "Software Engineer II", company_name: "CloudBase",
-    location: "Austin, TX", contract_type: "Full-time", work_type: "Hybrid", experience_level: "Mid",
-    job_description: "CloudBase is looking for a Software Engineer II...",
-    job_apply_url: "https://linkedin.com/jobs/202", application_status: "pending", applied_at: "2026-02-06T09:00:00Z", status_updated_at: "2026-02-06T09:00:00Z",
-    cv_file_name: "john_smith_resume_v2.pdf", cv_id: "cv1", recruiter_notes: null, platform_type: "linkedin",
-    timeline: [{ status: "Application Submitted", date: "2026-02-06T09:00:00Z" }],
-  },
-  {
-    application_id: "a6", job_id: "j6", job_title: "Frontend Architect", company_name: "MegaTech",
-    location: "San Francisco, CA", contract_type: "Full-time", work_type: "On-site", experience_level: "Lead",
-    job_description: "MegaTech is looking for a Frontend Architect...",
-    job_apply_url: "https://linkedin.com/jobs/303", application_status: "interviewed", applied_at: "2026-01-20T10:00:00Z", status_updated_at: "2026-02-04T15:00:00Z",
-    cv_file_name: "john_smith_resume.pdf", cv_id: "cv2", recruiter_notes: "Went well, waiting for feedback", platform_type: "linkedin",
-    timeline: [
-      { status: "Interview Completed", date: "2026-02-04T15:00:00Z", notes: "Went well, waiting for feedback" },
-      { status: "Interview Scheduled", date: "2026-01-28T09:00:00Z" },
-      { status: "In Review", date: "2026-01-22T11:00:00Z" },
-      { status: "Application Submitted", date: "2026-01-20T10:00:00Z" },
-    ],
-  },
-  {
-    application_id: "a7", job_id: "j7", job_title: "TypeScript Developer", company_name: "DevStudio",
-    location: "Remote", contract_type: "Part-time", work_type: "Remote", experience_level: "Mid",
-    job_description: "DevStudio needs a TypeScript Developer...",
-    job_apply_url: "https://jsearch.com/jobs/404", application_status: "hired", applied_at: "2025-12-15T10:00:00Z", status_updated_at: "2026-02-01T10:00:00Z",
-    cv_file_name: "john_smith_resume_v2.pdf", cv_id: "cv1", recruiter_notes: "Start date: March 1", platform_type: "jsearch",
-    timeline: [
-      { status: "Hired", date: "2026-02-01T10:00:00Z", notes: "Start date: March 1" },
-      { status: "Offer Received", date: "2026-01-25T14:00:00Z" },
-      { status: "Interview Completed", date: "2026-01-18T16:00:00Z" },
-      { status: "Interview Scheduled", date: "2026-01-10T09:00:00Z" },
-      { status: "In Review", date: "2025-12-20T11:00:00Z" },
-      { status: "Application Submitted", date: "2025-12-15T10:00:00Z" },
-    ],
-  },
-  {
-    application_id: "a8", job_id: "j8", job_title: "Node.js Backend Developer", company_name: "APIFirst",
-    location: "Pune, India", contract_type: "Full-time", work_type: "Hybrid", experience_level: "Senior",
-    job_description: "APIFirst is hiring a Node.js Backend Developer...",
-    job_apply_url: "https://linkedin.com/jobs/505", application_status: "pending", applied_at: "2026-02-07T16:00:00Z", status_updated_at: "2026-02-07T16:00:00Z",
-    cv_file_name: "john_smith_resume_v2.pdf", cv_id: "cv1", recruiter_notes: null, platform_type: "linkedin",
-    timeline: [{ status: "Application Submitted", date: "2026-02-07T16:00:00Z" }],
-  },
-];
-
-const mockCVs: CandidateCV[] = [
-  { cv_id: "cv1", file_name: "john_smith_resume_v2.pdf", file_url: "#", file_type: "pdf", file_size_bytes: 1258000, is_primary: true, uploaded_at: "2026-02-03T10:00:00Z" },
-  { cv_id: "cv2", file_name: "john_smith_resume.pdf", file_url: "#", file_type: "pdf", file_size_bytes: 980000, is_primary: false, uploaded_at: "2026-01-20T08:00:00Z" },
-  { cv_id: "cv3", file_name: "john_smith_cover_letter.docx", file_url: "#", file_type: "docx", file_size_bytes: 540000, is_primary: false, uploaded_at: "2026-01-10T12:00:00Z" },
-];
-
-const mockRecruiter: RecruiterInfo = {
-  name: "Sarah Johnson",
-  email: "sarah@wavelynk.ai",
-  company: "Wave Lynk AI",
-  phone: "+1 (555) 123-4567",
-  total_applications: 45,
-};
-
-const mockNotifications: CandidateNotification[] = [
-  { id: "n1", type: "status_update", title: "Application status updated", message: "Your application for React Developer at BigCo Solutions received an offer!", time: "2026-02-08T10:00:00Z", read: false },
-  { id: "n2", type: "interview", title: "Interview scheduled", message: "Interview for Senior Frontend Developer at TechCorp on Feb 15, 2026 at 2:00 PM", time: "2026-02-03T14:00:00Z", read: false },
-  { id: "n3", type: "new_application", title: "New application submitted", message: "Your recruiter applied for Node.js Backend Developer at APIFirst", time: "2026-02-07T16:00:00Z", read: true },
-  { id: "n4", type: "status_update", title: "Application rejected", message: "Your application for UI/UX Developer at DesignHub was not selected", time: "2026-01-25T09:00:00Z", read: true },
-];
-
 export type StatusFilter = "" | "pending" | "submitted" | "rejected" | "interview_scheduled" | "interviewed" | "offer_received" | "hired" | "declined";
 export type DateFilterType = "" | "7d" | "30d" | "month" | "3months";
 export type AppViewMode = "list" | "grid";
 
 export function useCandidateDashboard() {
-  const [applications] = useState(mockApplications);
-  const [cvs] = useState(mockCVs);
-  const [recruiter] = useState(mockRecruiter);
-  const [notifications, setNotifications] = useState(mockNotifications);
+  const { candidateId } = useAuth();
+
+  // Fetch applications from Supabase
+  const { data: rawApplications = [], isLoading: appsLoading } = useQuery({
+    queryKey: ["candidate", "applications", candidateId],
+    enabled: !!candidateId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("job_applications")
+        .select(`
+          *,
+          scraped_jobs!job_applications_job_id_fkey (
+            job_title, company_name, location, contract_type, work_type,
+            experience_level, job_description, job_apply_url, platform_type
+          ),
+          cvs!job_applications_cv_id_fkey (
+            file_name, cv_id
+          )
+        `)
+        .eq("candidate_id", candidateId!)
+        .order("applied_at", { ascending: false });
+
+      if (error) throw error;
+
+      return (data || []).map((a: any): CandidateApplication => {
+        const statusLabels: Record<string, string> = {
+          pending: "Pending", submitted: "Application Submitted", rejected: "Rejected",
+          interview_scheduled: "Interview Scheduled", interviewed: "Interview Completed",
+          offer_received: "Offer Received", hired: "Hired", declined: "Declined",
+        };
+
+        // Build simple timeline from status
+        const timeline: { status: string; date: string; notes?: string }[] = [
+          { status: statusLabels[a.application_status] || a.application_status, date: a.status_updated_at, notes: a.recruiter_notes || undefined },
+        ];
+        if (a.application_status !== "pending" && a.application_status !== "submitted") {
+          timeline.push({ status: "Application Submitted", date: a.applied_at });
+        }
+
+        return {
+          application_id: a.application_id,
+          job_id: a.job_id,
+          job_title: a.scraped_jobs?.job_title || "Unknown",
+          company_name: a.scraped_jobs?.company_name || "Unknown",
+          location: a.scraped_jobs?.location || "",
+          contract_type: a.scraped_jobs?.contract_type || "",
+          work_type: a.scraped_jobs?.work_type || "",
+          experience_level: a.scraped_jobs?.experience_level || "",
+          job_description: a.scraped_jobs?.job_description || "",
+          job_apply_url: a.scraped_jobs?.job_apply_url || "",
+          application_status: a.application_status,
+          applied_at: a.applied_at,
+          status_updated_at: a.status_updated_at,
+          cv_file_name: a.cvs?.file_name || "",
+          cv_id: a.cvs?.cv_id || a.cv_id,
+          recruiter_notes: a.recruiter_notes,
+          platform_type: a.scraped_jobs?.platform_type || "",
+          timeline,
+        };
+      });
+    },
+  });
+
+  // Fetch CVs
+  const { data: cvs = [] } = useQuery({
+    queryKey: ["candidate", "cvs", candidateId],
+    enabled: !!candidateId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("cvs")
+        .select("cv_id, file_name, file_url, file_type, file_size_bytes, is_primary, uploaded_at")
+        .eq("candidate_id", candidateId!)
+        .order("uploaded_at", { ascending: false });
+      if (error) throw error;
+      return (data || []).map((cv: any): CandidateCV => ({
+        cv_id: cv.cv_id,
+        file_name: cv.file_name,
+        file_url: cv.file_url,
+        file_type: cv.file_type || "",
+        file_size_bytes: cv.file_size_bytes || 0,
+        is_primary: cv.is_primary,
+        uploaded_at: cv.uploaded_at,
+      }));
+    },
+  });
+
+  // Fetch assigned recruiter info
+  const { data: recruiter } = useQuery({
+    queryKey: ["candidate", "recruiter", candidateId],
+    enabled: !!candidateId,
+    queryFn: async () => {
+      const { data: candData } = await supabase
+        .from("candidates")
+        .select("assigned_recruiter_id")
+        .eq("candidate_id", candidateId!)
+        .single();
+
+      if (!candData) return { name: "Unknown", email: "", company: "", phone: "", total_applications: 0 };
+
+      const { data: recData } = await supabase
+        .from("recruiters")
+        .select("company_name, phone, user_id")
+        .eq("recruiter_id", candData.assigned_recruiter_id)
+        .single();
+
+      let recruiterUser: any = null;
+      if (recData?.user_id) {
+        const { data: uData } = await supabase.from("users").select("full_name, email").eq("user_id", recData.user_id).single();
+        recruiterUser = uData;
+      }
+
+      // Count applications for this candidate
+      const { count } = await supabase
+        .from("job_applications")
+        .select("application_id", { count: "exact", head: true })
+        .eq("candidate_id", candidateId!);
+
+      return {
+        name: recruiterUser?.full_name || "Unknown",
+        email: recruiterUser?.email || "",
+        company: recData?.company_name || "",
+        phone: recData?.phone || "",
+        total_applications: count || 0,
+      } as RecruiterInfo;
+    },
+  });
+
+  const recruiterInfo: RecruiterInfo = recruiter || { name: "Unknown", email: "", company: "", phone: "", total_applications: 0 };
+
+  // Notifications derived from recent status changes
+  const notifications = useMemo((): CandidateNotification[] => {
+    return rawApplications.slice(0, 5).map((a) => {
+      const type: CandidateNotification["type"] =
+        a.application_status.includes("interview") ? "interview" :
+        a.application_status === "pending" || a.application_status === "submitted" ? "new_application" : "status_update";
+
+      return {
+        id: a.application_id,
+        type,
+        title: type === "interview" ? "Interview scheduled" : type === "new_application" ? "New application submitted" : "Application status updated",
+        message: `${a.job_title} at ${a.company_name} — ${a.application_status.replace(/_/g, " ")}`,
+        time: a.status_updated_at,
+        read: true,
+      };
+    });
+  }, [rawApplications]);
+
+  const [notifState, setNotifState] = useState<Record<string, boolean>>({});
+  const unreadCount = notifications.filter((n) => !n.read && !notifState[n.id]).length;
+  const markAllRead = () => {
+    const map: Record<string, boolean> = {};
+    notifications.forEach((n) => { map[n.id] = true; });
+    setNotifState(map);
+  };
 
   // Filter state
   const [search, setSearch] = useState("");
@@ -184,13 +223,13 @@ export function useCandidateDashboard() {
 
   // Stats
   const stats = useMemo(() => {
-    const pending = applications.filter((a) => ["pending", "submitted"].includes(a.application_status)).length;
-    const inReview = applications.filter((a) => ["submitted"].includes(a.application_status)).length;
-    const interviews = applications.filter((a) => ["interview_scheduled", "interviewed"].includes(a.application_status)).length;
-    const offers = applications.filter((a) => ["offer_received", "hired"].includes(a.application_status)).length;
-    const rejected = applications.filter((a) => a.application_status === "rejected").length;
-    return { total: applications.length, pending, inReview, interviews, offers, rejected };
-  }, [applications]);
+    const pending = rawApplications.filter((a) => ["pending", "submitted"].includes(a.application_status)).length;
+    const inReview = rawApplications.filter((a) => a.application_status === "submitted").length;
+    const interviews = rawApplications.filter((a) => ["interview_scheduled", "interviewed"].includes(a.application_status)).length;
+    const offers = rawApplications.filter((a) => ["offer_received", "hired"].includes(a.application_status)).length;
+    const rejected = rawApplications.filter((a) => a.application_status === "rejected").length;
+    return { total: rawApplications.length, pending, inReview, interviews, offers, rejected };
+  }, [rawApplications]);
 
   const chartData = useMemo(() => [
     { name: "Pending", value: stats.pending, color: "hsl(var(--warning-500))" },
@@ -202,7 +241,7 @@ export function useCandidateDashboard() {
 
   // Filtered applications
   const filteredApplications = useMemo(() => {
-    let result = [...applications];
+    let result = [...rawApplications];
     if (search) {
       const q = search.toLowerCase();
       result = result.filter((a) => a.job_title.toLowerCase().includes(q) || a.company_name.toLowerCase().includes(q) || a.location.toLowerCase().includes(q));
@@ -223,13 +262,12 @@ export function useCandidateDashboard() {
     }
     result.sort((a, b) => new Date(b.applied_at).getTime() - new Date(a.applied_at).getTime());
     return result;
-  }, [applications, search, statusFilter, typeFilter, locationFilter, dateFilter]);
+  }, [rawApplications, search, statusFilter, typeFilter, locationFilter, dateFilter]);
 
   const totalPages = Math.ceil(filteredApplications.length / perPage);
   const paginatedApplications = filteredApplications.slice((page - 1) * perPage, page * perPage);
-  const recentApplications = applications.sort((a, b) => new Date(b.applied_at).getTime() - new Date(a.applied_at).getTime()).slice(0, 5);
-
-  const uniqueLocations = [...new Set(applications.map((a) => a.location))];
+  const recentApplications = [...rawApplications].sort((a, b) => new Date(b.applied_at).getTime() - new Date(a.applied_at).getTime()).slice(0, 5);
+  const uniqueLocations = [...new Set(rawApplications.map((a) => a.location))].filter(Boolean);
 
   const activeFilters: { label: string; onRemove: () => void }[] = [];
   if (statusFilter) activeFilters.push({ label: `Status: ${statusFilter.replace("_", " ")}`, onRemove: () => setStatusFilter("") });
@@ -241,15 +279,13 @@ export function useCandidateDashboard() {
   }
 
   const clearAllFilters = () => { setSearch(""); setStatusFilter(""); setTypeFilter(""); setLocationFilter(""); setDateFilter(""); setPage(1); };
-  const markAllRead = () => setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  const unreadCount = notifications.filter((n) => !n.read).length;
 
   return {
     applications: paginatedApplications, allFilteredApplications: filteredApplications, recentApplications,
-    cvs, recruiter, notifications, unreadCount, markAllRead, stats, chartData,
+    cvs, recruiter: recruiterInfo, notifications, unreadCount, markAllRead, stats, chartData,
     search, setSearch, statusFilter, setStatusFilter, dateFilter, setDateFilter,
     typeFilter, setTypeFilter, locationFilter, setLocationFilter, uniqueLocations,
     viewMode, setViewMode, page, setPage, totalPages, perPage,
-    activeFilters, clearAllFilters,
+    activeFilters, clearAllFilters, isLoading: appsLoading,
   };
 }

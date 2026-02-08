@@ -1,177 +1,39 @@
+// This file now exports only the ScrapedJob interface used across components.
+// All mock data has been removed — data comes from Supabase.
+
 export interface ScrapedJob {
-  id: string;
+  id: string;         // maps to job_id
   job_title: string;
   company_name: string;
   location: string;
   contract_type: string;
   work_type: string;
   experience_level: string;
-  platform: "linkedin" | "jsearch";
+  platform: "linkedin" | "jsearch";  // maps to platform_type
   published_date: string;
   job_description: string;
   job_apply_url: string;
   salary_range?: string;
+  is_active?: boolean;
+  scraped_at?: string;
 }
 
-export const mockScrapedJobs: ScrapedJob[] = [
-  {
-    id: "JOB-00001",
-    job_title: "Senior Frontend Developer",
-    company_name: "TechCorp Inc.",
-    location: "Hyderabad, India",
-    contract_type: "Full-time",
-    work_type: "Remote",
-    experience_level: "Senior",
-    platform: "linkedin",
-    published_date: "2026-02-05",
-    job_description: "We are looking for a Senior Frontend Developer with 5+ years of experience in React, TypeScript, and modern web technologies. You will lead the development of our customer-facing web applications and mentor junior developers. Strong understanding of state management, testing, and performance optimization required.",
-    job_apply_url: "https://linkedin.com/jobs/123",
-    salary_range: "$120,000 - $160,000",
-  },
-  {
-    id: "JOB-00002",
-    job_title: "Full Stack Engineer",
-    company_name: "StartupXYZ",
-    location: "Bangalore, India",
-    contract_type: "Full-time",
-    work_type: "Hybrid",
-    experience_level: "Mid-level",
-    platform: "linkedin",
-    published_date: "2026-02-04",
-    job_description: "Join our fast-growing startup as a Full Stack Engineer. Work with Node.js, React, PostgreSQL, and AWS. You'll own entire features from design to deployment and work closely with the founding team.",
-    job_apply_url: "https://linkedin.com/jobs/124",
-  },
-  {
-    id: "JOB-00003",
-    job_title: "UI/UX Designer",
-    company_name: "DesignCo",
-    location: "Mumbai, India",
-    contract_type: "Contract",
-    work_type: "Remote",
-    experience_level: "Senior",
-    platform: "jsearch",
-    published_date: "2026-02-03",
-    job_description: "Looking for a talented UI/UX Designer to create intuitive and beautiful user interfaces for our SaaS products. Must have experience with Figma, design systems, and user research methodologies.",
-    job_apply_url: "https://example.com/jobs/125",
-  },
-  {
-    id: "JOB-00004",
-    job_title: "Backend Developer (Python)",
-    company_name: "CloudTech Solutions",
-    location: "Delhi, India",
-    contract_type: "Full-time",
-    work_type: "On-site",
-    experience_level: "Mid-level",
-    platform: "jsearch",
-    published_date: "2026-02-02",
-    job_description: "We need an experienced Python backend developer familiar with Django/FastAPI, PostgreSQL, Redis, and microservices architecture. Cloud experience with AWS or GCP is a plus.",
-    job_apply_url: "https://example.com/jobs/126",
-  },
-  {
-    id: "JOB-00005",
-    job_title: "DevOps Engineer",
-    company_name: "InfraSys",
-    location: "Pune, India",
-    contract_type: "Full-time",
-    work_type: "Hybrid",
-    experience_level: "Senior",
-    platform: "linkedin",
-    published_date: "2026-02-01",
-    job_description: "Seeking a DevOps Engineer to manage our CI/CD pipelines, container orchestration with Kubernetes, and infrastructure as code using Terraform. Must have strong Linux and networking skills.",
-    job_apply_url: "https://linkedin.com/jobs/127",
-    salary_range: "$100,000 - $140,000",
-  },
-  {
-    id: "JOB-00006",
-    job_title: "Product Manager",
-    company_name: "InnovateTech",
-    location: "Remote",
-    contract_type: "Full-time",
-    work_type: "Remote",
-    experience_level: "Senior",
-    platform: "linkedin",
-    published_date: "2026-01-30",
-    job_description: "We're looking for a Product Manager to drive our AI-powered analytics platform. Experience with B2B SaaS products, agile methodologies, and data-driven decision making is essential.",
-    job_apply_url: "https://linkedin.com/jobs/128",
-  },
-  {
-    id: "JOB-00007",
-    job_title: "Data Scientist",
-    company_name: "DataWorks",
-    location: "Chennai, India",
-    contract_type: "Part-time",
-    work_type: "Remote",
-    experience_level: "Entry",
-    platform: "jsearch",
-    published_date: "2026-01-29",
-    job_description: "Entry-level Data Scientist position. Work with Python, pandas, scikit-learn, and TensorFlow. Help build ML models for customer behavior prediction and fraud detection.",
-    job_apply_url: "https://example.com/jobs/129",
-  },
-  {
-    id: "JOB-00008",
-    job_title: "React Native Developer",
-    company_name: "MobileFirst",
-    location: "Hyderabad, India",
-    contract_type: "Contract",
-    work_type: "On-site",
-    experience_level: "Mid-level",
-    platform: "linkedin",
-    published_date: "2026-01-28",
-    job_description: "Build cross-platform mobile applications using React Native. Experience with app store deployments, native module integration, and mobile UI best practices required.",
-    job_apply_url: "https://linkedin.com/jobs/130",
-  },
-  {
-    id: "JOB-00009",
-    job_title: "AI/ML Engineer",
-    company_name: "NeuralTech AI",
-    location: "Bangalore, India",
-    contract_type: "Full-time",
-    work_type: "Hybrid",
-    experience_level: "Senior",
-    platform: "jsearch",
-    published_date: "2026-01-27",
-    job_description: "Join our AI research team to develop cutting-edge NLP models and recommendation systems. PhD or equivalent experience in machine learning required. Publications in top conferences preferred.",
-    job_apply_url: "https://example.com/jobs/131",
-    salary_range: "₹25,00,000 - ₹40,00,000",
-  },
-  {
-    id: "JOB-00010",
-    job_title: "QA Automation Engineer",
-    company_name: "TestPro Solutions",
-    location: "Noida, India",
-    contract_type: "Internship",
-    work_type: "On-site",
-    experience_level: "Entry",
-    platform: "linkedin",
-    published_date: "2026-01-26",
-    job_description: "Internship opportunity for aspiring QA engineers. Learn test automation with Selenium, Cypress, and Playwright. Write test plans and execute both manual and automated tests.",
-    job_apply_url: "https://linkedin.com/jobs/132",
-  },
-  {
-    id: "JOB-00011",
-    job_title: "Cloud Architect",
-    company_name: "SkyScale",
-    location: "Remote",
-    contract_type: "Full-time",
-    work_type: "Remote",
-    experience_level: "Senior",
-    platform: "jsearch",
-    published_date: "2026-01-25",
-    job_description: "Design and implement multi-cloud architecture solutions for enterprise clients. Deep expertise in AWS, Azure, or GCP required along with security best practices.",
-    job_apply_url: "https://example.com/jobs/133",
-    salary_range: "$150,000 - $200,000",
-  },
-  {
-    id: "JOB-00012",
-    job_title: "Technical Writer",
-    company_name: "DocuTech",
-    location: "Pune, India",
-    contract_type: "Part-time",
-    work_type: "Remote",
-    experience_level: "Mid-level",
-    platform: "linkedin",
-    published_date: "2026-01-24",
-    job_description: "Create technical documentation, API guides, and developer tutorials for our developer platform. Strong writing skills and ability to explain complex concepts simply required.",
-    job_apply_url: "https://linkedin.com/jobs/134",
-  },
-];
+/** Map a database row to the ScrapedJob UI interface */
+export function mapDbJob(row: any): ScrapedJob {
+  return {
+    id: row.job_id,
+    job_title: row.job_title,
+    company_name: row.company_name,
+    location: row.location,
+    contract_type: row.contract_type || "",
+    work_type: row.work_type || "",
+    experience_level: row.experience_level || "",
+    platform: row.platform_type,
+    published_date: row.published_date || row.scraped_at,
+    job_description: row.job_description,
+    job_apply_url: row.job_apply_url,
+    salary_range: row.salary_range || undefined,
+    is_active: row.is_active,
+    scraped_at: row.scraped_at,
+  };
+}
