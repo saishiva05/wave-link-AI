@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useQueryClient } from "@tanstack/react-query";
 import ATSResultsView, { type ATSAnalysisResult } from "@/components/recruiter/ATSResultsView";
 
 interface ATSMatcherModalProps {
@@ -31,6 +32,7 @@ const getInitials = (name: string) =>
 
 const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps) => {
   const { recruiterId } = useAuth();
+  const queryClient = useQueryClient();
   const [selectedCandidate, setSelectedCandidate] = useState("");
   const [selectedCV, setSelectedCV] = useState("");
   const [candidateSearch, setCandidateSearch] = useState("");
@@ -137,6 +139,9 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
           analysis_result: parsed as any,
           webhook_response_time_ms: elapsed,
         });
+
+        // Invalidate ATS analyses cache so score shows on job record
+        queryClient.invalidateQueries({ queryKey: ["recruiter", "job-ats-analyses"] });
       }
     } catch (err: any) {
       console.error("ATS analysis failed:", err);

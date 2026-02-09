@@ -406,6 +406,59 @@ export function useRecruiterCVs() {
   });
 }
 
+export function useJobATSAnalyses(jobIds: string[]) {
+  const { recruiterId } = useAuth();
+
+  return useQuery({
+    queryKey: ["recruiter", "job-ats-analyses", recruiterId, jobIds],
+    enabled: !!recruiterId && jobIds.length > 0,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("ats_analyses")
+        .select(`
+          analysis_id,
+          job_id,
+          cv_id,
+          ats_score,
+          analysis_result,
+          analyzed_at,
+          cvs!ats_analyses_cv_id_fkey (
+            file_name,
+            candidates!cvs_candidate_id_fkey (
+              users!candidates_user_id_fkey (
+                full_name
+              )
+            )
+          )
+        `)
+        .eq("recruiter_id", recruiterId!)
+        .in("job_id", jobIds)
+        .order("analyzed_at", { ascending: false });
+
+      if (error) throw error;
+
+      // Group by job_id, keep the latest analysis per job
+      const byJob: Record<string, any> = {};
+      (data || []).forEach((a: any) => {
+        if (!byJob[a.job_id]) {
+          byJob[a.job_id] = {
+            analysis_id: a.analysis_id,
+            job_id: a.job_id,
+            cv_id: a.cv_id,
+            ats_score: a.ats_score,
+            analysis_result: a.analysis_result,
+            analyzed_at: a.analyzed_at,
+            candidate_name: a.cvs?.candidates?.users?.full_name || "Unknown",
+            cv_file_name: a.cvs?.file_name || "Unknown",
+          };
+        }
+      });
+
+      return byJob;
+    },
+  });
+}
+
 export function useScrapeHistory() {
   const { recruiterId } = useAuth();
 
