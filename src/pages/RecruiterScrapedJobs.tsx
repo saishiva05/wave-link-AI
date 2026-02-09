@@ -122,7 +122,12 @@ const RecruiterScrapedJobs = () => {
   const handleViewATSResult = (job: ScrapedJob) => {
     const analysis = atsAnalyses[job.id];
     if (analysis) {
-      setViewATSResult({ result: analysis.analysis_result as ATSAnalysisResult, job });
+      // Unwrap the raw webhook format [{ text: { ... } }] if needed
+      let result = analysis.analysis_result;
+      if (Array.isArray(result) && result[0]?.text) {
+        result = result[0].text;
+      }
+      setViewATSResult({ result: result as ATSAnalysisResult, job });
     }
   };
 
