@@ -2,7 +2,7 @@ import { ScrapedJob } from "@/data/mockScrapedJobs";
 import {
   MapPin, Sparkles, MoreVertical, Eye, Link, Trash, Search,
   ChevronUp, ChevronDown, ExternalLink, FilePen, DollarSign, Award,
-  Globe, Clock,
+  Globe, Clock, CheckCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
@@ -21,6 +21,8 @@ interface JobTableViewProps {
   onViewDetails: (job: ScrapedJob) => void;
   onRunATS: (job: ScrapedJob) => void;
   onUpdateCV: (job: ScrapedJob) => void;
+  onViewATSResult: (job: ScrapedJob) => void;
+  atsAnalyses: Record<string, any>;
   sortField: string;
   sortDir: "asc" | "desc";
   onSort: (field: string) => void;
@@ -57,15 +59,38 @@ const SortIcon = ({ field, sortField, sortDir }: { field: string; sortField: str
   return sortDir === "asc" ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />;
 };
 
+const ATSScoreBadge = ({ score, onClick }: { score: number; onClick: () => void }) => {
+  const color = score >= 70
+    ? "bg-success-50 text-success-700 border-success-200"
+    : score >= 50
+    ? "bg-warning-50 text-warning-700 border-warning-200"
+    : "bg-destructive/10 text-destructive border-destructive/20";
+
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "inline-flex items-center gap-1 px-2 py-1 rounded-full text-[11px] font-bold border transition-all hover:scale-105 hover:shadow-sm",
+        color
+      )}
+      title="Click to view full ATS analysis"
+    >
+      <CheckCircle className="w-3 h-3" />
+      {score}%
+    </button>
+  );
+};
+
 const JobTableView = ({
   jobs, selectedIds, onToggleSelect, onSelectAll, allSelected,
-  onViewDetails, onRunATS, onUpdateCV, sortField, sortDir, onSort,
+  onViewDetails, onRunATS, onUpdateCV, onViewATSResult, atsAnalyses,
+  sortField, sortDir, onSort,
 }: JobTableViewProps) => {
   if (jobs.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center bg-card rounded-xl border border-border">
-        <Search className="w-16 h-16 text-neutral-300 mb-4" />
-        <h3 className="text-lg font-semibold text-neutral-700 mb-2">No jobs found</h3>
+        <Search className="w-16 h-16 text-muted-foreground/30 mb-4" />
+        <h3 className="text-lg font-semibold text-foreground mb-2">No jobs found</h3>
         <p className="text-sm text-muted-foreground">Try adjusting your filters or scrape new jobs</p>
       </div>
     );
@@ -79,22 +104,23 @@ const JobTableView = ({
             <thead>
               <tr className="bg-muted border-b-2 border-border">
                 <th className="w-10 px-3 py-3">
-                  <input type="checkbox" checked={allSelected} onChange={onSelectAll} className="w-4 h-4 rounded border-neutral-300 text-primary focus:ring-primary" />
+                  <input type="checkbox" checked={allSelected} onChange={onSelectAll} className="w-4 h-4 rounded border-border text-primary focus:ring-primary" />
                 </th>
-                <th className="px-3 py-3 text-left font-medium text-neutral-700 w-20">Platform</th>
-                <th className="px-3 py-3 text-left font-medium text-neutral-700 cursor-pointer select-none min-w-[260px]" onClick={() => onSort("job_title")}>
+                <th className="px-3 py-3 text-left font-medium text-muted-foreground w-20">Platform</th>
+                <th className="px-3 py-3 text-left font-medium text-muted-foreground cursor-pointer select-none min-w-[260px]" onClick={() => onSort("job_title")}>
                   <div className="flex items-center gap-1">Job Details <SortIcon field="job_title" sortField={sortField} sortDir={sortDir} /></div>
                 </th>
-                <th className="px-3 py-3 text-left font-medium text-neutral-700 min-w-[130px]">Location</th>
-                <th className="px-3 py-3 text-left font-medium text-neutral-700 min-w-[100px]">Salary</th>
-                <th className="px-3 py-3 text-left font-medium text-neutral-700 min-w-[100px]">Experience</th>
-                <th className="px-3 py-3 text-left font-medium text-neutral-700 cursor-pointer select-none min-w-[120px]" onClick={() => onSort("published_date")}>
+                <th className="px-3 py-3 text-left font-medium text-muted-foreground min-w-[130px]">Location</th>
+                <th className="px-3 py-3 text-left font-medium text-muted-foreground min-w-[100px]">Salary</th>
+                <th className="px-3 py-3 text-left font-medium text-muted-foreground min-w-[100px]">Experience</th>
+                <th className="px-3 py-3 text-left font-medium text-muted-foreground cursor-pointer select-none min-w-[120px]" onClick={() => onSort("published_date")}>
                   <div className="flex items-center gap-1">Published <SortIcon field="published_date" sortField={sortField} sortDir={sortDir} /></div>
                 </th>
-                <th className="px-3 py-3 text-left font-medium text-neutral-700 cursor-pointer select-none min-w-[120px]" onClick={() => onSort("scraped_at")}>
+                <th className="px-3 py-3 text-left font-medium text-muted-foreground cursor-pointer select-none min-w-[120px]" onClick={() => onSort("scraped_at")}>
                   <div className="flex items-center gap-1">Scraped <SortIcon field="scraped_at" sortField={sortField} sortDir={sortDir} /></div>
                 </th>
-                <th className="px-3 py-3 text-center font-medium text-neutral-700 w-36">Actions</th>
+                <th className="px-3 py-3 text-center font-medium text-muted-foreground w-20">ATS</th>
+                <th className="px-3 py-3 text-center font-medium text-muted-foreground w-36">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -103,10 +129,12 @@ const JobTableView = ({
                   key={job.id}
                   job={job}
                   selected={selectedIds.has(job.id)}
+                  atsAnalysis={atsAnalyses[job.id] || null}
                   onToggleSelect={() => onToggleSelect(job.id)}
                   onViewDetails={() => onViewDetails(job)}
                   onRunATS={() => onRunATS(job)}
                   onUpdateCV={() => onUpdateCV(job)}
+                  onViewATSResult={() => onViewATSResult(job)}
                 />
               ))}
             </tbody>
@@ -118,14 +146,16 @@ const JobTableView = ({
 };
 
 const JobTableRow = ({
-  job, selected, onToggleSelect, onViewDetails, onRunATS, onUpdateCV,
+  job, selected, atsAnalysis, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onViewATSResult,
 }: {
   job: ScrapedJob;
   selected: boolean;
+  atsAnalysis: any;
   onToggleSelect: () => void;
   onViewDetails: () => void;
   onRunATS: () => void;
   onUpdateCV: () => void;
+  onViewATSResult: () => void;
 }) => {
   const { toast } = useToast();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -139,6 +169,8 @@ const JobTableRow = ({
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  const hasATS = !!atsAnalysis;
+
   return (
     <tr className={cn(
       "border-b border-border hover:bg-muted/50 transition-colors",
@@ -146,13 +178,13 @@ const JobTableRow = ({
     )}>
       {/* Checkbox */}
       <td className="px-3 py-3">
-        <input type="checkbox" checked={selected} onChange={onToggleSelect} className="w-4 h-4 rounded border-neutral-300 text-primary focus:ring-primary" />
+        <input type="checkbox" checked={selected} onChange={onToggleSelect} className="w-4 h-4 rounded border-border text-primary focus:ring-primary" />
       </td>
 
       {/* Platform */}
       <td className="px-3 py-3">{platformBadge(job.platform)}</td>
 
-      {/* Job Details: title + company + description preview */}
+      {/* Job Details */}
       <td className="px-3 py-3">
         <button onClick={onViewDetails} className="text-secondary-900 font-semibold hover:text-primary hover:underline text-left truncate max-w-[280px] block text-sm">
           {job.job_title}
@@ -165,8 +197,8 @@ const JobTableRow = ({
 
       {/* Location */}
       <td className="px-3 py-3">
-        <span className="flex items-center gap-1 text-neutral-600 text-xs">
-          <MapPin className="w-3.5 h-3.5 shrink-0 text-neutral-400" />{job.location}
+        <span className="flex items-center gap-1 text-muted-foreground text-xs">
+          <MapPin className="w-3.5 h-3.5 shrink-0" />{job.location}
         </span>
       </td>
 
@@ -177,48 +209,68 @@ const JobTableRow = ({
             <DollarSign className="w-3.5 h-3.5 shrink-0" />{job.salary_range}
           </span>
         ) : (
-          <span className="text-xs text-neutral-400">—</span>
+          <span className="text-xs text-muted-foreground">—</span>
         )}
       </td>
 
       {/* Experience */}
       <td className="px-3 py-3">
         {job.experience_level ? (
-          <span className="flex items-center gap-1 text-xs text-neutral-600">
-            <Award className="w-3.5 h-3.5 shrink-0 text-neutral-400" />{job.experience_level}
+          <span className="flex items-center gap-1 text-xs text-muted-foreground">
+            <Award className="w-3.5 h-3.5 shrink-0" />{job.experience_level}
           </span>
         ) : (
-          <span className="text-xs text-neutral-400">—</span>
+          <span className="text-xs text-muted-foreground">—</span>
         )}
       </td>
 
       {/* Published */}
       <td className="px-3 py-3">
-        <span className="flex items-center gap-1 text-xs text-neutral-600">
-          <Clock className="w-3.5 h-3.5 shrink-0 text-neutral-400" />
+        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+          <Clock className="w-3.5 h-3.5 shrink-0" />
           {timeAgo(job.published_date)}
         </span>
       </td>
 
       {/* Scraped */}
       <td className="px-3 py-3">
-        <span className="flex items-center gap-1 text-xs text-neutral-600">
-          <Globe className="w-3.5 h-3.5 shrink-0 text-neutral-400" />
+        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+          <Globe className="w-3.5 h-3.5 shrink-0" />
           {timeAgo(job.scraped_at)}
         </span>
+      </td>
+
+      {/* ATS Score */}
+      <td className="px-3 py-3 text-center">
+        {hasATS ? (
+          <ATSScoreBadge score={atsAnalysis.ats_score} onClick={onViewATSResult} />
+        ) : (
+          <span className="text-xs text-muted-foreground">—</span>
+        )}
       </td>
 
       {/* Actions */}
       <td className="px-3 py-3">
         <div className="flex items-center justify-center gap-1">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button onClick={onRunATS} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-primary-50 text-primary transition-colors" aria-label="Run ATS">
-                <Sparkles className="w-4 h-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>Run ATS Analysis</TooltipContent>
-          </Tooltip>
+          {!hasATS ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button onClick={onRunATS} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-primary-50 text-primary transition-colors" aria-label="Run ATS">
+                  <Sparkles className="w-4 h-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>Run ATS Analysis</TooltipContent>
+            </Tooltip>
+          ) : (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button onClick={onRunATS} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-primary-50 text-primary/50 transition-colors" aria-label="Re-run ATS">
+                  <Sparkles className="w-4 h-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>Re-run ATS Analysis</TooltipContent>
+            </Tooltip>
+          )}
 
           <Tooltip>
             <TooltipTrigger asChild>
@@ -239,19 +291,19 @@ const JobTableRow = ({
           </Tooltip>
 
           <div ref={menuRef} className="relative">
-            <button onClick={() => setMenuOpen(!menuOpen)} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-muted text-neutral-500 hover:text-primary transition-colors">
+            <button onClick={() => setMenuOpen(!menuOpen)} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-muted text-muted-foreground hover:text-primary transition-colors">
               <MoreVertical className="w-4 h-4" />
             </button>
             {menuOpen && (
               <div className="absolute right-0 top-9 w-48 bg-card border border-border rounded-lg shadow-elevated z-20 overflow-hidden animate-scale-in">
                 <button onClick={() => { onViewDetails(); setMenuOpen(false); }} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm hover:bg-muted transition-colors text-left">
-                  <Eye className="w-4 h-4 text-neutral-500" /> View Details
+                  <Eye className="w-4 h-4 text-muted-foreground" /> View Details
                 </button>
                 <button onClick={() => { navigator.clipboard.writeText(job.job_apply_url); toast({ title: "Copied!", description: "Job URL copied to clipboard" }); setMenuOpen(false); }} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm hover:bg-muted transition-colors text-left">
-                  <Link className="w-4 h-4 text-neutral-500" /> Copy Job URL
+                  <Link className="w-4 h-4 text-muted-foreground" /> Copy Job URL
                 </button>
                 <div className="border-t border-border" />
-                <button className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm hover:bg-error-50 text-destructive transition-colors text-left">
+                <button className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm hover:bg-destructive/10 text-destructive transition-colors text-left">
                   <Trash className="w-4 h-4" /> Delete Job
                 </button>
               </div>

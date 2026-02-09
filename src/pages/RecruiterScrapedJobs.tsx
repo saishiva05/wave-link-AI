@@ -8,7 +8,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ScrapedJob, mapDbJob } from "@/data/mockScrapedJobs";
-import { useScrapedJobs, useRecruiterCandidates, useRecruiterCVs } from "@/hooks/useRecruiterData";
+import { useScrapedJobs, useRecruiterCandidates, useRecruiterCVs, useJobATSAnalyses } from "@/hooks/useRecruiterData";
+import ATSResultsView, { type ATSAnalysisResult } from "@/components/recruiter/ATSResultsView";
 import { useAuth } from "@/hooks/useAuth";
 import FilterDropdown from "@/components/recruiter/FilterDropdown";
 import JobTableView from "@/components/recruiter/JobTableView";
@@ -72,6 +73,7 @@ const RecruiterScrapedJobs = () => {
   const [detailJob, setDetailJob] = useState<ScrapedJob | null>(null);
   const [atsJob, setAtsJob] = useState<ScrapedJob | null>(null);
   const [updateCVJob, setUpdateCVJob] = useState<ScrapedJob | null>(null);
+  const [viewATSResult, setViewATSResult] = useState<{ result: ATSAnalysisResult; job: ScrapedJob } | null>(null);
 
   // Fetch jobs
   const { data, isLoading } = useScrapedJobs(recruiterId, {
@@ -87,6 +89,10 @@ const RecruiterScrapedJobs = () => {
   const jobs: ScrapedJob[] = (data?.jobs || []).map(mapDbJob);
   const totalCount = data?.total || 0;
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+  // Fetch ATS analyses for current page's jobs
+  const jobIds = jobs.map((j) => j.id);
+  const { data: atsAnalyses = {} } = useJobATSAnalyses(jobIds);
 
   // Active filters
   const activeFilters: { label: string; onRemove: () => void }[] = [];
@@ -113,18 +119,48 @@ const RecruiterScrapedJobs = () => {
     else { setSortField(field); setSortDir("desc"); }
   };
 
+  const handleViewATSResult = (job: ScrapedJob) => {
+    const analysis = atsAnalyses[job.id];
+    if (analysis) {
+      setViewATSResult({ result: analysis.analysis_result as ATSAnalysisResult, job });
+    }
+  };
+
   return (
     <>
       <JobDetailsModal job={detailJob} onClose={() => setDetailJob(null)} onRunATS={(j) => { setDetailJob(null); setAtsJob(j); }} />
       <ATSMatcherModal job={atsJob} candidates={candidatesData} cvs={cvsData} onClose={() => setAtsJob(null)} />
       <UpdateCVModal job={updateCVJob} candidates={candidatesData} cvs={cvsData} onClose={() => setUpdateCVJob(null)} />
 
+      {/* ATS Results Viewer Modal */}
+      {viewATSResult && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setViewATSResult(null)}>
+          <div className="bg-card rounded-2xl shadow-elevated max-w-3xl w-full max-h-[92vh] flex flex-col animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <div className="px-6 py-5 border-b border-border flex items-start justify-between shrink-0">
+              <div>
+                <h2 className="text-xl font-bold text-secondary-900 font-display">ATS Analysis Results</h2>
+                <p className="text-sm text-muted-foreground mt-1">{viewATSResult.job.job_title} at {viewATSResult.job.company_name}</p>
+              </div>
+              <button onClick={() => setViewATSResult(null)} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted text-neutral-500 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="px-6 py-5 overflow-y-auto flex-1">
+              <ATSResultsView result={viewATSResult.result} />
+            </div>
+            <div className="px-6 py-4 border-t border-border flex items-center justify-end shrink-0">
+              <Button variant="portal" onClick={() => setViewATSResult(null)}>Close</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
           <nav className="flex items-center gap-1.5 text-sm mb-4">
-            <button onClick={() => navigate("/recruiter/dashboard")} className="text-neutral-500 hover:text-primary transition-colors">Dashboard</button>
-            <span className="text-neutral-300">/</span>
+            <button onClick={() => navigate("/recruiter/dashboard")} className="text-muted-foreground hover:text-primary transition-colors">Dashboard</button>
+            <span className="text-muted-foreground/50">/</span>
             <span className="text-secondary-900 font-semibold">Scraped Jobs</span>
           </nav>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -142,20 +178,20 @@ const RecruiterScrapedJobs = () => {
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.05 }} className="bg-card border border-border rounded-xl p-5 shadow-card">
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative flex-1 min-w-[240px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 pointer-events-none" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
               <input type="text" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                 placeholder="Search by job title, company, or location..."
                 className="w-full h-11 pl-10 pr-9 text-sm rounded-lg border border-border bg-card outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground"
               />
-              {search && <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"><X className="w-4 h-4" /></button>}
+              {search && <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"><X className="w-4 h-4" /></button>}
             </div>
             <FilterDropdown label="All Platforms" icon={<Globe className="w-4 h-4" />} value={platformFilter} options={platformOptions} onChange={(v) => { setPlatformFilter(v as string); setPage(1); }} />
             <FilterDropdown label="All Time" icon={<Calendar className="w-4 h-4" />} value={dateFilter} options={dateOptions} onChange={(v) => { setDateFilter(v as string); setPage(1); }} />
             <FilterDropdown label="All Types" icon={<Briefcase className="w-4 h-4" />} value={contractFilter} options={contractOptions} onChange={(v) => { setContractFilter(v as string[]); setPage(1); }} multi />
             <FilterDropdown label="All Modes" icon={<Building className="w-4 h-4" />} value={workModeFilter} options={workModeOptions} onChange={(v) => { setWorkModeFilter(v as string); setPage(1); }} />
             <div className="flex gap-1 ml-auto">
-              <button onClick={() => setViewMode("table")} className={cn("w-9 h-9 rounded flex items-center justify-center transition-colors", viewMode === "table" ? "bg-primary text-primary-foreground" : "bg-muted text-neutral-500 hover:bg-neutral-200")} title="Table view"><List className="w-4 h-4" /></button>
-              <button onClick={() => setViewMode("card")} className={cn("w-9 h-9 rounded flex items-center justify-center transition-colors", viewMode === "card" ? "bg-primary text-primary-foreground" : "bg-muted text-neutral-500 hover:bg-neutral-200")} title="Card view"><LayoutGrid className="w-4 h-4" /></button>
+              <button onClick={() => setViewMode("table")} className={cn("w-9 h-9 rounded flex items-center justify-center transition-colors", viewMode === "table" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-accent")} title="Table view"><List className="w-4 h-4" /></button>
+              <button onClick={() => setViewMode("card")} className={cn("w-9 h-9 rounded flex items-center justify-center transition-colors", viewMode === "card" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-accent")} title="Card view"><LayoutGrid className="w-4 h-4" /></button>
             </div>
           </div>
           {activeFilters.length > 0 && (
@@ -166,7 +202,7 @@ const RecruiterScrapedJobs = () => {
                   <button onClick={f.onRemove} className="w-4 h-4 rounded-full flex items-center justify-center hover:bg-primary-200 transition-colors"><X className="w-3 h-3" /></button>
                 </span>
               ))}
-              <button onClick={clearAllFilters} className="text-xs text-neutral-600 hover:text-foreground underline ml-1">Clear all filters</button>
+              <button onClick={clearAllFilters} className="text-xs text-muted-foreground hover:text-foreground underline ml-1">Clear all filters</button>
             </div>
           )}
         </motion.div>
@@ -176,10 +212,10 @@ const RecruiterScrapedJobs = () => {
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="sticky top-16 z-20 bg-primary rounded-xl px-5 py-3.5 flex items-center justify-between shadow-card">
             <span className="text-sm font-medium text-primary-foreground">{selectedIds.size} job{selectedIds.size > 1 ? "s" : ""} selected</span>
             <div className="flex items-center gap-2">
-              <Button size="sm" className="bg-white text-primary-700 hover:bg-white/90 text-xs font-semibold"><Sparkles className="w-3.5 h-3.5" /> Run ATS</Button>
-              <Button size="sm" variant="outline" className="border-white/30 text-primary-foreground hover:bg-white/10 text-xs"><Download className="w-3.5 h-3.5" /> Export</Button>
-              <Button size="sm" variant="ghost" className="text-primary-foreground hover:bg-white/10 text-xs"><Trash className="w-3.5 h-3.5" /> Delete</Button>
-              <button onClick={() => setSelectedIds(new Set())} className="text-primary-foreground/80 hover:text-white ml-2"><X className="w-4 h-4" /></button>
+              <Button size="sm" className="bg-white text-primary hover:bg-white/90 text-xs font-semibold"><Sparkles className="w-3.5 h-3.5" /> Run ATS</Button>
+              <Button size="sm" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-xs"><Download className="w-3.5 h-3.5" /> Export</Button>
+              <Button size="sm" variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-xs"><Trash className="w-3.5 h-3.5" /> Delete</Button>
+              <button onClick={() => setSelectedIds(new Set())} className="text-primary-foreground/80 hover:text-primary-foreground ml-2"><X className="w-4 h-4" /></button>
             </div>
           </motion.div>
         )}
@@ -213,12 +249,16 @@ const RecruiterScrapedJobs = () => {
               jobs={jobs} selectedIds={selectedIds} onToggleSelect={toggleSelect} onSelectAll={selectAll}
               allSelected={jobs.length > 0 && selectedIds.size === jobs.length}
               onViewDetails={setDetailJob} onRunATS={setAtsJob} onUpdateCV={setUpdateCVJob}
+              onViewATSResult={handleViewATSResult}
+              atsAnalyses={atsAnalyses}
               sortField={sortField} sortDir={sortDir} onSort={handleSort}
             />
           ) : (
             <JobCardView
               jobs={jobs} selectedIds={selectedIds} onToggleSelect={toggleSelect}
               onViewDetails={setDetailJob} onRunATS={setAtsJob} onUpdateCV={setUpdateCVJob}
+              onViewATSResult={handleViewATSResult}
+              atsAnalyses={atsAnalyses}
             />
           )}
         </motion.div>

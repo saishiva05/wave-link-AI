@@ -1,8 +1,8 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ScrapedJob } from "@/data/mockScrapedJobs";
 import {
   X, Briefcase, MapPin, FileText, Info, FilePen, Loader2, CheckCircle,
-  XCircle, Search, Download,
+  XCircle, Search, Download, Sparkles, AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -34,6 +34,8 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
   const [state, setState] = useState<ModalState>("form");
   const [updateResult, setUpdateResult] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const [atsAnalysis, setAtsAnalysis] = useState<any>(null);
+  const [loadingATS, setLoadingATS] = useState(false);
 
   const candidateCVs = useMemo(
     () => cvs.filter((cv: any) => cv.candidate_id === selectedCandidate),
@@ -50,7 +52,30 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
     [candidates, candidateSearch]
   );
 
+  // Fetch ATS analysis when CV is selected
+  useEffect(() => {
+    if (!selectedCV || !job) {
+      setAtsAnalysis(null);
+      return;
+    }
+    const fetchATS = async () => {
+      setLoadingATS(true);
+      const { data } = await supabase
+        .from("ats_analyses")
+        .select("ats_score, analysis_result, analyzed_at")
+        .eq("cv_id", selectedCV)
+        .eq("job_id", job.id)
+        .order("analyzed_at", { ascending: false })
+        .limit(1);
+      setAtsAnalysis(data && data.length > 0 ? data[0] : null);
+      setLoadingATS(false);
+    };
+    fetchATS();
+  }, [selectedCV, job]);
+
   if (!job) return null;
+
+  const selectedCandidateObj = candidates.find((c: any) => c.candidate_id === selectedCandidate);
 
   const handleUpdate = async () => {
     setState("loading");
@@ -69,23 +94,19 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
         if (signedData?.signedUrl) cvUrl = signedData.signedUrl;
       }
 
-      // Fetch existing ATS analysis for this CV + job if it exists
-      let atsAnalysis: any = null;
-      const { data: atsData } = await supabase
-        .from("ats_analyses")
-        .select("ats_score, analysis_result")
-        .eq("cv_id", selectedCV)
-        .eq("job_id", job.id)
-        .order("analyzed_at", { ascending: false })
-        .limit(1);
-      if (atsData && atsData.length > 0) atsAnalysis = atsData[0];
+      const candidateName = selectedCandidateObj?.users?.full_name || cvObj.candidate_name || "Unknown";
 
       const payload = {
+        // Candidate & CV info
+        candidate_name: candidateName,
         cv_url: cvUrl,
         cv_file_name: cvObj.file_name,
-        candidate_name: cvObj.candidate_name || cvObj.candidates?.users?.full_name || "Unknown",
+
+        // ATS analysis info
         ats_analysis: atsAnalysis?.analysis_result || null,
         ats_score: atsAnalysis?.ats_score || null,
+
+        // Job description details
         job_title: job.job_title,
         company_name: job.company_name,
         location: job.location,
@@ -123,6 +144,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
     setState("form");
     setUpdateResult(null);
     setErrorMsg("");
+    setAtsAnalysis(null);
     onClose();
   };
 
@@ -133,6 +155,8 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
     }
   };
 
+  const atsResult = atsAnalysis?.analysis_result;
+
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={handleClose}>
       <div className="bg-card rounded-2xl shadow-elevated max-w-xl w-full animate-scale-in max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
@@ -140,9 +164,9 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
         <div className="px-6 py-5 border-b border-border flex items-start justify-between shrink-0">
           <div>
             <h2 className="text-xl font-bold text-secondary-900 font-display">Update CV</h2>
-            <p className="text-sm text-muted-foreground mt-1">Select a CV to rewrite based on this job's ATS analysis</p>
+            <p className="text-sm text-muted-foreground mt-1">Select candidate, CV, and send to AI for rewriting</p>
           </div>
-          <button onClick={handleClose} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted text-neutral-500 transition-colors">
+          <button onClick={handleClose} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted text-muted-foreground transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -157,17 +181,17 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
                   <Briefcase className="w-5 h-5 text-info-500" />
                   <span className="text-sm font-semibold text-secondary-900">{job.job_title}</span>
                 </div>
-                <p className="text-sm text-neutral-700">{job.company_name}</p>
+                <p className="text-sm text-foreground/70">{job.company_name}</p>
                 <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1"><MapPin className="w-3 h-3" />{job.location}</p>
               </div>
 
               {/* Candidate selection */}
               <div className="mb-5">
-                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                <label className="block text-sm font-medium text-foreground/80 mb-2">
                   Select Candidate <span className="text-destructive">*</span>
                 </label>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <input
                     value={candidateSearch}
                     onChange={(e) => setCandidateSearch(e.target.value)}
@@ -180,7 +204,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
                     <button
                       key={c.candidate_id}
                       type="button"
-                      onClick={() => { setSelectedCandidate(c.candidate_id); setSelectedCV(""); }}
+                      onClick={() => { setSelectedCandidate(c.candidate_id); setSelectedCV(""); setAtsAnalysis(null); }}
                       className={cn(
                         "w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors",
                         selectedCandidate === c.candidate_id ? "bg-primary-100" : "hover:bg-muted/50"
@@ -191,12 +215,12 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-secondary-900 truncate">{c.users?.full_name}</p>
-                        <p className="text-xs text-neutral-500">{c.users?.email}</p>
+                        <p className="text-xs text-muted-foreground">{c.users?.email}</p>
                       </div>
                     </button>
                   ))}
                   {filteredCandidates.length === 0 && (
-                    <p className="text-sm text-neutral-500 text-center py-4">No candidates found</p>
+                    <p className="text-sm text-muted-foreground text-center py-4">No candidates found</p>
                   )}
                 </div>
               </div>
@@ -204,11 +228,11 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
               {/* CV selection */}
               {selectedCandidate && (
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground/80 mb-2">
                     Select CV to Update <span className="text-destructive">*</span>
                   </label>
                   {candidateCVs.length === 0 ? (
-                    <p className="text-sm text-neutral-500 bg-muted/50 p-3 rounded-lg">No CVs uploaded for this candidate.</p>
+                    <p className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">No CVs uploaded for this candidate.</p>
                   ) : (
                     <div className="space-y-2">
                       {candidateCVs.map((cv: any) => (
@@ -221,7 +245,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
                             selectedCV === cv.cv_id ? "border-info-500 bg-info-50" : "border-border hover:bg-muted/50"
                           )}
                         >
-                          <FileText className="w-5 h-5 text-neutral-500 shrink-0" />
+                          <FileText className="w-5 h-5 text-muted-foreground shrink-0" />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <span className="text-sm font-medium text-secondary-900 truncate">{cv.file_name}</span>
@@ -235,7 +259,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
                           </div>
                           <div className={cn(
                             "w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0",
-                            selectedCV === cv.cv_id ? "border-info-500 bg-info-500" : "border-neutral-300"
+                            selectedCV === cv.cv_id ? "border-info-500 bg-info-500" : "border-muted-foreground/30"
                           )}>
                             {selectedCV === cv.cv_id && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                           </div>
@@ -246,9 +270,74 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
                 </div>
               )}
 
+              {/* ATS Analysis Summary */}
+              {selectedCV && !loadingATS && atsAnalysis && atsResult && (
+                <div className="mb-5 border border-border rounded-lg overflow-hidden">
+                  <div className="bg-muted/50 px-4 py-3 flex items-center justify-between border-b border-border">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-primary" />
+                      <span className="text-sm font-semibold text-secondary-900">ATS Analysis Available</span>
+                    </div>
+                    <span className={cn(
+                      "text-xs font-bold px-2 py-0.5 rounded-full",
+                      atsAnalysis.ats_score >= 70 ? "bg-success-50 text-success-700" :
+                      atsAnalysis.ats_score >= 50 ? "bg-warning-50 text-warning-700" :
+                      "bg-destructive/10 text-destructive"
+                    )}>
+                      Score: {atsAnalysis.ats_score}%
+                    </span>
+                  </div>
+                  <div className="px-4 py-3 space-y-2">
+                    {atsResult.missing_skills && atsResult.missing_skills.length > 0 && (
+                      <div>
+                        <p className="text-xs font-medium text-foreground/70 mb-1 flex items-center gap-1">
+                          <AlertTriangle className="w-3 h-3 text-warning-500" /> Missing Skills ({atsResult.missing_skills.length})
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {atsResult.missing_skills.slice(0, 6).map((skill: string) => (
+                            <span key={skill} className="text-[10px] bg-destructive/10 text-destructive px-2 py-0.5 rounded-full">{skill}</span>
+                          ))}
+                          {atsResult.missing_skills.length > 6 && (
+                            <span className="text-[10px] text-muted-foreground">+{atsResult.missing_skills.length - 6} more</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    {atsResult.top_recommendations && atsResult.top_recommendations.length > 0 && (
+                      <div>
+                        <p className="text-xs font-medium text-foreground/70 mb-1">Top Recommendations</p>
+                        <ul className="space-y-1">
+                          {atsResult.top_recommendations.slice(0, 2).map((rec: string, i: number) => (
+                            <li key={i} className="text-xs text-muted-foreground flex items-start gap-1.5">
+                              <span className="w-4 h-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
+                              <span className="line-clamp-2">{rec}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {selectedCV && !loadingATS && !atsAnalysis && (
+                <div className="mb-5 bg-warning-50 border border-warning-200 rounded-lg p-3 flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-warning-500 shrink-0 mt-0.5" />
+                  <p className="text-xs text-warning-700">
+                    No ATS analysis found for this CV + job combination. The CV will be updated based on the job description only. Run ATS analysis first for better results.
+                  </p>
+                </div>
+              )}
+
+              {selectedCV && loadingATS && (
+                <div className="mb-5 flex items-center justify-center py-3 text-muted-foreground text-sm">
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" /> Checking for ATS analysis...
+                </div>
+              )}
+
               <div className="notice-info flex items-start gap-2">
                 <Info className="w-4 h-4 text-info-500 shrink-0 mt-0.5" />
-                <p className="text-sm">This will send the selected CV along with the job details and any existing ATS analysis to our AI. The updated CV with recommended skills and improvements will be returned.</p>
+                <p className="text-sm">This will send the selected CV, job details, and ATS analysis (if available) to our AI for resume rewriting. The updated CV with recommended improvements will be returned.</p>
               </div>
             </>
           )}
@@ -292,7 +381,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
 
           {state === "error" && (
             <div className="flex flex-col items-center justify-center py-10 text-center">
-              <div className="w-16 h-16 rounded-full bg-error-50 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center">
                 <XCircle className="w-10 h-10 text-destructive" />
               </div>
               <h3 className="text-xl font-bold text-secondary-900 font-display mt-6">Update Failed</h3>
