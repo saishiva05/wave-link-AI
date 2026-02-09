@@ -8,13 +8,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ScrapedJob, mapDbJob } from "@/data/mockScrapedJobs";
-import { useScrapedJobs } from "@/hooks/useRecruiterData";
+import { useScrapedJobs, useRecruiterCandidates, useRecruiterCVs } from "@/hooks/useRecruiterData";
 import { useAuth } from "@/hooks/useAuth";
 import FilterDropdown from "@/components/recruiter/FilterDropdown";
 import JobTableView from "@/components/recruiter/JobTableView";
 import JobCardView from "@/components/recruiter/JobCardView";
 import JobDetailsModal from "@/components/recruiter/JobDetailsModal";
 import ATSMatcherModal from "@/components/recruiter/ATSMatcherModal";
+import UpdateCVModal from "@/components/recruiter/UpdateCVModal";
 
 const platformOptions = [
   { value: "", label: "All Platforms" },
@@ -70,19 +71,18 @@ const RecruiterScrapedJobs = () => {
   // Modals
   const [detailJob, setDetailJob] = useState<ScrapedJob | null>(null);
   const [atsJob, setAtsJob] = useState<ScrapedJob | null>(null);
+  const [updateCVJob, setUpdateCVJob] = useState<ScrapedJob | null>(null);
 
-  // Fetch real data
+  // Fetch jobs
   const { data, isLoading } = useScrapedJobs(recruiterId, {
-    search,
-    platform: platformFilter,
-    contractType: contractFilter,
-    workMode: workModeFilter,
-    dateRange: dateFilter,
-    sortField,
-    sortDir,
-    page,
-    perPage: ITEMS_PER_PAGE,
+    search, platform: platformFilter, contractType: contractFilter,
+    workMode: workModeFilter, dateRange: dateFilter,
+    sortField, sortDir, page, perPage: ITEMS_PER_PAGE,
   });
+
+  // Fetch candidates & CVs for ATS / Update CV modals
+  const { data: candidatesData = [] } = useRecruiterCandidates();
+  const { data: cvsData = [] } = useRecruiterCVs();
 
   const jobs: ScrapedJob[] = (data?.jobs || []).map(mapDbJob);
   const totalCount = data?.total || 0;
@@ -115,8 +115,9 @@ const RecruiterScrapedJobs = () => {
 
   return (
     <>
-      <JobDetailsModal job={detailJob} onClose={() => setDetailJob(null)} onRunATS={(j) => setAtsJob(j)} />
-      <ATSMatcherModal job={atsJob} onClose={() => setAtsJob(null)} />
+      <JobDetailsModal job={detailJob} onClose={() => setDetailJob(null)} onRunATS={(j) => { setDetailJob(null); setAtsJob(j); }} />
+      <ATSMatcherModal job={atsJob} candidates={candidatesData} cvs={cvsData} onClose={() => setAtsJob(null)} />
+      <UpdateCVModal job={updateCVJob} candidates={candidatesData} cvs={cvsData} onClose={() => setUpdateCVJob(null)} />
 
       <div className="space-y-6">
         {/* Header */}
@@ -211,10 +212,14 @@ const RecruiterScrapedJobs = () => {
             <JobTableView
               jobs={jobs} selectedIds={selectedIds} onToggleSelect={toggleSelect} onSelectAll={selectAll}
               allSelected={jobs.length > 0 && selectedIds.size === jobs.length}
-              onViewDetails={setDetailJob} onRunATS={setAtsJob} sortField={sortField} sortDir={sortDir} onSort={handleSort}
+              onViewDetails={setDetailJob} onRunATS={setAtsJob} onUpdateCV={setUpdateCVJob}
+              sortField={sortField} sortDir={sortDir} onSort={handleSort}
             />
           ) : (
-            <JobCardView jobs={jobs} selectedIds={selectedIds} onToggleSelect={toggleSelect} onViewDetails={setDetailJob} onRunATS={setAtsJob} />
+            <JobCardView
+              jobs={jobs} selectedIds={selectedIds} onToggleSelect={toggleSelect}
+              onViewDetails={setDetailJob} onRunATS={setAtsJob} onUpdateCV={setUpdateCVJob}
+            />
           )}
         </motion.div>
 

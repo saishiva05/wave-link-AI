@@ -4,6 +4,10 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 import type { CandidateOption } from "@/hooks/useCVManagement";
 
 interface UploadCVModalProps {
@@ -39,6 +43,10 @@ const getInitials = (name: string) =>
   name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
 
 const UploadCVModal = ({ open, onClose, candidates }: UploadCVModalProps) => {
+  const { recruiterId } = useAuth();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
   const [selectedCandidate, setSelectedCandidate] = useState("");
   const [candidateDropdownOpen, setCandidateDropdownOpen] = useState(false);
   const [candidateSearch, setCandidateSearch] = useState("");
@@ -132,7 +140,6 @@ const UploadCVModal = ({ open, onClose, candidates }: UploadCVModalProps) => {
   const removeFile = (id: string) => {
     setFiles((prev) => {
       const updated = prev.filter((f) => f.id !== id);
-      // If removed the primary, set first remaining as primary
       if (updated.length > 0 && !updated.some((f) => f.isPrimary)) {
         updated[0].isPrimary = true;
       }
@@ -145,21 +152,83 @@ const UploadCVModal = ({ open, onClose, candidates }: UploadCVModalProps) => {
   };
 
   const handleUpload = async () => {
+    if (!recruiterId || !selectedCandidate) return;
     setIsUploading(true);
     setErrors([]);
 
-    // Simulate upload with progress
+    let successCount = 0;
+
     for (let i = 0; i < files.length; i++) {
-      setFiles((prev) => prev.map((f, idx) => idx === i ? { ...f, status: "uploading" } : f));
-      for (let p = 0; p <= 100; p += 20) {
-        await new Promise((r) => setTimeout(r, 200));
-        setFiles((prev) => prev.map((f, idx) => idx === i ? { ...f, progress: p } : f));
+      const f = files[i];
+      setFiles((prev) => prev.map((file, idx) => idx === i ? { ...file, status: "uploading", progress: 10 } : file));
+
+      try {
+        // Upload file to Supabase Storage
+        const timestamp = Date.now();
+        const safeName = f.file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const filePath = `${recruiterId}/${selectedCandidate}/${timestamp}_${safeName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("cvs-bucket")
+          .upload(filePath, f.file, { contentType: f.file.type });
+
+        if (uploadError) throw uploadError;
+
+        setFiles((prev) => prev.map((file, idx) => idx === i ? { ...file, progress: 60 } : file));
+
+        // Get public URL (used for path extraction later)
+        const { data: urlData } = supabase.storage
+          .from("cvs-bucket")
+          .getPublicUrl(filePath);
+
+        // Determine file type
+        const ext = f.file.name.split(".").pop()?.toLowerCase();
+        const fileType = ext === "pdf" ? "pdf" : ext === "doc" ? "doc" : "docx";
+
+        // If this file is set as primary, unset other primaries for this candidate first
+        if (f.isPrimary) {
+          await supabase
+            .from("cvs")
+            .update({ is_primary: false })
+            .eq("candidate_id", selectedCandidate)
+            .eq("recruiter_id", recruiterId);
+        }
+
+        // Insert metadata into cvs table
+        const { error: dbError } = await supabase.from("cvs").insert({
+          candidate_id: selectedCandidate,
+          recruiter_id: recruiterId,
+          file_name: f.file.name,
+          file_url: urlData.publicUrl,
+          file_type: fileType,
+          file_size_bytes: f.file.size,
+          is_primary: f.isPrimary,
+        });
+
+        if (dbError) throw dbError;
+
+        setFiles((prev) => prev.map((file, idx) => idx === i ? { ...file, status: "success", progress: 100 } : file));
+        successCount++;
+      } catch (err: any) {
+        console.error("Upload failed for", f.file.name, err);
+        setFiles((prev) => prev.map((file, idx) => idx === i ? { ...file, status: "error", error: err.message || "Upload failed" } : file));
       }
-      setFiles((prev) => prev.map((f, idx) => idx === i ? { ...f, status: "success", progress: 100 } : f));
     }
 
     setIsUploading(false);
-    setUploadComplete(true);
+
+    if (successCount === files.length) {
+      setUploadComplete(true);
+      toast({ title: "Upload Complete", description: `${successCount} CV${successCount > 1 ? "s" : ""} uploaded successfully.` });
+    } else if (successCount > 0) {
+      toast({ title: "Partial Upload", description: `${successCount} of ${files.length} files uploaded. Some failed.`, variant: "destructive" });
+    } else {
+      toast({ title: "Upload Failed", description: "No files were uploaded. Please try again.", variant: "destructive" });
+    }
+
+    // Invalidate relevant queries
+    queryClient.invalidateQueries({ queryKey: ["recruiter", "cvs"] });
+    queryClient.invalidateQueries({ queryKey: ["recruiter", "candidate-options"] });
   };
 
   const resetModal = () => {
@@ -192,7 +261,7 @@ const UploadCVModal = ({ open, onClose, candidates }: UploadCVModalProps) => {
             </div>
             <h2 className="text-2xl font-bold text-secondary-900 font-display mt-6">CVs Uploaded Successfully!</h2>
             <p className="text-base text-neutral-600 mt-3">
-              {files.length} CV{files.length > 1 ? "s" : ""} have been uploaded for {selectedCandidateObj?.full_name}
+              {files.filter(f => f.status === "success").length} CV{files.filter(f => f.status === "success").length > 1 ? "s" : ""} have been uploaded for {selectedCandidateObj?.full_name}
             </p>
 
             <div className="bg-primary-50 border border-primary-200 rounded-lg p-5 mt-6">
@@ -205,11 +274,11 @@ const UploadCVModal = ({ open, onClose, candidates }: UploadCVModalProps) => {
               <div className="grid grid-cols-3 gap-3 text-sm">
                 <div>
                   <p className="text-neutral-600">New CVs</p>
-                  <p className="font-semibold text-secondary-900">{files.length}</p>
+                  <p className="font-semibold text-secondary-900">{files.filter(f => f.status === "success").length}</p>
                 </div>
                 <div>
                   <p className="text-neutral-600">Total CVs</p>
-                  <p className="font-semibold text-secondary-900">{(selectedCandidateObj?.cv_count || 0) + files.length}</p>
+                  <p className="font-semibold text-secondary-900">{(selectedCandidateObj?.cv_count || 0) + files.filter(f => f.status === "success").length}</p>
                 </div>
                 <div>
                   <p className="text-neutral-600">Primary</p>
@@ -386,6 +455,8 @@ const UploadCVModal = ({ open, onClose, candidates }: UploadCVModalProps) => {
                             </div>
                           ) : f.status === "success" ? (
                             <p className="text-xs text-success-600 mt-0.5">Uploaded successfully</p>
+                          ) : f.status === "error" ? (
+                            <p className="text-xs text-destructive mt-0.5">{f.error || "Upload failed"}</p>
                           ) : (
                             <p className="text-xs text-neutral-600 mt-0.5">{formatBytes(f.file.size)}</p>
                           )}

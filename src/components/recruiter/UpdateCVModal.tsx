@@ -1,15 +1,14 @@
 import { useState, useMemo } from "react";
 import { ScrapedJob } from "@/data/mockScrapedJobs";
 import {
-  X, Briefcase, MapPin, FileText, Info, Sparkles, Loader2, CheckCircle,
-  XCircle, User, Search,
+  X, Briefcase, MapPin, FileText, Info, FilePen, Loader2, CheckCircle,
+  XCircle, Search, Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
 
-interface ATSMatcherModalProps {
+interface UpdateCVModalProps {
   job: ScrapedJob | null;
   candidates: any[];
   cvs: any[];
@@ -28,14 +27,12 @@ const formatBytes = (bytes: number | null) => {
 const getInitials = (name: string) =>
   name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
 
-const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps) => {
-  const { recruiterId } = useAuth();
+const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) => {
   const [selectedCandidate, setSelectedCandidate] = useState("");
   const [selectedCV, setSelectedCV] = useState("");
   const [candidateSearch, setCandidateSearch] = useState("");
   const [state, setState] = useState<ModalState>("form");
-  const [score, setScore] = useState(0);
-  const [atsResult, setAtsResult] = useState<any>(null);
+  const [updateResult, setUpdateResult] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState("");
 
   const candidateCVs = useMemo(
@@ -55,17 +52,14 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
 
   if (!job) return null;
 
-  const selectedCandidateObj = candidates.find((c: any) => c.candidate_id === selectedCandidate);
-  const selectedCVObj = cvs.find((cv: any) => cv.cv_id === selectedCV);
-
-  const handleRun = async () => {
+  const handleUpdate = async () => {
     setState("loading");
     setErrorMsg("");
     try {
       const cvObj = cvs.find((cv: any) => cv.cv_id === selectedCV);
       if (!cvObj) throw new Error("CV not found");
 
-      // Create a signed URL for the CV so the webhook can access it
+      // Create a signed URL for the CV
       let cvUrl = cvObj.file_url;
       const urlParts = cvObj.file_url.split("/cvs-bucket/");
       if (urlParts[1]) {
@@ -75,10 +69,23 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
         if (signedData?.signedUrl) cvUrl = signedData.signedUrl;
       }
 
+      // Fetch existing ATS analysis for this CV + job if it exists
+      let atsAnalysis: any = null;
+      const { data: atsData } = await supabase
+        .from("ats_analyses")
+        .select("ats_score, analysis_result")
+        .eq("cv_id", selectedCV)
+        .eq("job_id", job.id)
+        .order("analyzed_at", { ascending: false })
+        .limit(1);
+      if (atsData && atsData.length > 0) atsAnalysis = atsData[0];
+
       const payload = {
         cv_url: cvUrl,
         cv_file_name: cvObj.file_name,
         candidate_name: cvObj.candidate_name || cvObj.candidates?.users?.full_name || "Unknown",
+        ats_analysis: atsAnalysis?.analysis_result || null,
+        ats_score: atsAnalysis?.ats_score || null,
         job_title: job.job_title,
         company_name: job.company_name,
         location: job.location,
@@ -91,7 +98,7 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
         scraped_at: job.scraped_at || "",
       };
 
-      const response = await fetch("https://n8n.srv1340079.hstgr.cloud/webhook/Ats", {
+      const response = await fetch("https://n8n.srv1340079.hstgr.cloud/webhook/update cv", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -100,41 +107,30 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
       if (!response.ok) throw new Error(`Webhook returned ${response.status}`);
 
       const result = await response.json();
-      setAtsResult(result);
-
-      // Try to extract score from response
-      const resultScore = result.ats_score ?? result.score ?? result.match_score ?? 0;
-      setScore(typeof resultScore === "number" ? resultScore : parseInt(resultScore) || 0);
+      setUpdateResult(result);
       setState("success");
-
-      // Save analysis to database
-      if (recruiterId) {
-        await supabase.from("ats_analyses").insert({
-          cv_id: selectedCV,
-          job_id: job.id,
-          recruiter_id: recruiterId,
-          ats_score: typeof resultScore === "number" ? resultScore : parseInt(resultScore) || 0,
-          analysis_result: result,
-        }).then(() => {}); // fire and forget
-      }
     } catch (err: any) {
-      console.error("ATS analysis failed:", err);
+      console.error("Update CV failed:", err);
       setErrorMsg(err.message || "Something went wrong");
       setState("error");
     }
   };
-
-  const scoreColor = score >= 70 ? "text-success-500" : score >= 50 ? "text-warning-500" : "text-destructive";
 
   const handleClose = () => {
     setSelectedCandidate("");
     setSelectedCV("");
     setCandidateSearch("");
     setState("form");
-    setScore(0);
-    setAtsResult(null);
+    setUpdateResult(null);
     setErrorMsg("");
     onClose();
+  };
+
+  const handleDownloadUpdated = () => {
+    if (updateResult?.updated_cv_url || updateResult?.file_url || updateResult?.download_url) {
+      const url = updateResult.updated_cv_url || updateResult.file_url || updateResult.download_url;
+      window.open(url, "_blank");
+    }
   };
 
   return (
@@ -143,8 +139,8 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
         {/* Header */}
         <div className="px-6 py-5 border-b border-border flex items-start justify-between shrink-0">
           <div>
-            <h2 className="text-xl font-bold text-secondary-900 font-display">Run ATS Analysis</h2>
-            <p className="text-sm text-muted-foreground mt-1">Select a candidate's CV to analyze against this job</p>
+            <h2 className="text-xl font-bold text-secondary-900 font-display">Update CV</h2>
+            <p className="text-sm text-muted-foreground mt-1">Select a CV to rewrite based on this job's ATS analysis</p>
           </div>
           <button onClick={handleClose} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted text-neutral-500 transition-colors">
             <X className="w-5 h-5" />
@@ -156,9 +152,9 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
           {state === "form" && (
             <>
               {/* Job summary */}
-              <div className="bg-primary-50 border border-primary-100 rounded-lg p-4 mb-6">
+              <div className="bg-info-50 border border-info-100 rounded-lg p-4 mb-6">
                 <div className="flex items-center gap-2 mb-1">
-                  <Briefcase className="w-5 h-5 text-primary" />
+                  <Briefcase className="w-5 h-5 text-info-500" />
                   <span className="text-sm font-semibold text-secondary-900">{job.job_title}</span>
                 </div>
                 <p className="text-sm text-neutral-700">{job.company_name}</p>
@@ -190,7 +186,7 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
                         selectedCandidate === c.candidate_id ? "bg-primary-100" : "hover:bg-muted/50"
                       )}
                     >
-                      <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-semibold shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-info-500 flex items-center justify-center text-primary-foreground text-xs font-semibold shrink-0">
                         {getInitials(c.users?.full_name || "?")}
                       </div>
                       <div className="min-w-0 flex-1">
@@ -209,7 +205,7 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
               {selectedCandidate && (
                 <div className="mb-5">
                   <label className="block text-sm font-medium text-neutral-700 mb-2">
-                    Select CV <span className="text-destructive">*</span>
+                    Select CV to Update <span className="text-destructive">*</span>
                   </label>
                   {candidateCVs.length === 0 ? (
                     <p className="text-sm text-neutral-500 bg-muted/50 p-3 rounded-lg">No CVs uploaded for this candidate.</p>
@@ -222,7 +218,7 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
                           onClick={() => setSelectedCV(cv.cv_id)}
                           className={cn(
                             "w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-all",
-                            selectedCV === cv.cv_id ? "border-primary bg-primary-50" : "border-border hover:bg-muted/50"
+                            selectedCV === cv.cv_id ? "border-info-500 bg-info-50" : "border-border hover:bg-muted/50"
                           )}
                         >
                           <FileText className="w-5 h-5 text-neutral-500 shrink-0" />
@@ -239,7 +235,7 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
                           </div>
                           <div className={cn(
                             "w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0",
-                            selectedCV === cv.cv_id ? "border-primary bg-primary" : "border-neutral-300"
+                            selectedCV === cv.cv_id ? "border-info-500 bg-info-500" : "border-neutral-300"
                           )}>
                             {selectedCV === cv.cv_id && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                           </div>
@@ -252,16 +248,16 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
 
               <div className="notice-info flex items-start gap-2">
                 <Info className="w-4 h-4 text-info-500 shrink-0 mt-0.5" />
-                <p className="text-sm">ATS analysis will match the candidate's CV against this job description using AI. Results will include a match score and recommendations.</p>
+                <p className="text-sm">This will send the selected CV along with the job details and any existing ATS analysis to our AI. The updated CV with recommended skills and improvements will be returned.</p>
               </div>
             </>
           )}
 
           {state === "loading" && (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <Loader2 className="w-12 h-12 text-primary animate-spin" />
-              <h3 className="text-lg font-bold text-secondary-900 font-display mt-6">Analyzing CV against job requirements...</h3>
-              <p className="text-sm text-muted-foreground mt-2">Sending to ATS webhook. This may take 10–30 seconds.</p>
+              <Loader2 className="w-12 h-12 text-info-500 animate-spin" />
+              <h3 className="text-lg font-bold text-secondary-900 font-display mt-6">Updating CV with AI recommendations...</h3>
+              <p className="text-sm text-muted-foreground mt-2">Rewriting resume with optimized content. This may take 30–60 seconds.</p>
             </div>
           )}
 
@@ -270,27 +266,26 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
               <div className="w-16 h-16 rounded-full bg-success-50 flex items-center justify-center">
                 <CheckCircle className="w-10 h-10 text-success-500" />
               </div>
-              <h3 className="text-xl font-bold text-secondary-900 font-display mt-6">Analysis Complete!</h3>
-              <div className="mt-4">
-                <span className={cn("text-5xl font-bold font-display", scoreColor)}>{score}%</span>
-                <p className="text-sm text-muted-foreground mt-2">
-                  {score >= 70 ? "Good match" : score >= 50 ? "Moderate match" : "Low match"} — ATS Compatibility Score
-                </p>
-              </div>
+              <h3 className="text-xl font-bold text-secondary-900 font-display mt-6">CV Updated Successfully!</h3>
+              <p className="text-sm text-muted-foreground mt-2">The CV has been rewritten with optimized content based on the job requirements.</p>
 
-              {/* ATS Result details */}
-              {atsResult && (
+              {/* Result details */}
+              {updateResult && (
                 <div className="mt-6 w-full text-left bg-muted/50 border border-border rounded-lg p-4 max-h-[200px] overflow-y-auto">
-                  <h4 className="text-sm font-semibold text-secondary-900 mb-2">Analysis Details</h4>
+                  <h4 className="text-sm font-semibold text-secondary-900 mb-2">Update Details</h4>
                   <pre className="text-xs text-muted-foreground whitespace-pre-wrap break-words">
-                    {typeof atsResult === "string" ? atsResult : JSON.stringify(atsResult, null, 2)}
+                    {typeof updateResult === "string" ? updateResult : JSON.stringify(updateResult, null, 2)}
                   </pre>
                 </div>
               )}
 
               <div className="flex gap-3 mt-6 w-full">
-                <Button variant="portal" className="flex-1" onClick={handleClose}>Done</Button>
-                <Button variant="outline" className="flex-1" onClick={() => { setState("form"); setScore(0); setAtsResult(null); }}>Analyze Another</Button>
+                {(updateResult?.updated_cv_url || updateResult?.file_url || updateResult?.download_url) && (
+                  <Button variant="portal" className="flex-1" onClick={handleDownloadUpdated}>
+                    <Download className="w-4 h-4" /> Download Updated CV
+                  </Button>
+                )}
+                <Button variant="outline" className="flex-1" onClick={handleClose}>Close</Button>
               </div>
             </div>
           )}
@@ -300,7 +295,7 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
               <div className="w-16 h-16 rounded-full bg-error-50 flex items-center justify-center">
                 <XCircle className="w-10 h-10 text-destructive" />
               </div>
-              <h3 className="text-xl font-bold text-secondary-900 font-display mt-6">Analysis Failed</h3>
+              <h3 className="text-xl font-bold text-secondary-900 font-display mt-6">Update Failed</h3>
               <p className="text-sm text-muted-foreground mt-2">{errorMsg || "Something went wrong. Please try again."}</p>
               <div className="flex gap-3 mt-8 w-full">
                 <Button variant="portal" className="flex-1" onClick={() => setState("form")}>Try Again</Button>
@@ -314,8 +309,8 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
         {state === "form" && (
           <div className="px-6 py-4 border-t border-border flex items-center justify-between shrink-0">
             <Button variant="ghost" onClick={handleClose}>Cancel</Button>
-            <Button variant="portal" onClick={handleRun} disabled={!selectedCandidate || !selectedCV}>
-              <Sparkles className="w-4 h-4" /> Run ATS Analysis
+            <Button variant="portal-info" onClick={handleUpdate} disabled={!selectedCandidate || !selectedCV}>
+              <FilePen className="w-4 h-4" /> Update CV
             </Button>
           </div>
         )}
@@ -324,4 +319,4 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
   );
 };
 
-export default ATSMatcherModal;
+export default UpdateCVModal;
