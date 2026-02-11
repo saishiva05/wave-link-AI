@@ -7,6 +7,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
 
 interface UpdateCVModalProps {
   job: ScrapedJob | null;
@@ -28,6 +30,8 @@ const getInitials = (name: string) =>
   name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
 
 const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) => {
+  const { recruiterId } = useAuth();
+  const queryClient = useQueryClient();
   const [selectedCandidate, setSelectedCandidate] = useState("");
   const [selectedCV, setSelectedCV] = useState("");
   const [candidateSearch, setCandidateSearch] = useState("");
@@ -129,6 +133,29 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
 
       const result = await response.json();
       setUpdateResult(result);
+
+      // Save to updated_cvs table
+      const updatedFileUrl = result?.updated_cv_url || result?.file_url || result?.download_url || "";
+      if (updatedFileUrl && recruiterId) {
+        try {
+          await supabase.from("updated_cvs").insert({
+            job_id: job.id,
+            cv_id: selectedCV,
+            candidate_id: selectedCandidate,
+            recruiter_id: recruiterId,
+            original_file_name: cvObj.file_name,
+            updated_file_name: result?.updated_file_name || `Updated_${cvObj.file_name}`,
+            updated_file_url: updatedFileUrl,
+            updated_file_size_bytes: result?.file_size || null,
+            webhook_response: result,
+          });
+          // Invalidate updated CVs cache
+          queryClient.invalidateQueries({ queryKey: ["recruiter", "job-updated-cvs"] });
+        } catch (dbErr) {
+          console.error("Failed to save updated CV record:", dbErr);
+        }
+      }
+
       setState("success");
     } catch (err: any) {
       console.error("Update CV failed:", err);

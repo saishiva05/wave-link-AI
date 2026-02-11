@@ -387,6 +387,90 @@ export type Database = {
           },
         ]
       }
+      updated_cvs: {
+        Row: {
+          ats_analysis_id: string | null
+          candidate_id: string
+          created_at: string
+          cv_id: string
+          job_id: string
+          original_file_name: string
+          recruiter_id: string
+          updated_cv_id: string
+          updated_file_name: string
+          updated_file_size_bytes: number | null
+          updated_file_url: string
+          webhook_response: Json | null
+          webhook_response_time_ms: number | null
+        }
+        Insert: {
+          ats_analysis_id?: string | null
+          candidate_id: string
+          created_at?: string
+          cv_id: string
+          job_id: string
+          original_file_name: string
+          recruiter_id: string
+          updated_cv_id?: string
+          updated_file_name: string
+          updated_file_size_bytes?: number | null
+          updated_file_url: string
+          webhook_response?: Json | null
+          webhook_response_time_ms?: number | null
+        }
+        Update: {
+          ats_analysis_id?: string | null
+          candidate_id?: string
+          created_at?: string
+          cv_id?: string
+          job_id?: string
+          original_file_name?: string
+          recruiter_id?: string
+          updated_cv_id?: string
+          updated_file_name?: string
+          updated_file_size_bytes?: number | null
+          updated_file_url?: string
+          webhook_response?: Json | null
+          webhook_response_time_ms?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "updated_cvs_ats_analysis_id_fkey"
+            columns: ["ats_analysis_id"]
+            isOneToOne: false
+            referencedRelation: "ats_analyses"
+            referencedColumns: ["analysis_id"]
+          },
+          {
+            foreignKeyName: "updated_cvs_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["candidate_id"]
+          },
+          {
+            foreignKeyName: "updated_cvs_cv_id_fkey"
+            columns: ["cv_id"]
+            isOneToOne: false
+            referencedRelation: "cvs"
+            referencedColumns: ["cv_id"]
+          },
+          {
+            foreignKeyName: "updated_cvs_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "scraped_jobs"
+            referencedColumns: ["job_id"]
+          },
+          {
+            foreignKeyName: "updated_cvs_recruiter_id_fkey"
+            columns: ["recruiter_id"]
+            isOneToOne: false
+            referencedRelation: "recruiters"
+            referencedColumns: ["recruiter_id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string

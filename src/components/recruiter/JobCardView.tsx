@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
+import UpdatedCVsBadge from "@/components/recruiter/UpdatedCVsBadge";
 
 interface JobCardViewProps {
   jobs: ScrapedJob[];
@@ -17,6 +18,7 @@ interface JobCardViewProps {
   onUpdateCV: (job: ScrapedJob) => void;
   onViewATSResult: (job: ScrapedJob) => void;
   atsAnalyses: Record<string, any>;
+  updatedCVsMap: Record<string, any[]>;
 }
 
 const timeAgo = (dateStr: string | undefined) => {
@@ -66,7 +68,7 @@ const ATSScoreBadge = ({ score, onClick }: { score: number; onClick: (e: React.M
   );
 };
 
-const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onViewATSResult, atsAnalyses }: JobCardViewProps) => {
+const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onViewATSResult, atsAnalyses, updatedCVsMap }: JobCardViewProps) => {
   if (jobs.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -85,6 +87,7 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
           job={job}
           selected={selectedIds.has(job.id)}
           atsAnalysis={atsAnalyses[job.id] || null}
+          updatedCVs={updatedCVsMap[job.id] || []}
           onToggleSelect={() => onToggleSelect(job.id)}
           onViewDetails={() => onViewDetails(job)}
           onRunATS={() => onRunATS(job)}
@@ -97,11 +100,12 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
 };
 
 const JobCard = ({
-  job, selected, atsAnalysis, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onViewATSResult,
+  job, selected, atsAnalysis, updatedCVs, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onViewATSResult,
 }: {
   job: ScrapedJob;
   selected: boolean;
   atsAnalysis: any;
+  updatedCVs: any[];
   onToggleSelect: () => void;
   onViewDetails: () => void;
   onRunATS: () => void;
@@ -199,6 +203,13 @@ const JobCard = ({
         <ExternalLink className="w-3 h-3 shrink-0" />
         <span className="truncate">{job.job_apply_url}</span>
       </a>
+
+      {/* Updated CVs */}
+      {updatedCVs.length > 0 && (
+        <div className="mb-3" onClick={(e) => e.stopPropagation()}>
+          <UpdatedCVsBadge updatedCVs={updatedCVs} />
+        </div>
+      )}
 
       {/* Footer actions */}
       <div className="pt-3 border-t border-border flex items-center justify-between mt-auto">
