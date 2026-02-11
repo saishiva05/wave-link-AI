@@ -100,11 +100,31 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
 
       const candidateName = selectedCandidateObj?.users?.full_name || cvObj.candidate_name || "Unknown";
 
+      // Fetch ats_analysis_id if available
+      let atsAnalysisId: string | null = null;
+      if (atsAnalysis) {
+        const { data: atsRow } = await supabase
+          .from("ats_analyses")
+          .select("analysis_id")
+          .eq("cv_id", selectedCV)
+          .eq("job_id", job.id)
+          .order("analyzed_at", { ascending: false })
+          .limit(1);
+        atsAnalysisId = atsRow?.[0]?.analysis_id || null;
+      }
+
       const payload = {
+        // Required IDs
+        job_id: job.id,
+        cv_id: selectedCV,
+        candidate_id: selectedCandidate,
+        recruiter_id: recruiterId,
+        ats_analysis_id: atsAnalysisId,
+        original_file_name: cvObj.file_name,
+
         // Candidate & CV info
         candidate_name: candidateName,
         cv_url: cvUrl,
-        cv_file_name: cvObj.file_name,
 
         // ATS analysis info
         ats_analysis: atsAnalysis?.analysis_result || null,
