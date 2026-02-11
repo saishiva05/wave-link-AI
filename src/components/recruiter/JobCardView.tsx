@@ -1,7 +1,8 @@
 import { ScrapedJob } from "@/data/mockScrapedJobs";
 import {
-  MapPin, Sparkles, MoreVertical, Eye, Link, Trash,
-  Search, ExternalLink, FilePen, DollarSign, Globe, Clock, CheckCircle, Building2,
+  MapPin, MoreVertical, Eye, Link, Trash,
+  Search, ExternalLink, DollarSign, Clock, Building2,
+  Wand2, FileEdit, FileCheck2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
@@ -48,10 +49,10 @@ const PlatformBadge = ({ platform }: { platform: string }) => {
 
 const ATSScoreBadge = ({ score, onClick }: { score: number; onClick: (e: React.MouseEvent) => void }) => {
   const color = score >= 70
-    ? "bg-success-50 text-success-700 border-success-200"
+    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
     : score >= 50
-    ? "bg-warning-50 text-warning-700 border-warning-200"
-    : "bg-destructive/10 text-destructive border-destructive/20";
+    ? "bg-amber-50 text-amber-700 border-amber-200"
+    : "bg-red-50 text-red-600 border-red-200";
 
   return (
     <button
@@ -62,7 +63,7 @@ const ATSScoreBadge = ({ score, onClick }: { score: number; onClick: (e: React.M
       )}
       title="Click to view full ATS analysis"
     >
-      <CheckCircle className="w-3 h-3" />
+      <Wand2 className="w-3 h-3" />
       ATS: {score}%
     </button>
   );
@@ -222,16 +223,16 @@ const JobCard = ({
         <div className="pt-3 border-t border-border flex items-center justify-between mt-auto">
           <div className="flex items-center gap-1">
             {hasATS ? (
-              <button onClick={(e) => { e.stopPropagation(); onViewATSResult(); }} className="flex items-center gap-1.5 text-xs font-semibold text-success-600 hover:text-success-700 px-2 py-1.5 rounded-md hover:bg-success-50 transition-all">
-                <CheckCircle className="w-3.5 h-3.5" /> View ATS
+              <button onClick={(e) => { e.stopPropagation(); onViewATSResult(); }} className="flex items-center gap-1.5 text-xs font-semibold text-purple-600 hover:text-purple-700 px-2 py-1.5 rounded-md hover:bg-purple-50 transition-all">
+                <Wand2 className="w-3.5 h-3.5" /> View ATS
               </button>
             ) : (
-              <button onClick={(e) => { e.stopPropagation(); onRunATS(); }} className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary-700 px-2 py-1.5 rounded-md hover:bg-primary-50 transition-all">
-                <Sparkles className="w-3.5 h-3.5" /> Run ATS
+              <button onClick={(e) => { e.stopPropagation(); onRunATS(); }} className="flex items-center gap-1.5 text-xs font-semibold text-purple-500 hover:text-purple-700 px-2 py-1.5 rounded-md hover:bg-purple-50 transition-all">
+                <Wand2 className="w-3.5 h-3.5" /> Run ATS
               </button>
             )}
-            <button onClick={(e) => { e.stopPropagation(); onUpdateCV(); }} className="flex items-center gap-1.5 text-xs font-semibold text-info-500 hover:text-info-600 px-2 py-1.5 rounded-md hover:bg-info-50 transition-all">
-              <FilePen className="w-3.5 h-3.5" /> Update CV
+            <button onClick={(e) => { e.stopPropagation(); onUpdateCV(); }} className="flex items-center gap-1.5 text-xs font-semibold text-teal-500 hover:text-teal-600 px-2 py-1.5 rounded-md hover:bg-teal-50 transition-all">
+              <FileEdit className="w-3.5 h-3.5" /> Update CV
             </button>
           </div>
           <a
