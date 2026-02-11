@@ -11,6 +11,7 @@ import { formatDistanceToNow } from "date-fns";
 import {
   Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
 } from "@/components/ui/tooltip";
+import UpdatedCVsBadge from "@/components/recruiter/UpdatedCVsBadge";
 
 interface JobTableViewProps {
   jobs: ScrapedJob[];
@@ -23,6 +24,7 @@ interface JobTableViewProps {
   onUpdateCV: (job: ScrapedJob) => void;
   onViewATSResult: (job: ScrapedJob) => void;
   atsAnalyses: Record<string, any>;
+  updatedCVsMap: Record<string, any[]>;
   sortField: string;
   sortDir: "asc" | "desc";
   onSort: (field: string) => void;
@@ -84,7 +86,7 @@ const ATSScoreBadge = ({ score, onClick }: { score: number; onClick: () => void 
 const JobTableView = ({
   jobs, selectedIds, onToggleSelect, onSelectAll, allSelected,
   onViewDetails, onRunATS, onUpdateCV, onViewATSResult, atsAnalyses,
-  sortField, sortDir, onSort,
+  updatedCVsMap, sortField, sortDir, onSort,
 }: JobTableViewProps) => {
   if (jobs.length === 0) {
     return (
@@ -120,6 +122,7 @@ const JobTableView = ({
                   <div className="flex items-center gap-1">Scraped <SortIcon field="scraped_at" sortField={sortField} sortDir={sortDir} /></div>
                 </th>
                 <th className="px-3 py-3 text-center font-medium text-muted-foreground w-20">ATS</th>
+                <th className="px-3 py-3 text-center font-medium text-muted-foreground w-28">Updated CV</th>
                 <th className="px-3 py-3 text-center font-medium text-muted-foreground w-36">Actions</th>
               </tr>
             </thead>
@@ -130,6 +133,7 @@ const JobTableView = ({
                   job={job}
                   selected={selectedIds.has(job.id)}
                   atsAnalysis={atsAnalyses[job.id] || null}
+                  updatedCVs={updatedCVsMap[job.id] || []}
                   onToggleSelect={() => onToggleSelect(job.id)}
                   onViewDetails={() => onViewDetails(job)}
                   onRunATS={() => onRunATS(job)}
@@ -146,11 +150,12 @@ const JobTableView = ({
 };
 
 const JobTableRow = ({
-  job, selected, atsAnalysis, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onViewATSResult,
+  job, selected, atsAnalysis, updatedCVs, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onViewATSResult,
 }: {
   job: ScrapedJob;
   selected: boolean;
   atsAnalysis: any;
+  updatedCVs: any[];
   onToggleSelect: () => void;
   onViewDetails: () => void;
   onRunATS: () => void;
@@ -244,6 +249,15 @@ const JobTableRow = ({
       <td className="px-3 py-3 text-center">
         {hasATS ? (
           <ATSScoreBadge score={atsAnalysis.ats_score} onClick={onViewATSResult} />
+        ) : (
+          <span className="text-xs text-muted-foreground">—</span>
+        )}
+      </td>
+
+      {/* Updated CV */}
+      <td className="px-3 py-3 text-center">
+        {updatedCVs.length > 0 ? (
+          <UpdatedCVsBadge updatedCVs={updatedCVs} compact />
         ) : (
           <span className="text-xs text-muted-foreground">—</span>
         )}

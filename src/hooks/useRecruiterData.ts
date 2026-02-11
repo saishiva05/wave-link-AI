@@ -459,6 +459,52 @@ export function useJobATSAnalyses(jobIds: string[]) {
   });
 }
 
+export function useJobUpdatedCVs(jobIds: string[]) {
+  const { recruiterId } = useAuth();
+
+  return useQuery({
+    queryKey: ["recruiter", "job-updated-cvs", recruiterId, jobIds],
+    enabled: !!recruiterId && jobIds.length > 0,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("updated_cvs")
+        .select(`
+          updated_cv_id,
+          job_id,
+          cv_id,
+          candidate_id,
+          original_file_name,
+          updated_file_name,
+          updated_file_url,
+          updated_file_size_bytes,
+          created_at,
+          candidates!updated_cvs_candidate_id_fkey (
+            users!candidates_user_id_fkey (
+              full_name
+            )
+          )
+        `)
+        .eq("recruiter_id", recruiterId!)
+        .in("job_id", jobIds)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      // Group by job_id - multiple updated CVs per job (different candidates)
+      const byJob: Record<string, any[]> = {};
+      (data || []).forEach((ucv: any) => {
+        if (!byJob[ucv.job_id]) byJob[ucv.job_id] = [];
+        byJob[ucv.job_id].push({
+          ...ucv,
+          candidate_name: ucv.candidates?.users?.full_name || "Unknown",
+        });
+      });
+
+      return byJob;
+    },
+  });
+}
+
 export function useScrapeHistory() {
   const { recruiterId } = useAuth();
 

@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ScrapedJob, mapDbJob } from "@/data/mockScrapedJobs";
-import { useScrapedJobs, useRecruiterCandidates, useRecruiterCVs, useJobATSAnalyses } from "@/hooks/useRecruiterData";
+import { useScrapedJobs, useRecruiterCandidates, useRecruiterCVs, useJobATSAnalyses, useJobUpdatedCVs } from "@/hooks/useRecruiterData";
 import ATSResultsView, { type ATSAnalysisResult } from "@/components/recruiter/ATSResultsView";
 import { useAuth } from "@/hooks/useAuth";
 import FilterDropdown from "@/components/recruiter/FilterDropdown";
@@ -93,6 +93,7 @@ const RecruiterScrapedJobs = () => {
   // Fetch ATS analyses for current page's jobs
   const jobIds = jobs.map((j) => j.id);
   const { data: atsAnalyses = {} } = useJobATSAnalyses(jobIds);
+  const { data: updatedCVsMap = {} } = useJobUpdatedCVs(jobIds);
 
   // Active filters
   const activeFilters: { label: string; onRemove: () => void }[] = [];
@@ -256,6 +257,7 @@ const RecruiterScrapedJobs = () => {
               onViewDetails={setDetailJob} onRunATS={setAtsJob} onUpdateCV={setUpdateCVJob}
               onViewATSResult={handleViewATSResult}
               atsAnalyses={atsAnalyses}
+              updatedCVsMap={updatedCVsMap}
               sortField={sortField} sortDir={sortDir} onSort={handleSort}
             />
           ) : (
@@ -264,6 +266,7 @@ const RecruiterScrapedJobs = () => {
               onViewDetails={setDetailJob} onRunATS={setAtsJob} onUpdateCV={setUpdateCVJob}
               onViewATSResult={handleViewATSResult}
               atsAnalyses={atsAnalyses}
+              updatedCVsMap={updatedCVsMap}
             />
           )}
         </motion.div>
