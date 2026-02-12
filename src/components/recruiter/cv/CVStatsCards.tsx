@@ -1,8 +1,9 @@
-import { FileText, Users, TrendingUp, HardDrive, CheckCircle } from "lucide-react";
+import { FileText, Users, TrendingUp, HardDrive, Sparkles } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 interface CVStats {
   totalCVs: number;
+  totalUpdatedCVs: number;
   candidatesWithCVs: number;
   uploadedThisWeek: number;
   storageMB: number;
@@ -15,68 +16,34 @@ interface CVStatsCardsProps {
 }
 
 const CVStatsCards = ({ stats }: CVStatsCardsProps) => {
-  const cards = [
-    {
-      icon: FileText,
-      iconBg: "bg-primary-50",
-      iconColor: "text-primary",
-      title: "Total CVs",
-      value: stats.totalCVs.toString(),
-      trend: "+12 this month",
-      trendIcon: TrendingUp,
-      trendColor: "text-success-500",
-    },
-    {
-      icon: Users,
-      iconBg: "bg-success-50",
-      iconColor: "text-success-500",
-      title: "Candidates with CVs",
-      value: stats.candidatesWithCVs.toString(),
-      trend: "All candidates covered",
-      trendIcon: CheckCircle,
-      trendColor: "text-success-500",
-    },
-    {
-      icon: TrendingUp,
-      iconBg: "bg-info-50",
-      iconColor: "text-info-500",
-      title: "Uploaded This Week",
-      value: stats.uploadedThisWeek.toString(),
-      trend: "+3 from last week",
-      trendIcon: TrendingUp,
-      trendColor: "text-success-500",
-    },
-  ];
-
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-      {cards.map((card) => (
+    <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      {[
+        { icon: FileText, bg: "bg-primary/10", color: "text-primary", label: "Original CVs", value: stats.totalCVs },
+        { icon: Sparkles, bg: "bg-teal-50", color: "text-teal-600", label: "AI Rewritten", value: stats.totalUpdatedCVs },
+        { icon: Users, bg: "bg-emerald-50", color: "text-emerald-600", label: "Candidates", value: stats.candidatesWithCVs },
+        { icon: TrendingUp, bg: "bg-blue-50", color: "text-blue-600", label: "This Week", value: stats.uploadedThisWeek },
+      ].map((card) => (
         <div
-          key={card.title}
-          className="bg-card border border-border rounded-xl p-5 shadow-xs hover:shadow-card hover:-translate-y-0.5 transition-all duration-200"
+          key={card.label}
+          className="bg-card border border-border rounded-xl p-4 shadow-xs hover:shadow-card transition-shadow"
         >
-          <div className={`w-12 h-12 rounded-full ${card.iconBg} flex items-center justify-center`}>
-            <card.icon className={`w-6 h-6 ${card.iconColor}`} />
+          <div className={`w-10 h-10 rounded-lg ${card.bg} flex items-center justify-center`}>
+            <card.icon className={`w-5 h-5 ${card.color}`} />
           </div>
-          <p className="text-sm font-medium text-neutral-600 mt-4">{card.title}</p>
-          <p className="text-3xl font-bold text-secondary-900 font-display mt-2">{card.value}</p>
-          <div className={`flex items-center gap-1 mt-2 text-sm ${card.trendColor}`}>
-            <card.trendIcon className="w-4 h-4" />
-            <span>{card.trend}</span>
-          </div>
+          <p className="text-2xl font-bold text-foreground font-display mt-3">{card.value}</p>
+          <p className="text-xs font-medium text-muted-foreground mt-0.5">{card.label}</p>
         </div>
       ))}
 
       {/* Storage card */}
-      <div className="bg-card border border-border rounded-xl p-5 shadow-xs hover:shadow-card hover:-translate-y-0.5 transition-all duration-200">
-        <div className="w-12 h-12 rounded-full bg-warning-50 flex items-center justify-center">
-          <HardDrive className="w-6 h-6 text-warning-500" />
+      <div className="bg-card border border-border rounded-xl p-4 shadow-xs hover:shadow-card transition-shadow">
+        <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
+          <HardDrive className="w-5 h-5 text-amber-600" />
         </div>
-        <p className="text-sm font-medium text-neutral-600 mt-4">Storage Used</p>
-        <p className="text-xl font-semibold text-secondary-900 font-display mt-2">{stats.storageMB} MB</p>
-        <p className="text-xs text-neutral-600 mt-2">of {stats.storageGB} GB plan</p>
-        <Progress value={stats.storagePercent} className="h-2 mt-2 bg-neutral-200" />
-        <p className="text-xs text-neutral-500 mt-1.5">{stats.storagePercent}% used</p>
+        <p className="text-lg font-bold text-foreground font-display mt-3">{stats.storageMB} MB</p>
+        <Progress value={stats.storagePercent} className="h-1.5 mt-2 bg-muted" />
+        <p className="text-[11px] text-muted-foreground mt-1">{stats.storagePercent}% of {stats.storageGB} GB</p>
       </div>
     </div>
   );

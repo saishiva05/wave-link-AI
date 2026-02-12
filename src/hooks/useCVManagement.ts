@@ -20,6 +20,30 @@ export interface CVFile {
   ats_usage_count: number;
 }
 
+export interface UpdatedCVFile {
+  updated_cv_id: string;
+  cv_id: string;
+  job_id: string;
+  candidate_id: string;
+  recruiter_id: string;
+  original_file_name: string;
+  updated_file_name: string;
+  updated_file_url: string;
+  updated_file_size_bytes: number | null;
+  created_at: string;
+  candidate_name: string;
+  job_title: string;
+  company_name: string;
+}
+
+export interface CandidateGroup {
+  candidate_id: string;
+  candidate_name: string;
+  candidate_email: string;
+  originalCVs: CVFile[];
+  updatedCVs: UpdatedCVFile[];
+}
+
 export interface CandidateOption {
   candidate_id: string;
   user_id: string;
@@ -81,6 +105,36 @@ export function useCVManagement() {
     },
   });
 
+  // Fetch updated CVs
+  const { data: rawUpdatedCVs = [], isLoading: updatedCVsLoading } = useQuery({
+    queryKey: ["recruiter", "updated-cvs", recruiterId],
+    enabled: !!recruiterId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("updated_cvs")
+        .select(`*, candidates!updated_cvs_candidate_id_fkey ( users!candidates_user_id_fkey ( full_name ) ), scraped_jobs!updated_cvs_job_id_fkey ( job_title, company_name )`)
+        .eq("recruiter_id", recruiterId!)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+
+      return (data || []).map((ucv: any): UpdatedCVFile => ({
+        updated_cv_id: ucv.updated_cv_id,
+        cv_id: ucv.cv_id,
+        job_id: ucv.job_id,
+        candidate_id: ucv.candidate_id,
+        recruiter_id: ucv.recruiter_id,
+        original_file_name: ucv.original_file_name,
+        updated_file_name: ucv.updated_file_name,
+        updated_file_url: ucv.updated_file_url,
+        updated_file_size_bytes: ucv.updated_file_size_bytes,
+        created_at: ucv.created_at,
+        candidate_name: ucv.candidates?.users?.full_name || "Unknown",
+        job_title: ucv.scraped_jobs?.job_title || "Unknown Job",
+        company_name: ucv.scraped_jobs?.company_name || "",
+      }));
+    },
+  });
+
   // Fetch candidates
   const { data: candidates = [], isLoading: candidatesLoading } = useQuery({
     queryKey: ["recruiter", "candidate-options", recruiterId],
@@ -93,7 +147,6 @@ export function useCVManagement() {
         .order("created_at", { ascending: false });
       if (error) throw error;
 
-      // Get CV counts
       const candidateIds = (data || []).map((c) => c.candidate_id);
       let cvCounts: Record<string, number> = {};
       if (candidateIds.length > 0) {
@@ -111,7 +164,7 @@ export function useCVManagement() {
     },
   });
 
-  // Fetch jobs for ATS
+  // Fetch jobs
   const { data: jobs = [] } = useQuery({
     queryKey: ["recruiter", "job-options", recruiterId],
     enabled: !!recruiterId,
@@ -132,7 +185,7 @@ export function useCVManagement() {
     },
   });
 
-  const isLoading = cvsLoading || candidatesLoading;
+  const isLoading = cvsLoading || candidatesLoading || updatedCVsLoading;
 
   // Filters
   const [search, setSearch] = useState("");
@@ -152,6 +205,7 @@ export function useCVManagement() {
   // Stats
   const stats = useMemo(() => {
     const totalCVs = rawCVs.length;
+    const totalUpdatedCVs = rawUpdatedCVs.length;
     const candidatesWithCVs = new Set(rawCVs.map((cv) => cv.candidate_id)).size;
     const now = new Date();
     const weekAgo = new Date(now.getTime() - 7 * 86400000);
@@ -160,8 +214,8 @@ export function useCVManagement() {
     const storageMB = Math.round(totalBytes / (1024 * 1024) * 10) / 10;
     const storageGB = 10;
     const storagePercent = Math.round((storageMB / (storageGB * 1024)) * 10000) / 100;
-    return { totalCVs, candidatesWithCVs, uploadedThisWeek, storageMB, storageGB, storagePercent };
-  }, [rawCVs]);
+    return { totalCVs, totalUpdatedCVs, candidatesWithCVs, uploadedThisWeek, storageMB, storageGB, storagePercent };
+  }, [rawCVs, rawUpdatedCVs]);
 
   // Filtered CVs
   const filteredCVs = useMemo(() => {
@@ -195,6 +249,41 @@ export function useCVManagement() {
     result.sort((a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime());
     return result;
   }, [rawCVs, search, candidateFilter, fileTypeFilter, dateFilter, primaryFilter]);
+
+  // Candidate-grouped data
+  const candidateGroups = useMemo((): CandidateGroup[] => {
+    const candidateIds = new Set<string>();
+    filteredCVs.forEach((cv) => candidateIds.add(cv.candidate_id));
+
+    // Also include candidates that have updated CVs matching filter
+    let filteredUpdated = [...rawUpdatedCVs];
+    if (candidateFilter) filteredUpdated = filteredUpdated.filter((u) => u.candidate_id === candidateFilter);
+    if (search) {
+      const q = search.toLowerCase();
+      filteredUpdated = filteredUpdated.filter((u) =>
+        u.candidate_name.toLowerCase().includes(q) || u.original_file_name.toLowerCase().includes(q) || u.updated_file_name.toLowerCase().includes(q)
+      );
+    }
+    filteredUpdated.forEach((u) => candidateIds.add(u.candidate_id));
+
+    const groups: CandidateGroup[] = [];
+    candidateIds.forEach((cid) => {
+      const cvs = filteredCVs.filter((cv) => cv.candidate_id === cid);
+      const ucvs = filteredUpdated.filter((u) => u.candidate_id === cid);
+      const name = cvs[0]?.candidate_name || ucvs[0]?.candidate_name || "Unknown";
+      const email = cvs[0]?.candidate_email || "";
+      groups.push({
+        candidate_id: cid,
+        candidate_name: name,
+        candidate_email: email,
+        originalCVs: cvs,
+        updatedCVs: ucvs,
+      });
+    });
+
+    groups.sort((a, b) => a.candidate_name.localeCompare(b.candidate_name));
+    return groups;
+  }, [filteredCVs, rawUpdatedCVs, candidateFilter, search]);
 
   // Pagination
   const totalPages = Math.ceil(filteredCVs.length / perPage);
@@ -234,7 +323,6 @@ export function useCVManagement() {
     mutationFn: async (cvId: string) => {
       const cv = rawCVs.find((c) => c.cv_id === cvId);
       if (cv?.file_url) {
-        // Extract path from URL
         const urlParts = cv.file_url.split("/cvs-bucket/");
         if (urlParts[1]) {
           await supabase.storage.from("cvs-bucket").remove([urlParts[1]]);
@@ -291,12 +379,21 @@ export function useCVManagement() {
     }
   }, [toast]);
 
+  const handleDownloadUpdated = useCallback((url: string, fileName: string) => {
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName;
+    a.target = "_blank";
+    a.click();
+  }, []);
+
   return {
     cvs: paginatedCVs, allFilteredCVs: filteredCVs, candidates, jobs, isLoading, stats,
+    rawUpdatedCVs, candidateGroups,
     search, setSearch, candidateFilter, setCandidateFilter, fileTypeFilter, setFileTypeFilter,
     dateFilter, setDateFilter, primaryFilter, setPrimaryFilter, activeFilters, clearAllFilters,
     viewMode, setViewMode, page, setPage, perPage, setPerPage, totalPages,
     selectedIds, toggleSelect, selectAll, clearSelection,
-    handleDelete, handleSetPrimary, handleDownload,
+    handleDelete, handleSetPrimary, handleDownload, handleDownloadUpdated,
   };
 }

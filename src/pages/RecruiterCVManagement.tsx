@@ -1,20 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FileUp } from "lucide-react";
+import { FileUp, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCVManagement } from "@/hooks/useCVManagement";
-import type { CVFile } from "@/hooks/useCVManagement";
+import type { CVFile, UpdatedCVFile } from "@/hooks/useCVManagement";
 import CVStatsCards from "@/components/recruiter/cv/CVStatsCards";
 import CVFilters from "@/components/recruiter/cv/CVFilters";
-import CVBulkActions from "@/components/recruiter/cv/CVBulkActions";
-import CVGridView from "@/components/recruiter/cv/CVGridView";
-import CVListView from "@/components/recruiter/cv/CVListView";
-import CVPagination from "@/components/recruiter/cv/CVPagination";
+import CandidateCVSection from "@/components/recruiter/cv/CandidateCVSection";
 import CVEmptyState from "@/components/recruiter/cv/CVEmptyState";
 import UploadCVModal from "@/components/recruiter/cv/UploadCVModal";
 import CVPreviewModal from "@/components/recruiter/cv/CVPreviewModal";
-import CVATSModal from "@/components/recruiter/cv/CVATSModal";
+import UpdatedCVPreviewModal from "@/components/recruiter/cv/UpdatedCVPreviewModal";
 import { DeleteCVModal, SetPrimaryModal } from "@/components/recruiter/cv/CVConfirmationModals";
 
 const RecruiterCVManagement = () => {
@@ -24,12 +21,12 @@ const RecruiterCVManagement = () => {
   // Modals
   const [uploadOpen, setUploadOpen] = useState(false);
   const [previewCV, setPreviewCV] = useState<CVFile | null>(null);
-  const [atsCV, setAtsCV] = useState<CVFile | null>(null);
+  const [previewUpdatedCV, setPreviewUpdatedCV] = useState<UpdatedCVFile | null>(null);
   const [deleteCV, setDeleteCV] = useState<CVFile | null>(null);
   const [primaryCV, setPrimaryCV] = useState<CVFile | null>(null);
 
-  const hasAnyCVs = cm.stats.totalCVs > 0;
-  const hasResults = cm.allFilteredCVs.length > 0;
+  const hasAnyCVs = cm.stats.totalCVs > 0 || cm.stats.totalUpdatedCVs > 0;
+  const hasResults = cm.candidateGroups.length > 0;
 
   const currentPrimaryName = primaryCV
     ? cm.allFilteredCVs.find((cv) => cv.candidate_id === primaryCV.candidate_id && cv.is_primary)?.file_name
@@ -39,24 +36,26 @@ const RecruiterCVManagement = () => {
     <>
       {/* Modals */}
       <UploadCVModal open={uploadOpen} onClose={() => setUploadOpen(false)} candidates={cm.candidates} />
-      <CVPreviewModal cv={previewCV} onClose={() => setPreviewCV(null)} onRunATS={(cv) => { setPreviewCV(null); setAtsCV(cv); }} onDownload={cm.handleDownload} />
-      <CVATSModal cv={atsCV} jobs={cm.jobs} onClose={() => setAtsCV(null)} />
+      <CVPreviewModal cv={previewCV} onClose={() => setPreviewCV(null)} onDownload={cm.handleDownload} />
+      <UpdatedCVPreviewModal ucv={previewUpdatedCV} onClose={() => setPreviewUpdatedCV(null)} />
       <DeleteCVModal cv={deleteCV} onClose={() => setDeleteCV(null)} onConfirm={cm.handleDelete} />
       <SetPrimaryModal cv={primaryCV} currentPrimaryName={currentPrimaryName} onClose={() => setPrimaryCV(null)} onConfirm={cm.handleSetPrimary} />
 
       <div className="space-y-6 max-w-[1600px] mx-auto">
-        {/* Breadcrumbs & Header */}
+        {/* Header */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
           <nav className="flex items-center gap-1.5 text-sm mb-4">
-            <button onClick={() => navigate("/recruiter/dashboard")} className="text-neutral-500 hover:text-primary transition-colors">Dashboard</button>
-            <span className="text-neutral-300">/</span>
-            <span className="text-secondary-900 font-semibold">CV Management</span>
+            <button onClick={() => navigate("/recruiter/dashboard")} className="text-muted-foreground hover:text-primary transition-colors">Dashboard</button>
+            <span className="text-muted-foreground/40">/</span>
+            <span className="text-foreground font-semibold">CV Management</span>
           </nav>
 
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-2xl md:text-4xl font-bold text-secondary-900 font-display">CV Management</h1>
-              <p className="text-base text-muted-foreground mt-1">Upload and manage candidate resumes</p>
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground font-display">CV Management</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Manage original and AI-rewritten resumes for all candidates
+              </p>
             </div>
             <Button variant="portal" size="lg" onClick={() => setUploadOpen(true)}>
               <FileUp className="w-5 h-5" />
@@ -70,7 +69,7 @@ const RecruiterCVManagement = () => {
           <CVStatsCards stats={cm.stats} />
         </motion.div>
 
-        {/* Filters */}
+        {/* Filters - remove view mode toggle, use candidate-grouped view */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
           <CVFilters
             search={cm.search}
@@ -93,60 +92,37 @@ const RecruiterCVManagement = () => {
           />
         </motion.div>
 
-        {/* Bulk Actions */}
-        <CVBulkActions
-          count={cm.selectedIds.size}
-          onDownload={() => {}}
-          onDelete={() => {}}
-          onClear={cm.clearSelection}
-          onSelectAll={cm.selectAll}
-          allSelected={cm.cvs.length > 0 && cm.selectedIds.size === cm.cvs.length}
-        />
+        {/* Loading */}
+        {cm.isLoading && (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          </div>
+        )}
 
-        {/* Content */}
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.15 }}>
-          {!hasAnyCVs ? (
-            <CVEmptyState type="no-cvs" onUpload={() => setUploadOpen(true)} />
-          ) : !hasResults ? (
-            <CVEmptyState type="no-results" onUpload={() => setUploadOpen(true)} onClearFilters={cm.clearAllFilters} />
-          ) : cm.viewMode === "grid" ? (
-            <CVGridView
-              cvs={cm.cvs}
-              selectedIds={cm.selectedIds}
-              onToggleSelect={cm.toggleSelect}
-              onPreview={setPreviewCV}
-              onRunATS={setAtsCV}
-              onDownload={cm.handleDownload}
-              onSetPrimary={setPrimaryCV}
-              onDelete={setDeleteCV}
-            />
-          ) : (
-            <CVListView
-              cvs={cm.cvs}
-              selectedIds={cm.selectedIds}
-              onToggleSelect={cm.toggleSelect}
-              onSelectAll={cm.selectAll}
-              allSelected={cm.cvs.length > 0 && cm.selectedIds.size === cm.cvs.length}
-              onPreview={setPreviewCV}
-              onRunATS={setAtsCV}
-              onDownload={cm.handleDownload}
-              onSetPrimary={setPrimaryCV}
-              onDelete={setDeleteCV}
-            />
-          )}
-        </motion.div>
-
-        {/* Pagination */}
-        {hasResults && (
-          <CVPagination
-            page={cm.page}
-            totalPages={cm.totalPages}
-            perPage={cm.perPage}
-            totalCount={cm.stats.totalCVs}
-            filteredCount={cm.allFilteredCVs.length}
-            onPageChange={cm.setPage}
-            onPerPageChange={(v) => { cm.setPerPage(v); cm.setPage(1); }}
-          />
+        {/* Content - Candidate Grouped */}
+        {!cm.isLoading && (
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.15 }}>
+            {!hasAnyCVs ? (
+              <CVEmptyState type="no-cvs" onUpload={() => setUploadOpen(true)} />
+            ) : !hasResults ? (
+              <CVEmptyState type="no-results" onUpload={() => setUploadOpen(true)} onClearFilters={cm.clearAllFilters} />
+            ) : (
+              <div className="space-y-4">
+                {cm.candidateGroups.map((group) => (
+                  <CandidateCVSection
+                    key={group.candidate_id}
+                    group={group}
+                    onPreview={setPreviewCV}
+                    onPreviewUpdated={setPreviewUpdatedCV}
+                    onDownload={cm.handleDownload}
+                    onDownloadUpdated={cm.handleDownloadUpdated}
+                    onSetPrimary={setPrimaryCV}
+                    onDelete={setDeleteCV}
+                  />
+                ))}
+              </div>
+            )}
+          </motion.div>
         )}
       </div>
     </>
