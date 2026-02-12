@@ -1,11 +1,12 @@
 import { ScrapedJob } from "@/data/mockScrapedJobs";
 import {
-  MapPin, MoreVertical, Eye, Link, Trash, Search,
+  MapPin, Eye, Link, Trash, Search,
   ChevronUp, ChevronDown, ExternalLink, DollarSign,
   Clock, Building2, Wand2, FileCheck2, FileEdit,
+  ChevronRight, Mail, Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -22,6 +23,7 @@ interface JobTableViewProps {
   onViewDetails: (job: ScrapedJob) => void;
   onRunATS: (job: ScrapedJob) => void;
   onUpdateCV: (job: ScrapedJob) => void;
+  onGenerateEmail: (job: ScrapedJob) => void;
   onViewATSResult: (job: ScrapedJob) => void;
   atsAnalyses: Record<string, any>;
   updatedCVsMap: Record<string, any[]>;
@@ -57,11 +59,7 @@ const PlatformIcon = ({ platform }: { platform: string }) => {
 
 const timeAgo = (dateStr: string | undefined) => {
   if (!dateStr) return "—";
-  try {
-    return formatDistanceToNow(new Date(dateStr), { addSuffix: true });
-  } catch {
-    return "—";
-  }
+  try { return formatDistanceToNow(new Date(dateStr), { addSuffix: true }); } catch { return "—"; }
 };
 
 const SortIcon = ({ field, sortField, sortDir }: { field: string; sortField: string; sortDir: string }) => {
@@ -75,27 +73,20 @@ const ATSScoreBadge = ({ score, onClick }: { score: number; onClick: () => void 
     : score >= 50
     ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
     : "bg-red-50 text-red-600 border-red-200 hover:bg-red-100";
-
   return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all hover:scale-105 hover:shadow-md cursor-pointer",
-        color
-      )}
-      title="Click to view full ATS analysis"
-    >
-      <Wand2 className="w-3 h-3" />
-      {score}%
+    <button onClick={onClick} className={cn("inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all hover:scale-105 hover:shadow-md cursor-pointer", color)} title="Click to view full ATS analysis">
+      <Wand2 className="w-3 h-3" />{score}%
     </button>
   );
 };
 
 const JobTableView = ({
   jobs, selectedIds, onToggleSelect, onSelectAll, allSelected,
-  onViewDetails, onRunATS, onUpdateCV, onViewATSResult, atsAnalyses,
+  onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, atsAnalyses,
   updatedCVsMap, sortField, sortDir, onSort,
 }: JobTableViewProps) => {
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
   if (jobs.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center bg-card rounded-xl border border-border">
@@ -115,43 +106,51 @@ const JobTableView = ({
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gradient-to-r from-secondary-50/80 to-muted/50 border-b border-border">
-                <th className="w-12 px-4 py-4">
+                <th className="w-10 px-3 py-4">
                   <input type="checkbox" checked={allSelected} onChange={onSelectAll} className="w-4 h-4 rounded border-border text-primary focus:ring-primary cursor-pointer" />
                 </th>
+                <th className="w-8 px-2 py-4"></th>
                 <th className="px-3 py-4 text-left font-bold text-secondary-700 text-[11px] uppercase tracking-widest w-12"></th>
-                <th className="px-3 py-4 text-left font-bold text-secondary-700 text-[11px] uppercase tracking-widest cursor-pointer select-none min-w-[280px] group" onClick={() => onSort("job_title")}>
+                <th className="px-3 py-4 text-left font-bold text-secondary-700 text-[11px] uppercase tracking-widest cursor-pointer select-none min-w-[260px] group" onClick={() => onSort("job_title")}>
                   <div className="flex items-center gap-1.5">Job Details <SortIcon field="job_title" sortField={sortField} sortDir={sortDir} /></div>
                 </th>
-                <th className="px-3 py-4 text-left font-bold text-secondary-700 text-[11px] uppercase tracking-widest min-w-[140px]">Location</th>
+                <th className="px-3 py-4 text-left font-bold text-secondary-700 text-[11px] uppercase tracking-widest min-w-[130px]">Location</th>
                 <th className="px-3 py-4 text-left font-bold text-secondary-700 text-[11px] uppercase tracking-widest min-w-[100px]">Salary</th>
-                <th className="px-3 py-4 text-left font-bold text-secondary-700 text-[11px] uppercase tracking-widest cursor-pointer select-none min-w-[120px] group" onClick={() => onSort("scraped_at")}>
+                <th className="px-3 py-4 text-left font-bold text-secondary-700 text-[11px] uppercase tracking-widest cursor-pointer select-none min-w-[110px] group" onClick={() => onSort("scraped_at")}>
                   <div className="flex items-center gap-1.5">Scraped <SortIcon field="scraped_at" sortField={sortField} sortDir={sortDir} /></div>
                 </th>
-                <th className="px-3 py-4 text-center font-bold text-secondary-700 text-[11px] uppercase tracking-widest w-24">
+                <th className="px-3 py-4 text-center font-bold text-secondary-700 text-[11px] uppercase tracking-widest w-20">
                   <span className="flex items-center justify-center gap-1"><Wand2 className="w-3 h-3" /> ATS</span>
                 </th>
-                <th className="px-3 py-4 text-center font-bold text-secondary-700 text-[11px] uppercase tracking-widest w-28">
-                  <span className="flex items-center justify-center gap-1"><FileCheck2 className="w-3 h-3" /> Updated CV</span>
+                <th className="px-3 py-4 text-center font-bold text-secondary-700 text-[11px] uppercase tracking-widest w-24">
+                  <span className="flex items-center justify-center gap-1"><FileCheck2 className="w-3 h-3" /> CV</span>
                 </th>
-                <th className="px-3 py-4 text-center font-bold text-secondary-700 text-[11px] uppercase tracking-widest w-40">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/60">
-              {jobs.map((job, idx) => (
-                <JobTableRow
-                  key={job.id}
-                  job={job}
-                  index={idx}
-                  selected={selectedIds.has(job.id)}
-                  atsAnalysis={atsAnalyses[job.id] || null}
-                  updatedCVs={updatedCVsMap[job.id] || []}
-                  onToggleSelect={() => onToggleSelect(job.id)}
-                  onViewDetails={() => onViewDetails(job)}
-                  onRunATS={() => onRunATS(job)}
-                  onUpdateCV={() => onUpdateCV(job)}
-                  onViewATSResult={() => onViewATSResult(job)}
-                />
-              ))}
+              {jobs.map((job) => {
+                const isExpanded = expandedId === job.id;
+                const hasATS = !!atsAnalyses[job.id];
+                const updatedCVs = updatedCVsMap[job.id] || [];
+                return (
+                  <JobExpandableRow
+                    key={job.id}
+                    job={job}
+                    selected={selectedIds.has(job.id)}
+                    isExpanded={isExpanded}
+                    hasATS={hasATS}
+                    atsAnalysis={atsAnalyses[job.id]}
+                    updatedCVs={updatedCVs}
+                    onToggle={() => setExpandedId(isExpanded ? null : job.id)}
+                    onToggleSelect={() => onToggleSelect(job.id)}
+                    onViewDetails={() => onViewDetails(job)}
+                    onRunATS={() => onRunATS(job)}
+                    onUpdateCV={() => onUpdateCV(job)}
+                    onGenerateEmail={() => onGenerateEmail(job)}
+                    onViewATSResult={() => onViewATSResult(job)}
+                  />
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -160,171 +159,155 @@ const JobTableView = ({
   );
 };
 
-const JobTableRow = ({
-  job, index, selected, atsAnalysis, updatedCVs, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onViewATSResult,
+const JobExpandableRow = ({
+  job, selected, isExpanded, hasATS, atsAnalysis, updatedCVs,
+  onToggle, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult,
 }: {
-  job: ScrapedJob;
-  index: number;
-  selected: boolean;
-  atsAnalysis: any;
-  updatedCVs: any[];
-  onToggleSelect: () => void;
-  onViewDetails: () => void;
-  onRunATS: () => void;
-  onUpdateCV: () => void;
-  onViewATSResult: () => void;
+  job: ScrapedJob; selected: boolean; isExpanded: boolean; hasATS: boolean;
+  atsAnalysis: any; updatedCVs: any[];
+  onToggle: () => void; onToggleSelect: () => void; onViewDetails: () => void;
+  onRunATS: () => void; onUpdateCV: () => void; onGenerateEmail: () => void; onViewATSResult: () => void;
 }) => {
   const { toast } = useToast();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
-  const hasATS = !!atsAnalysis;
 
   return (
-    <tr
-      className={cn(
-        "group transition-all duration-150 cursor-pointer",
-        selected
-          ? "bg-primary/5 border-l-[3px] border-l-primary"
-          : "hover:bg-muted/30",
-      )}
-      onClick={onViewDetails}
-    >
-      {/* Checkbox */}
-      <td className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
-        <input type="checkbox" checked={selected} onChange={onToggleSelect} className="w-4 h-4 rounded border-border text-primary focus:ring-primary cursor-pointer" />
-      </td>
-
-      {/* Platform */}
-      <td className="px-3 py-4" onClick={(e) => e.stopPropagation()}>
-        <PlatformIcon platform={job.platform} />
-      </td>
-
-      {/* Job Details */}
-      <td className="px-3 py-4">
-        <div className="space-y-1">
-          <p className="text-[13px] font-bold text-secondary-900 group-hover:text-primary transition-colors line-clamp-1 leading-snug">
-            {job.job_title}
-          </p>
-          <div className="flex items-center gap-1.5 text-xs text-primary-600 font-semibold">
-            <Building2 className="w-3 h-3" />
-            {job.company_name}
+    <>
+      {/* Main row */}
+      <tr
+        className={cn(
+          "group transition-all duration-150 cursor-pointer",
+          selected ? "bg-primary/5" : "hover:bg-muted/30",
+          isExpanded && "bg-muted/20"
+        )}
+        onClick={onToggle}
+      >
+        <td className="px-3 py-4" onClick={(e) => e.stopPropagation()}>
+          <input type="checkbox" checked={selected} onChange={onToggleSelect} className="w-4 h-4 rounded border-border text-primary focus:ring-primary cursor-pointer" />
+        </td>
+        <td className="px-2 py-4">
+          <ChevronRight className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", isExpanded && "rotate-90")} />
+        </td>
+        <td className="px-3 py-4" onClick={(e) => e.stopPropagation()}>
+          <PlatformIcon platform={job.platform} />
+        </td>
+        <td className="px-3 py-4">
+          <div className="space-y-1">
+            <p className="text-[13px] font-bold text-secondary-900 group-hover:text-primary transition-colors line-clamp-1">{job.job_title}</p>
+            <div className="flex items-center gap-1.5 text-xs text-primary-600 font-semibold">
+              <Building2 className="w-3 h-3" />{job.company_name}
+            </div>
           </div>
-          <p className="text-[11px] text-muted-foreground/80 line-clamp-1 max-w-[280px] leading-relaxed">
-            {job.job_description}
-          </p>
-        </div>
-      </td>
-
-      {/* Location */}
-      <td className="px-3 py-4">
-        <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
-          <MapPin className="w-3.5 h-3.5 shrink-0 text-primary/50" />{job.location}
-        </span>
-      </td>
-
-      {/* Salary */}
-      <td className="px-3 py-4">
-        {job.salary_range ? (
-          <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
-            <DollarSign className="w-3 h-3 shrink-0" />{job.salary_range}
+        </td>
+        <td className="px-3 py-4">
+          <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
+            <MapPin className="w-3.5 h-3.5 shrink-0 text-primary/50" />{job.location}
           </span>
-        ) : (
-          <span className="text-xs text-muted-foreground/40">—</span>
-        )}
-      </td>
+        </td>
+        <td className="px-3 py-4">
+          {job.salary_range ? (
+            <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
+              <DollarSign className="w-3 h-3 shrink-0" />{job.salary_range}
+            </span>
+          ) : (
+            <span className="text-xs text-muted-foreground/40">—</span>
+          )}
+        </td>
+        <td className="px-3 py-4">
+          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Clock className="w-3.5 h-3.5 shrink-0 text-muted-foreground/50" />{timeAgo(job.scraped_at)}
+          </span>
+        </td>
+        <td className="px-3 py-4 text-center" onClick={(e) => e.stopPropagation()}>
+          {hasATS ? (
+            <ATSScoreBadge score={atsAnalysis.ats_score} onClick={onViewATSResult} />
+          ) : (
+            <span className="text-xs text-muted-foreground/30 italic">Not run</span>
+          )}
+        </td>
+        <td className="px-3 py-4 text-center" onClick={(e) => e.stopPropagation()}>
+          {updatedCVs.length > 0 ? (
+            <UpdatedCVsBadge updatedCVs={updatedCVs} compact />
+          ) : (
+            <span className="text-xs text-muted-foreground/30 italic">None</span>
+          )}
+        </td>
+      </tr>
 
-      {/* Scraped */}
-      <td className="px-3 py-4">
-        <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Clock className="w-3.5 h-3.5 shrink-0 text-muted-foreground/50" />
-          {timeAgo(job.scraped_at)}
-        </span>
-      </td>
-
-      {/* ATS Score */}
-      <td className="px-3 py-4 text-center" onClick={(e) => e.stopPropagation()}>
-        {hasATS ? (
-          <ATSScoreBadge score={atsAnalysis.ats_score} onClick={onViewATSResult} />
-        ) : (
-          <span className="text-xs text-muted-foreground/30 italic">Not run</span>
-        )}
-      </td>
-
-      {/* Updated CV */}
-      <td className="px-3 py-4 text-center" onClick={(e) => e.stopPropagation()}>
-        {updatedCVs.length > 0 ? (
-          <UpdatedCVsBadge updatedCVs={updatedCVs} compact />
-        ) : (
-          <span className="text-xs text-muted-foreground/30 italic">None</span>
-        )}
-      </td>
-
-      {/* Actions */}
-      <td className="px-3 py-4" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-center gap-1 opacity-50 group-hover:opacity-100 transition-opacity">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button onClick={onRunATS} className={cn(
-                "w-9 h-9 rounded-lg flex items-center justify-center transition-all",
-                hasATS
-                  ? "hover:bg-purple-50 text-purple-400 hover:text-purple-600 hover:shadow-sm"
-                  : "hover:bg-purple-50 text-purple-500 hover:text-purple-700 hover:scale-110 hover:shadow-sm"
-              )} aria-label={hasATS ? "Re-run ATS" : "Run ATS"}>
-                <Wand2 className="w-4 h-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>{hasATS ? "Re-run ATS" : "Run ATS Analysis"}</TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button onClick={onUpdateCV} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-teal-50 text-teal-500 hover:text-teal-700 hover:scale-110 hover:shadow-sm transition-all" aria-label="Update CV">
-                <FileEdit className="w-4 h-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>Update CV</TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <a href={job.job_apply_url} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-blue-50 text-blue-500 hover:text-blue-700 hover:scale-110 hover:shadow-sm transition-all" aria-label="Apply Link">
-                <ExternalLink className="w-4 h-4" />
-              </a>
-            </TooltipTrigger>
-            <TooltipContent>Open Apply URL</TooltipContent>
-          </Tooltip>
-
-          <div ref={menuRef} className="relative">
-            <button onClick={() => setMenuOpen(!menuOpen)} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-muted text-muted-foreground hover:text-foreground transition-all">
-              <MoreVertical className="w-4 h-4" />
-            </button>
-            {menuOpen && (
-              <div className="absolute right-0 top-10 w-52 bg-card border border-border rounded-xl shadow-xl z-20 overflow-hidden animate-scale-in py-1">
-                <button onClick={() => { onViewDetails(); setMenuOpen(false); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted transition-colors text-left text-foreground">
-                  <Eye className="w-4 h-4 text-muted-foreground" /> View Details
+      {/* Expanded panel */}
+      {isExpanded && (
+        <tr>
+          <td colSpan={9} className="px-0 py-0">
+            <div className="bg-gradient-to-r from-muted/40 via-card to-muted/40 border-t border-b border-border/50 px-6 py-4 animate-accordion-down">
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Run ATS */}
+                <button
+                  onClick={onRunATS}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 hover:shadow-md transition-all hover:scale-[1.02]"
+                >
+                  <Wand2 className="w-4 h-4" />
+                  {hasATS ? "Re-run ATS" : "Run ATS Analysis"}
                 </button>
-                <button onClick={() => { navigator.clipboard.writeText(job.job_apply_url); toast({ title: "Copied!", description: "Job URL copied to clipboard" }); setMenuOpen(false); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted transition-colors text-left text-foreground">
-                  <Link className="w-4 h-4 text-muted-foreground" /> Copy Job URL
+
+                {/* Update CV */}
+                <button
+                  onClick={onUpdateCV}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-100 hover:shadow-md transition-all hover:scale-[1.02]"
+                >
+                  <FileEdit className="w-4 h-4" />
+                  Update CV
                 </button>
-                <div className="my-1 border-t border-border" />
-                <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-destructive/5 text-destructive transition-colors text-left">
-                  <Trash className="w-4 h-4" /> Delete Job
+
+                {/* Generate Email */}
+                <button
+                  onClick={onGenerateEmail}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 hover:shadow-md transition-all hover:scale-[1.02]"
+                >
+                  <Mail className="w-4 h-4" />
+                  Generate Email
                 </button>
+
+                <div className="h-8 w-px bg-border mx-1" />
+
+                {/* View Details */}
+                <button
+                  onClick={onViewDetails}
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+                >
+                  <Eye className="w-4 h-4" /> View Details
+                </button>
+
+                {/* Copy URL */}
+                <button
+                  onClick={() => { navigator.clipboard.writeText(job.job_apply_url); toast({ title: "Copied!", description: "Job URL copied" }); }}
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+                >
+                  <Link className="w-4 h-4" /> Copy URL
+                </button>
+
+                {/* Apply */}
+                <a
+                  href={job.job_apply_url} target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-all"
+                >
+                  <ExternalLink className="w-4 h-4" /> Apply
+                </a>
+
+                <div className="ml-auto">
+                  <button className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/5 transition-all">
+                    <Trash className="w-4 h-4" /> Delete
+                  </button>
+                </div>
               </div>
-            )}
-          </div>
-        </div>
-      </td>
-    </tr>
+
+              {/* Description preview */}
+              <p className="text-xs text-muted-foreground/80 line-clamp-2 mt-3 max-w-3xl leading-relaxed">
+                {job.job_description}
+              </p>
+            </div>
+          </td>
+        </tr>
+      )}
+    </>
   );
 };
 

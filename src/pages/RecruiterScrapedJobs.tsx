@@ -17,6 +17,7 @@ import JobCardView from "@/components/recruiter/JobCardView";
 import JobDetailsModal from "@/components/recruiter/JobDetailsModal";
 import ATSMatcherModal from "@/components/recruiter/ATSMatcherModal";
 import UpdateCVModal from "@/components/recruiter/UpdateCVModal";
+import GenerateEmailModal from "@/components/recruiter/GenerateEmailModal";
 
 const platformOptions = [
   { value: "", label: "All Platforms" },
@@ -74,7 +75,7 @@ const RecruiterScrapedJobs = () => {
   const [atsJob, setAtsJob] = useState<ScrapedJob | null>(null);
   const [updateCVJob, setUpdateCVJob] = useState<ScrapedJob | null>(null);
   const [viewATSResult, setViewATSResult] = useState<{ result: ATSAnalysisResult; job: ScrapedJob } | null>(null);
-
+  const [emailJob, setEmailJob] = useState<ScrapedJob | null>(null);
   // Fetch jobs
   const { data, isLoading } = useScrapedJobs(recruiterId, {
     search, platform: platformFilter, contractType: contractFilter,
@@ -137,6 +138,7 @@ const RecruiterScrapedJobs = () => {
       <JobDetailsModal job={detailJob} onClose={() => setDetailJob(null)} onRunATS={(j) => { setDetailJob(null); setAtsJob(j); }} />
       <ATSMatcherModal job={atsJob} candidates={candidatesData} cvs={cvsData} onClose={() => setAtsJob(null)} />
       <UpdateCVModal job={updateCVJob} candidates={candidatesData} cvs={cvsData} onClose={() => setUpdateCVJob(null)} />
+      <GenerateEmailModal job={emailJob} onClose={() => setEmailJob(null)} />
 
       {/* ATS Results Viewer Modal */}
       {viewATSResult && (
@@ -254,7 +256,7 @@ const RecruiterScrapedJobs = () => {
             <JobTableView
               jobs={jobs} selectedIds={selectedIds} onToggleSelect={toggleSelect} onSelectAll={selectAll}
               allSelected={jobs.length > 0 && selectedIds.size === jobs.length}
-              onViewDetails={setDetailJob} onRunATS={setAtsJob} onUpdateCV={setUpdateCVJob}
+               onViewDetails={setDetailJob} onRunATS={setAtsJob} onUpdateCV={setUpdateCVJob} onGenerateEmail={setEmailJob}
               onViewATSResult={handleViewATSResult}
               atsAnalyses={atsAnalyses}
               updatedCVsMap={updatedCVsMap}
@@ -263,7 +265,7 @@ const RecruiterScrapedJobs = () => {
           ) : (
             <JobCardView
               jobs={jobs} selectedIds={selectedIds} onToggleSelect={toggleSelect}
-              onViewDetails={setDetailJob} onRunATS={setAtsJob} onUpdateCV={setUpdateCVJob}
+               onViewDetails={setDetailJob} onRunATS={setAtsJob} onUpdateCV={setUpdateCVJob} onGenerateEmail={setEmailJob}
               onViewATSResult={handleViewATSResult}
               atsAnalyses={atsAnalyses}
               updatedCVsMap={updatedCVsMap}
