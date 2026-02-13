@@ -254,25 +254,9 @@ const JobExpandableRow = ({
         <tr>
           <td colSpan={9} className="px-0 py-0">
             <div className="bg-gradient-to-r from-muted/40 via-card to-muted/40 border-t border-b border-border/50 px-6 py-5 animate-accordion-down space-y-4">
-              {/* Action Buttons */}
+              {/* Action Buttons - Flow: Update CV first → then ATS Analysis */}
               <div className="flex flex-wrap items-center gap-3">
-                {/* ATS */}
-                {hasATS ? (
-                  <button onClick={onViewATSResult} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 hover:shadow-md transition-all hover:scale-[1.02]">
-                    <Eye className="w-4 h-4" /> View ATS Results ({atsAnalysesForJob.length})
-                  </button>
-                ) : (
-                  <button onClick={onRunATS} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 hover:shadow-md transition-all hover:scale-[1.02]">
-                    <Wand2 className="w-4 h-4" /> Run ATS Analysis
-                  </button>
-                )}
-                {hasATS && (
-                  <button onClick={onRunATS} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-purple-600 hover:bg-purple-50 transition-all">
-                    <Wand2 className="w-3.5 h-3.5" /> Run Again
-                  </button>
-                )}
-
-                {/* Updated CVs */}
+                {/* Step 1: Update CV (always available) */}
                 {hasUpdatedCVs ? (
                   <UpdatedCVsBadge updatedCVs={updatedCVs} />
                 ) : (
@@ -284,6 +268,30 @@ const JobExpandableRow = ({
                   <button onClick={onUpdateCV} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-teal-600 hover:bg-teal-50 transition-all">
                     <FileEdit className="w-3.5 h-3.5" /> Update More
                   </button>
+                )}
+
+                {/* Step 2: ATS Analysis (only available after CV is updated) */}
+                {hasUpdatedCVs ? (
+                  <>
+                    {hasATS ? (
+                      <button onClick={onViewATSResult} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 hover:shadow-md transition-all hover:scale-[1.02]">
+                        <Eye className="w-4 h-4" /> View ATS Results ({atsAnalysesForJob.length})
+                      </button>
+                    ) : (
+                      <button onClick={onRunATS} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 hover:shadow-md transition-all hover:scale-[1.02]">
+                        <Wand2 className="w-4 h-4" /> Run ATS Analysis
+                      </button>
+                    )}
+                    {hasATS && (
+                      <button onClick={onRunATS} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-purple-600 hover:bg-purple-50 transition-all">
+                        <Wand2 className="w-3.5 h-3.5" /> Run Again
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-muted text-muted-foreground border border-border cursor-not-allowed opacity-60">
+                    <Wand2 className="w-4 h-4" /> Run ATS (Update CV first)
+                  </span>
                 )}
 
                 {/* Generate Email */}
