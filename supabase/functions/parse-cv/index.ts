@@ -61,7 +61,7 @@ serve(async (req: Request) => {
     if (isPdf) {
       console.log("parse-cv: Detected PDF format");
       const pdfParse = (await import("npm:pdf-parse@1.1.1")).default;
-      const result = await pdfParse(Buffer.from(arrayBuffer));
+      const result = await pdfParse(new Uint8Array(arrayBuffer));
       extractedText = result.text;
     } else if (isDocx) {
       console.log("parse-cv: Detected DOCX format");
