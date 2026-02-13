@@ -17,8 +17,9 @@ interface JobCardViewProps {
   onUpdateCV: (job: ScrapedJob) => void;
   onGenerateEmail: (job: ScrapedJob) => void;
   onViewATSResult: (job: ScrapedJob) => void;
-  atsAnalyses: Record<string, any>;
+  atsAnalyses: Record<string, any[]>;
   updatedCVsMap: Record<string, any[]>;
+  generatedEmailsMap: Record<string, any[]>;
 }
 
 const timeAgo = (dateStr: string | undefined) => {
@@ -42,7 +43,7 @@ const PlatformBadge = ({ platform }: { platform: string }) => {
   );
 };
 
-const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, atsAnalyses, updatedCVsMap }: JobCardViewProps) => {
+const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, atsAnalyses, updatedCVsMap, generatedEmailsMap }: JobCardViewProps) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   if (jobs.length === 0) {
@@ -61,8 +62,11 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
       {jobs.map((job) => {
         const isExpanded = expandedId === job.id;
-        const hasATS = !!atsAnalyses[job.id];
+        const atsAnalysesForJob = atsAnalyses[job.id] || [];
+        const hasATS = atsAnalysesForJob.length > 0;
         const updatedCVs = updatedCVsMap[job.id] || [];
+        const hasEmails = (generatedEmailsMap[job.id] || []).length > 0;
+        const latestATS = atsAnalysesForJob[0];
 
         return (
           <div
@@ -91,12 +95,12 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                       onClick={() => onViewATSResult(job)}
                       className={cn(
                         "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border transition-all hover:scale-105",
-                        atsAnalyses[job.id].ats_score >= 70 ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                          : atsAnalyses[job.id].ats_score >= 50 ? "bg-amber-50 text-amber-700 border-amber-200"
+                        latestATS.ats_score >= 70 ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                          : latestATS.ats_score >= 50 ? "bg-amber-50 text-amber-700 border-amber-200"
                           : "bg-red-50 text-red-600 border-red-200"
                       )}
                     >
-                      <Wand2 className="w-3 h-3" /> {atsAnalyses[job.id].ats_score}%
+                      <Wand2 className="w-3 h-3" /> {latestATS.ats_score}%
                     </button>
                   )}
                 </div>
@@ -143,15 +147,31 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
               {/* Expanded actions */}
               {isExpanded && (
                 <div className="pt-3 space-y-2 animate-accordion-down">
-                  <button onClick={() => onRunATS(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-all">
-                    <Wand2 className="w-4 h-4" /> {hasATS ? "Re-run ATS Analysis" : "Run ATS Analysis"}
-                  </button>
-                  <button onClick={() => onUpdateCV(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-100 transition-all">
-                    <FileEdit className="w-4 h-4" /> Update CV
-                  </button>
-                  <button onClick={() => onGenerateEmail(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 transition-all">
-                    <Mail className="w-4 h-4" /> Generate Email
-                  </button>
+                  {hasATS ? (
+                    <button onClick={() => onViewATSResult(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-all">
+                      <Eye className="w-4 h-4" /> View ATS Results ({atsAnalysesForJob.length})
+                    </button>
+                  ) : (
+                    <button onClick={() => onRunATS(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-all">
+                      <Wand2 className="w-4 h-4" /> Run ATS Analysis
+                    </button>
+                  )}
+                  {updatedCVs.length > 0 ? (
+                    <div className="w-full"><UpdatedCVsBadge updatedCVs={updatedCVs} /></div>
+                  ) : (
+                    <button onClick={() => onUpdateCV(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-100 transition-all">
+                      <FileEdit className="w-4 h-4" /> Update CV
+                    </button>
+                  )}
+                  {hasEmails ? (
+                    <button onClick={() => onGenerateEmail(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 transition-all">
+                      <Eye className="w-4 h-4" /> View Generated Emails
+                    </button>
+                  ) : (
+                    <button onClick={() => onGenerateEmail(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 transition-all">
+                      <Mail className="w-4 h-4" /> Generate Email
+                    </button>
+                  )}
                   <div className="flex items-center gap-2 pt-1">
                     <button onClick={() => onViewDetails(job)} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
                       <Eye className="w-3.5 h-3.5" /> Details

@@ -3,7 +3,7 @@ import {
   MapPin, Eye, Link, Trash, Search,
   ChevronUp, ChevronDown, ExternalLink, DollarSign,
   Clock, Building2, Wand2, FileCheck2, FileEdit,
-  ChevronRight, Mail, Sparkles,
+  ChevronRight, Mail, Sparkles, Copy, Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -25,8 +25,9 @@ interface JobTableViewProps {
   onUpdateCV: (job: ScrapedJob) => void;
   onGenerateEmail: (job: ScrapedJob) => void;
   onViewATSResult: (job: ScrapedJob) => void;
-  atsAnalyses: Record<string, any>;
+  atsAnalyses: Record<string, any[]>;
   updatedCVsMap: Record<string, any[]>;
+  generatedEmailsMap: Record<string, any[]>;
   sortField: string;
   sortDir: "asc" | "desc";
   onSort: (field: string) => void;
@@ -83,7 +84,7 @@ const ATSScoreBadge = ({ score, onClick }: { score: number; onClick: () => void 
 const JobTableView = ({
   jobs, selectedIds, onToggleSelect, onSelectAll, allSelected,
   onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, atsAnalyses,
-  updatedCVsMap, sortField, sortDir, onSort,
+  updatedCVsMap, generatedEmailsMap, sortField, sortDir, onSort,
 }: JobTableViewProps) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -128,10 +129,12 @@ const JobTableView = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-border/60">
-              {jobs.map((job) => {
+            {jobs.map((job) => {
                 const isExpanded = expandedId === job.id;
-                const hasATS = !!atsAnalyses[job.id];
+                const atsAnalysesForJob = atsAnalyses[job.id] || [];
+                const hasATS = atsAnalysesForJob.length > 0;
                 const updatedCVs = updatedCVsMap[job.id] || [];
+                const generatedEmails = generatedEmailsMap[job.id] || [];
                 return (
                   <JobExpandableRow
                     key={job.id}
@@ -139,8 +142,9 @@ const JobTableView = ({
                     selected={selectedIds.has(job.id)}
                     isExpanded={isExpanded}
                     hasATS={hasATS}
-                    atsAnalysis={atsAnalyses[job.id]}
+                    atsAnalyses={atsAnalysesForJob}
                     updatedCVs={updatedCVs}
+                    generatedEmails={generatedEmails}
                     onToggle={() => setExpandedId(isExpanded ? null : job.id)}
                     onToggleSelect={() => onToggleSelect(job.id)}
                     onViewDetails={() => onViewDetails(job)}
@@ -160,15 +164,27 @@ const JobTableView = ({
 };
 
 const JobExpandableRow = ({
-  job, selected, isExpanded, hasATS, atsAnalysis, updatedCVs,
+  job, selected, isExpanded, hasATS, atsAnalyses: atsAnalysesForJob, updatedCVs, generatedEmails,
   onToggle, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult,
 }: {
   job: ScrapedJob; selected: boolean; isExpanded: boolean; hasATS: boolean;
-  atsAnalysis: any; updatedCVs: any[];
+  atsAnalyses: any[]; updatedCVs: any[]; generatedEmails: any[];
   onToggle: () => void; onToggleSelect: () => void; onViewDetails: () => void;
   onRunATS: () => void; onUpdateCV: () => void; onGenerateEmail: () => void; onViewATSResult: () => void;
 }) => {
   const { toast } = useToast();
+  const [showEmails, setShowEmails] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const hasUpdatedCVs = updatedCVs.length > 0;
+  const hasEmails = generatedEmails.length > 0;
+  const latestATS = atsAnalysesForJob[0];
+
+  const handleCopy = async (text: string, field: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopiedField(field);
+    toast({ title: "Copied!", description: "Copied to clipboard" });
+    setTimeout(() => setCopiedField(null), 2000);
+  };
 
   return (
     <>
@@ -219,7 +235,7 @@ const JobExpandableRow = ({
         </td>
         <td className="px-3 py-4 text-center" onClick={(e) => e.stopPropagation()}>
           {hasATS ? (
-            <ATSScoreBadge score={atsAnalysis.ats_score} onClick={onViewATSResult} />
+            <ATSScoreBadge score={latestATS.ats_score} onClick={onViewATSResult} />
           ) : (
             <span className="text-xs text-muted-foreground/30 italic">Not run</span>
           )}
@@ -237,58 +253,62 @@ const JobExpandableRow = ({
       {isExpanded && (
         <tr>
           <td colSpan={9} className="px-0 py-0">
-            <div className="bg-gradient-to-r from-muted/40 via-card to-muted/40 border-t border-b border-border/50 px-6 py-4 animate-accordion-down">
+            <div className="bg-gradient-to-r from-muted/40 via-card to-muted/40 border-t border-b border-border/50 px-6 py-5 animate-accordion-down space-y-4">
+              {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-3">
-                {/* Run ATS */}
-                <button
-                  onClick={onRunATS}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 hover:shadow-md transition-all hover:scale-[1.02]"
-                >
-                  <Wand2 className="w-4 h-4" />
-                  {hasATS ? "Re-run ATS" : "Run ATS Analysis"}
-                </button>
+                {/* ATS */}
+                {hasATS ? (
+                  <button onClick={onViewATSResult} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 hover:shadow-md transition-all hover:scale-[1.02]">
+                    <Eye className="w-4 h-4" /> View ATS Results ({atsAnalysesForJob.length})
+                  </button>
+                ) : (
+                  <button onClick={onRunATS} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 hover:shadow-md transition-all hover:scale-[1.02]">
+                    <Wand2 className="w-4 h-4" /> Run ATS Analysis
+                  </button>
+                )}
+                {hasATS && (
+                  <button onClick={onRunATS} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-purple-600 hover:bg-purple-50 transition-all">
+                    <Wand2 className="w-3.5 h-3.5" /> Run Again
+                  </button>
+                )}
 
-                {/* Update CV */}
-                <button
-                  onClick={onUpdateCV}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-100 hover:shadow-md transition-all hover:scale-[1.02]"
-                >
-                  <FileEdit className="w-4 h-4" />
-                  Update CV
-                </button>
+                {/* Updated CVs */}
+                {hasUpdatedCVs ? (
+                  <UpdatedCVsBadge updatedCVs={updatedCVs} />
+                ) : (
+                  <button onClick={onUpdateCV} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-100 hover:shadow-md transition-all hover:scale-[1.02]">
+                    <FileEdit className="w-4 h-4" /> Update CV
+                  </button>
+                )}
+                {hasUpdatedCVs && (
+                  <button onClick={onUpdateCV} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-teal-600 hover:bg-teal-50 transition-all">
+                    <FileEdit className="w-3.5 h-3.5" /> Update More
+                  </button>
+                )}
 
                 {/* Generate Email */}
-                <button
-                  onClick={onGenerateEmail}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 hover:shadow-md transition-all hover:scale-[1.02]"
-                >
-                  <Mail className="w-4 h-4" />
-                  Generate Email
-                </button>
+                {hasEmails ? (
+                  <button onClick={() => setShowEmails(!showEmails)} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 hover:shadow-md transition-all hover:scale-[1.02]">
+                    <Eye className="w-4 h-4" /> View Emails ({generatedEmails.length})
+                  </button>
+                ) : (
+                  <button onClick={onGenerateEmail} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 hover:shadow-md transition-all hover:scale-[1.02]">
+                    <Mail className="w-4 h-4" /> Generate Email
+                  </button>
+                )}
+                {hasEmails && (
+                  <button onClick={onGenerateEmail} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-orange-600 hover:bg-orange-50 transition-all">
+                    <Sparkles className="w-3.5 h-3.5" /> Generate New
+                  </button>
+                )}
 
                 <div className="h-8 w-px bg-border mx-1" />
 
-                {/* View Details */}
-                <button
-                  onClick={onViewDetails}
-                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
-                >
+                <button onClick={onViewDetails} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
                   <Eye className="w-4 h-4" /> View Details
                 </button>
 
-                {/* Copy URL */}
-                <button
-                  onClick={() => { navigator.clipboard.writeText(job.job_apply_url); toast({ title: "Copied!", description: "Job URL copied" }); }}
-                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
-                >
-                  <Link className="w-4 h-4" /> Copy URL
-                </button>
-
-                {/* Apply */}
-                <a
-                  href={job.job_apply_url} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-all"
-                >
+                <a href={job.job_apply_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-all">
                   <ExternalLink className="w-4 h-4" /> Apply
                 </a>
 
@@ -299,8 +319,58 @@ const JobExpandableRow = ({
                 </div>
               </div>
 
+              {/* ATS Results Summary (if multiple) */}
+              {hasATS && atsAnalysesForJob.length > 0 && (
+                <div className="bg-card border border-border rounded-xl p-4">
+                  <h4 className="text-xs font-bold text-secondary-700 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <Wand2 className="w-3.5 h-3.5 text-purple-500" /> ATS Analyses ({atsAnalysesForJob.length} student{atsAnalysesForJob.length > 1 ? "s" : ""})
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                    {atsAnalysesForJob.map((a: any) => (
+                      <div key={a.analysis_id} className="flex items-center gap-3 bg-muted/30 rounded-lg px-3 py-2.5 border border-border/50">
+                        <div className={cn(
+                          "w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold",
+                          a.ats_score >= 70 ? "bg-emerald-100 text-emerald-700" : a.ats_score >= 50 ? "bg-amber-100 text-amber-700" : "bg-red-100 text-red-600"
+                        )}>
+                          {a.ats_score}%
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-secondary-900 truncate">{a.candidate_name}</p>
+                          <p className="text-[11px] text-muted-foreground truncate">{a.cv_file_name}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Generated Emails */}
+              {showEmails && hasEmails && (
+                <div className="bg-card border border-border rounded-xl p-4 space-y-3">
+                  <h4 className="text-xs font-bold text-secondary-700 uppercase tracking-wider flex items-center gap-2">
+                    <Mail className="w-3.5 h-3.5 text-orange-500" /> Generated Emails ({generatedEmails.length})
+                  </h4>
+                  {generatedEmails.map((email: any) => (
+                    <div key={email.email_id} className="border border-border/50 rounded-lg p-3 bg-muted/20 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs font-bold text-secondary-900">Subject: {email.subject}</p>
+                        <button
+                          onClick={() => handleCopy(`Subject: ${email.subject}\n\n${email.body}`, email.email_id)}
+                          className="inline-flex items-center gap-1 text-[11px] font-medium text-orange-600 hover:text-orange-700"
+                        >
+                          {copiedField === email.email_id ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                          {copiedField === email.email_id ? "Copied!" : "Copy All"}
+                        </button>
+                      </div>
+                      <p className="text-xs text-muted-foreground whitespace-pre-wrap line-clamp-4 leading-relaxed">{email.body}</p>
+                      <p className="text-[10px] text-muted-foreground/50">{timeAgo(email.created_at)}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               {/* Description preview */}
-              <p className="text-xs text-muted-foreground/80 line-clamp-2 mt-3 max-w-3xl leading-relaxed">
+              <p className="text-xs text-muted-foreground/80 line-clamp-2 max-w-3xl leading-relaxed">
                 {job.job_description}
               </p>
             </div>
