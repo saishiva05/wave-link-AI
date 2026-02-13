@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ScrapedJob, mapDbJob } from "@/data/mockScrapedJobs";
-import { useScrapedJobs, useRecruiterCandidates, useRecruiterCVs, useJobATSAnalyses, useJobUpdatedCVs } from "@/hooks/useRecruiterData";
+import { useScrapedJobs, useRecruiterCandidates, useRecruiterCVs, useJobATSAnalyses, useJobUpdatedCVs, useJobGeneratedEmails } from "@/hooks/useRecruiterData";
 import ATSResultsView, { type ATSAnalysisResult } from "@/components/recruiter/ATSResultsView";
 import { useAuth } from "@/hooks/useAuth";
 import FilterDropdown from "@/components/recruiter/FilterDropdown";
@@ -95,6 +95,7 @@ const RecruiterScrapedJobs = () => {
   const jobIds = jobs.map((j) => j.id);
   const { data: atsAnalyses = {} } = useJobATSAnalyses(jobIds);
   const { data: updatedCVsMap = {} } = useJobUpdatedCVs(jobIds);
+  const { data: generatedEmailsMap = {} } = useJobGeneratedEmails(jobIds);
 
   // Active filters
   const activeFilters: { label: string; onRemove: () => void }[] = [];
@@ -122,9 +123,10 @@ const RecruiterScrapedJobs = () => {
   };
 
   const handleViewATSResult = (job: ScrapedJob) => {
-    const analysis = atsAnalyses[job.id];
-    if (analysis) {
-      // Unwrap the raw webhook format [{ text: { ... } }] if needed
+    const analyses = atsAnalyses[job.id];
+    if (analyses && analyses.length > 0) {
+      // Show the latest one
+      const analysis = analyses[0];
       let result = analysis.analysis_result;
       if (Array.isArray(result) && result[0]?.text) {
         result = result[0].text;
@@ -260,6 +262,7 @@ const RecruiterScrapedJobs = () => {
               onViewATSResult={handleViewATSResult}
               atsAnalyses={atsAnalyses}
               updatedCVsMap={updatedCVsMap}
+              generatedEmailsMap={generatedEmailsMap}
               sortField={sortField} sortDir={sortDir} onSort={handleSort}
             />
           ) : (
@@ -269,6 +272,7 @@ const RecruiterScrapedJobs = () => {
               onViewATSResult={handleViewATSResult}
               atsAnalyses={atsAnalyses}
               updatedCVsMap={updatedCVsMap}
+              generatedEmailsMap={generatedEmailsMap}
             />
           )}
         </motion.div>

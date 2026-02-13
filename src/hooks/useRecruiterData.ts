@@ -437,21 +437,20 @@ export function useJobATSAnalyses(jobIds: string[]) {
 
       if (error) throw error;
 
-      // Group by job_id, keep the latest analysis per job
-      const byJob: Record<string, any> = {};
+      // Group by job_id - keep ALL analyses per job (multiple candidates)
+      const byJob: Record<string, any[]> = {};
       (data || []).forEach((a: any) => {
-        if (!byJob[a.job_id]) {
-          byJob[a.job_id] = {
-            analysis_id: a.analysis_id,
-            job_id: a.job_id,
-            cv_id: a.cv_id,
-            ats_score: a.ats_score,
-            analysis_result: a.analysis_result,
-            analyzed_at: a.analyzed_at,
-            candidate_name: a.cvs?.candidates?.users?.full_name || "Unknown",
-            cv_file_name: a.cvs?.file_name || "Unknown",
-          };
-        }
+        if (!byJob[a.job_id]) byJob[a.job_id] = [];
+        byJob[a.job_id].push({
+          analysis_id: a.analysis_id,
+          job_id: a.job_id,
+          cv_id: a.cv_id,
+          ats_score: a.ats_score,
+          analysis_result: a.analysis_result,
+          analyzed_at: a.analyzed_at,
+          candidate_name: a.cvs?.candidates?.users?.full_name || "Unknown",
+          cv_file_name: a.cvs?.file_name || "Unknown",
+        });
       });
 
       return byJob;
@@ -498,6 +497,34 @@ export function useJobUpdatedCVs(jobIds: string[]) {
           ...ucv,
           candidate_name: ucv.candidates?.users?.full_name || "Unknown",
         });
+      });
+
+      return byJob;
+    },
+  });
+}
+
+export function useJobGeneratedEmails(jobIds: string[]) {
+  const { recruiterId } = useAuth();
+
+  return useQuery({
+    queryKey: ["recruiter", "job-generated-emails", recruiterId, jobIds],
+    enabled: !!recruiterId && jobIds.length > 0,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("generated_emails")
+        .select("email_id, job_id, subject, body, created_at")
+        .eq("recruiter_id", recruiterId!)
+        .in("job_id", jobIds)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      // Group by job_id
+      const byJob: Record<string, any[]> = {};
+      (data || []).forEach((e: any) => {
+        if (!byJob[e.job_id]) byJob[e.job_id] = [];
+        byJob[e.job_id].push(e);
       });
 
       return byJob;

@@ -1,9 +1,12 @@
-import { useState } from "react";
-import { X, Mail, Loader2, Copy, Check, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, Mail, Loader2, Copy, Check, Sparkles, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { ScrapedJob } from "@/data/mockScrapedJobs";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { formatDistanceToNow } from "date-fns";
 
 interface GenerateEmailModalProps {
   job: ScrapedJob | null;
@@ -13,15 +16,32 @@ interface GenerateEmailModalProps {
 const GenerateEmailModal = ({ job, onClose }: GenerateEmailModalProps) => {
   const { recruiterId } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
-  const [emailData, setEmailData] = useState<{ subject: string; body: string } | null>(null);
-  const [copiedField, setCopiedField] = useState<"subject" | "body" | "all" | null>(null);
+  const [existingEmails, setExistingEmails] = useState<any[]>([]);
+  const [loadingExisting, setLoadingExisting] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (job && recruiterId) {
+      setLoadingExisting(true);
+      supabase
+        .from("generated_emails")
+        .select("*")
+        .eq("job_id", job.id)
+        .eq("recruiter_id", recruiterId)
+        .order("created_at", { ascending: false })
+        .then(({ data }) => {
+          setExistingEmails(data || []);
+          setLoadingExisting(false);
+        });
+    }
+  }, [job, recruiterId]);
 
   if (!job) return null;
 
   const handleGenerate = async () => {
     setLoading(true);
-    setEmailData(null);
     try {
       const payload = {
         job_id: job.id,
@@ -36,6 +56,7 @@ const GenerateEmailModal = ({ job, onClose }: GenerateEmailModalProps) => {
         recruiter_id: recruiterId,
       };
 
+      const startTime = Date.now();
       const res = await fetch(
         "https://n8n.srv1340079.hstgr.cloud/webhook/101289f7-0ec4-4eb1-bcf0-a0f1d7cacec2",
         {
@@ -46,13 +67,12 @@ const GenerateEmailModal = ({ job, onClose }: GenerateEmailModalProps) => {
       );
 
       if (!res.ok) throw new Error("Webhook request failed");
+      const responseTime = Date.now() - startTime;
 
       let data = await res.json();
-      // Handle nested array format [{ text: { ... } }]
       if (Array.isArray(data) && data[0]?.text) {
         data = data[0].text;
       }
-      // Handle if it's a string
       if (typeof data === "string") {
         try { data = JSON.parse(data); } catch { /* keep as is */ }
       }
@@ -60,8 +80,25 @@ const GenerateEmailModal = ({ job, onClose }: GenerateEmailModalProps) => {
       const subject = data.subject || data.subject_line || data.email_subject || "Generated Subject";
       const body = data.body || data.email_body || data.message || data.email_message || "Generated email body";
 
-      setEmailData({ subject, body });
-      toast({ title: "Email Generated!", description: "Your email is ready to copy." });
+      // Save to database
+      const { data: savedEmail, error } = await supabase
+        .from("generated_emails")
+        .insert({
+          job_id: job.id,
+          recruiter_id: recruiterId!,
+          subject,
+          body,
+          webhook_response: data,
+          webhook_response_time_ms: responseTime,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setExistingEmails(prev => [savedEmail, ...prev]);
+      queryClient.invalidateQueries({ queryKey: ["recruiter", "job-generated-emails"] });
+      toast({ title: "Email Generated & Saved!", description: "Your email is ready to copy." });
     } catch (err: any) {
       toast({ title: "Error", description: err.message || "Failed to generate email", variant: "destructive" });
     } finally {
@@ -69,17 +106,10 @@ const GenerateEmailModal = ({ job, onClose }: GenerateEmailModalProps) => {
     }
   };
 
-  const handleCopy = async (field: "subject" | "body" | "all") => {
-    const text =
-      field === "subject"
-        ? emailData?.subject || ""
-        : field === "body"
-        ? emailData?.body || ""
-        : `Subject: ${emailData?.subject}\n\n${emailData?.body}`;
-
+  const handleCopy = async (text: string, field: string) => {
     await navigator.clipboard.writeText(text);
     setCopiedField(field);
-    toast({ title: "Copied!", description: `${field === "all" ? "Full email" : field === "subject" ? "Subject" : "Body"} copied to clipboard` });
+    toast({ title: "Copied!", description: "Copied to clipboard" });
     setTimeout(() => setCopiedField(null), 2000);
   };
 
@@ -97,7 +127,9 @@ const GenerateEmailModal = ({ job, onClose }: GenerateEmailModalProps) => {
                 <Mail className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-secondary-900 font-display">Generate Email</h2>
+                <h2 className="text-lg font-bold text-secondary-900 font-display">
+                  {existingEmails.length > 0 ? "Generated Emails" : "Generate Email"}
+                </h2>
                 <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">
                   {job.job_title} at {job.company_name}
                 </p>
@@ -110,94 +142,101 @@ const GenerateEmailModal = ({ job, onClose }: GenerateEmailModalProps) => {
         </div>
 
         {/* Content */}
-        <div className="px-6 py-5 overflow-y-auto flex-1">
-          {!emailData && !loading && (
+        <div className="px-6 py-5 overflow-y-auto flex-1 space-y-4">
+          {loadingExisting ? (
             <div className="text-center py-10">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-8 h-8 text-orange-500" />
-              </div>
-              <h3 className="text-lg font-bold text-secondary-900 mb-2">AI Email Generator</h3>
-              <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-6">
-                Generate a professional outreach email based on the job details using AI.
-              </p>
-              <Button onClick={handleGenerate} variant="portal" size="lg" className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 border-0">
-                <Sparkles className="w-4 h-4" /> Generate Email
-              </Button>
+              <Loader2 className="w-8 h-8 text-orange-500 animate-spin mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground">Loading emails...</p>
             </div>
-          )}
+          ) : (
+            <>
+              {/* Existing emails */}
+              {existingEmails.map((email) => (
+                <div key={email.email_id} className="border border-border rounded-xl p-4 space-y-3 bg-muted/20">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-4 h-4 text-orange-500" />
+                      <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {formatDistanceToNow(new Date(email.created_at), { addSuffix: true })}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => handleCopy(`Subject: ${email.subject}\n\n${email.body}`, email.email_id)}
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-orange-600 hover:text-orange-700 transition-colors"
+                    >
+                      {copiedField === email.email_id ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copiedField === email.email_id ? "Copied!" : "Copy All"}
+                    </button>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-[11px] font-bold text-secondary-700 uppercase tracking-wider">Subject</label>
+                      <button
+                        onClick={() => handleCopy(email.subject, `sub-${email.email_id}`)}
+                        className="text-[11px] text-orange-600 hover:text-orange-700"
+                      >
+                        {copiedField === `sub-${email.email_id}` ? "Copied!" : "Copy"}
+                      </button>
+                    </div>
+                    <div className="bg-card border border-border rounded-lg px-3 py-2 text-sm font-medium text-secondary-900">
+                      {email.subject}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-[11px] font-bold text-secondary-700 uppercase tracking-wider">Body</label>
+                      <button
+                        onClick={() => handleCopy(email.body, `body-${email.email_id}`)}
+                        className="text-[11px] text-orange-600 hover:text-orange-700"
+                      >
+                        {copiedField === `body-${email.email_id}` ? "Copied!" : "Copy"}
+                      </button>
+                    </div>
+                    <div className="bg-card border border-border rounded-lg px-3 py-3 text-sm text-secondary-800 whitespace-pre-wrap leading-relaxed max-h-[200px] overflow-y-auto">
+                      {email.body}
+                    </div>
+                  </div>
+                </div>
+              ))}
 
-          {loading && (
-            <div className="text-center py-14">
-              <Loader2 className="w-10 h-10 text-orange-500 animate-spin mx-auto mb-4" />
-              <p className="text-sm font-medium text-muted-foreground">Generating your email...</p>
-              <p className="text-xs text-muted-foreground/60 mt-1">This may take a few seconds</p>
-            </div>
-          )}
+              {/* Empty state or generate prompt */}
+              {existingEmails.length === 0 && !loading && (
+                <div className="text-center py-10">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center mx-auto mb-4">
+                    <Sparkles className="w-8 h-8 text-orange-500" />
+                  </div>
+                  <h3 className="text-lg font-bold text-secondary-900 mb-2">AI Email Generator</h3>
+                  <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-6">
+                    Generate a professional outreach email based on the job details using AI.
+                  </p>
+                </div>
+              )}
 
-          {emailData && (
-            <div className="space-y-5">
-              {/* Subject */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs font-bold text-secondary-700 uppercase tracking-wider">Subject Line</label>
-                  <button
-                    onClick={() => handleCopy("subject")}
-                    className="inline-flex items-center gap-1.5 text-xs font-medium text-orange-600 hover:text-orange-700 transition-colors"
-                  >
-                    {copiedField === "subject" ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                    {copiedField === "subject" ? "Copied!" : "Copy"}
-                  </button>
+              {loading && (
+                <div className="text-center py-8">
+                  <Loader2 className="w-10 h-10 text-orange-500 animate-spin mx-auto mb-4" />
+                  <p className="text-sm font-medium text-muted-foreground">Generating your email...</p>
+                  <p className="text-xs text-muted-foreground/60 mt-1">This may take a few seconds</p>
                 </div>
-                <div className="bg-muted/50 border border-border rounded-xl px-4 py-3 text-sm font-medium text-secondary-900">
-                  {emailData.subject}
-                </div>
-              </div>
-
-              {/* Body */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs font-bold text-secondary-700 uppercase tracking-wider">Email Body</label>
-                  <button
-                    onClick={() => handleCopy("body")}
-                    className="inline-flex items-center gap-1.5 text-xs font-medium text-orange-600 hover:text-orange-700 transition-colors"
-                  >
-                    {copiedField === "body" ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                    {copiedField === "body" ? "Copied!" : "Copy"}
-                  </button>
-                </div>
-                <div className="bg-muted/50 border border-border rounded-xl px-4 py-4 text-sm text-secondary-800 whitespace-pre-wrap leading-relaxed max-h-[300px] overflow-y-auto">
-                  {emailData.body}
-                </div>
-              </div>
-            </div>
+              )}
+            </>
           )}
         </div>
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-border shrink-0 flex items-center justify-between">
-          {emailData ? (
-            <>
-              <Button onClick={handleGenerate} variant="outline" size="sm" disabled={loading}>
-                <Sparkles className="w-3.5 h-3.5" /> Regenerate
-              </Button>
-              <div className="flex items-center gap-2">
-                <Button
-                  onClick={() => handleCopy("all")}
-                  variant="portal"
-                  size="sm"
-                  className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 border-0"
-                >
-                  {copiedField === "all" ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                  {copiedField === "all" ? "Copied!" : "Copy All"}
-                </Button>
-                <Button variant="outline" size="sm" onClick={onClose}>Close</Button>
-              </div>
-            </>
-          ) : (
-            <div className="ml-auto">
-              <Button variant="outline" size="sm" onClick={onClose}>Cancel</Button>
-            </div>
-          )}
+          <Button
+            onClick={handleGenerate}
+            disabled={loading}
+            variant="portal"
+            size="sm"
+            className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 border-0"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            {existingEmails.length > 0 ? "Generate Another" : "Generate Email"}
+          </Button>
+          <Button variant="outline" size="sm" onClick={onClose}>Close</Button>
         </div>
       </div>
     </div>

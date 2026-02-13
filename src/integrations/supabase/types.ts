@@ -187,6 +187,54 @@ export type Database = {
           },
         ]
       }
+      generated_emails: {
+        Row: {
+          body: string
+          created_at: string
+          email_id: string
+          job_id: string
+          recruiter_id: string
+          subject: string
+          webhook_response: Json | null
+          webhook_response_time_ms: number | null
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          email_id?: string
+          job_id: string
+          recruiter_id: string
+          subject: string
+          webhook_response?: Json | null
+          webhook_response_time_ms?: number | null
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          email_id?: string
+          job_id?: string
+          recruiter_id?: string
+          subject?: string
+          webhook_response?: Json | null
+          webhook_response_time_ms?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generated_emails_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "scraped_jobs"
+            referencedColumns: ["job_id"]
+          },
+          {
+            foreignKeyName: "generated_emails_recruiter_id_fkey"
+            columns: ["recruiter_id"]
+            isOneToOne: false
+            referencedRelation: "recruiters"
+            referencedColumns: ["recruiter_id"]
+          },
+        ]
+      }
       job_applications: {
         Row: {
           application_id: string
