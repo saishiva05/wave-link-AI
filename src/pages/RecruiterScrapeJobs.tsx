@@ -53,20 +53,6 @@ const contractTypeOptions = [
   { value: "Volunteer", label: "Volunteer" },
 ];
 
-interface ScrapeHistory {
-  id: number;
-  platform: "linkedin" | "jsearch";
-  jobTitle: string;
-  location: string;
-  jobCount: number;
-  time: string;
-}
-
-const mockHistory: ScrapeHistory[] = [
-  { id: 1, platform: "linkedin", jobTitle: "AI Developer", location: "Hyderabad", jobCount: 45, time: "2 hours ago" },
-  { id: 2, platform: "jsearch", jobTitle: "React Engineer", location: "Remote", jobCount: 32, time: "1 day ago" },
-  { id: 3, platform: "linkedin", jobTitle: "Product Manager", location: "Bangalore", jobCount: 28, time: "3 days ago" },
-];
 
 const RecruiterScrapeJobs = () => {
   const navigate = useNavigate();
