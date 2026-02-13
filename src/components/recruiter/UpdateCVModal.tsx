@@ -107,6 +107,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
         original_file_name: cvObj.file_name,
         candidate_name: candidateName,
         cv_content: cvText,
+        cv_url: cvObj.file_url,
         job_title: job.job_title,
         company_name: job.company_name,
         location: job.location,
