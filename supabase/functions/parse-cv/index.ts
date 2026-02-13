@@ -13,34 +13,34 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { fileUrl, bucket, filePath } = await req.json();
+    const { fileUrl, bucket, filePath, fileName: providedFileName } = await req.json();
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
     let fileData: Blob;
-    let fileName = "";
+    let fileName = providedFileName || "";
 
     if (bucket && filePath) {
-      // Download from Supabase storage
       const { data, error } = await supabase.storage
         .from(bucket)
         .download(filePath);
       if (error) throw new Error(`Storage download error: ${error.message}`);
       fileData = data;
-      fileName = filePath.split("/").pop() || filePath;
+      if (!fileName) fileName = filePath.split("/").pop() || filePath;
     } else if (fileUrl) {
-      // Download from external URL (e.g. updated CV URLs, signed URLs)
       const resp = await fetch(fileUrl);
       if (!resp.ok) throw new Error(`Failed to fetch file: ${resp.status}`);
       fileData = await resp.blob();
-      // Try to extract filename from URL
-      try {
-        const urlObj = new URL(fileUrl);
-        fileName = decodeURIComponent(urlObj.pathname.split("/").pop() || "file");
-      } catch {
-        fileName = "file";
+      if (!fileName) {
+        try {
+          const urlObj = new URL(fileUrl);
+          // Remove query params and get last path segment
+          fileName = decodeURIComponent(urlObj.pathname.split("/").pop() || "file");
+        } catch {
+          fileName = "file";
+        }
       }
     } else {
       throw new Error("Either fileUrl or (bucket + filePath) is required");
@@ -50,30 +50,31 @@ serve(async (req: Request) => {
     const bytes = new Uint8Array(arrayBuffer);
     const lowerName = fileName.toLowerCase();
 
+    console.log(`parse-cv: fileName="${fileName}", size=${bytes.length} bytes`);
+
+    // Detect file type from content (magic bytes) if extension is ambiguous
+    const isDocx = lowerName.endsWith(".docx") || (bytes[0] === 0x50 && bytes[1] === 0x4B); // PK zip header = docx
+    const isPdf = lowerName.endsWith(".pdf") || (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46); // %PDF
+
     let extractedText = "";
 
-    if (lowerName.endsWith(".docx")) {
-      // Parse DOCX using mammoth
-      const mammoth = await import("npm:mammoth@1.8.0");
-      const result = await mammoth.default.extractRawText({
-        buffer: bytes,
-      });
-      extractedText = result.value;
-    } else if (lowerName.endsWith(".pdf")) {
-      // Parse PDF using pdf-parse
+    if (isPdf) {
+      console.log("parse-cv: Detected PDF format");
       const pdfParse = (await import("npm:pdf-parse@1.1.1")).default;
       const result = await pdfParse(Buffer.from(arrayBuffer));
       extractedText = result.text;
+    } else if (isDocx) {
+      console.log("parse-cv: Detected DOCX format");
+      const mammoth = await import("npm:mammoth@1.8.0");
+      const result = await mammoth.default.extractRawText({ buffer: bytes });
+      extractedText = result.value;
     } else if (lowerName.endsWith(".txt") || lowerName.endsWith(".text")) {
       extractedText = new TextDecoder().decode(bytes);
     } else {
-      // Fallback: try as text
-      try {
-        extractedText = new TextDecoder().decode(bytes);
-      } catch {
-        throw new Error(`Unsupported file type: ${fileName}. Supported: .pdf, .docx, .txt`);
-      }
+      throw new Error(`Unsupported or undetectable file type: "${fileName}". Pass fileName parameter with .pdf, .docx, or .txt extension, or ensure the file has valid PDF/DOCX magic bytes.`);
     }
+
+    console.log(`parse-cv: Extracted ${extractedText.length} characters`);
 
     return new Response(
       JSON.stringify({ text: extractedText, fileName }),

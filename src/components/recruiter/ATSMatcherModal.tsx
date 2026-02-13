@@ -109,7 +109,7 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
       let cvText = "";
       try {
         const parseResp = await supabase.functions.invoke("parse-cv", {
-          body: { fileUrl: ucvObj.updated_file_url },
+          body: { fileUrl: ucvObj.updated_file_url, fileName: ucvObj.updated_file_name || ucvObj.original_file_name || "" },
         });
         if (parseResp.error) throw parseResp.error;
         if (parseResp.data?.error) throw new Error(parseResp.data.error);

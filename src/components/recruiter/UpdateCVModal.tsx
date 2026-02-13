@@ -62,21 +62,21 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
     // Try parsing via edge function
     let parsePayload: any = {};
 
+    const originalFileName = cvObj.file_name || cvObj.original_file_name || cvObj.updated_file_name || "";
+
     if (useSignedUrl) {
       // For original CVs in cvs-bucket, use bucket + filePath
       const urlParts = cvObj.file_url.split("/cvs-bucket/");
       if (urlParts[1]) {
-        parsePayload = { bucket: "cvs-bucket", filePath: decodeURIComponent(urlParts[1]) };
+        parsePayload = { bucket: "cvs-bucket", filePath: decodeURIComponent(urlParts[1]), fileName: originalFileName };
       } else {
-        // Fallback: create signed URL and pass as fileUrl
         const { data: signedData } = await supabase.storage
           .from("cvs-bucket")
           .createSignedUrl(decodeURIComponent(cvObj.file_url), 3600);
-        parsePayload = { fileUrl: signedData?.signedUrl || cvObj.file_url };
+        parsePayload = { fileUrl: signedData?.signedUrl || cvObj.file_url, fileName: originalFileName };
       }
     } else {
-      // For updated CVs (external URLs)
-      parsePayload = { fileUrl: cvObj.updated_file_url || cvObj.file_url };
+      parsePayload = { fileUrl: cvObj.updated_file_url || cvObj.file_url, fileName: originalFileName };
     }
 
     const parseResp = await supabase.functions.invoke("parse-cv", { body: parsePayload });
