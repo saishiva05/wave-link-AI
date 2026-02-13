@@ -58,6 +58,35 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
 
   const selectedCandidateObj = candidates.find((c: any) => c.candidate_id === selectedCandidate);
 
+  const parseCV = async (cvObj: any, useSignedUrl = true): Promise<string> => {
+    // Try parsing via edge function
+    let parsePayload: any = {};
+
+    if (useSignedUrl) {
+      // For original CVs in cvs-bucket, use bucket + filePath
+      const urlParts = cvObj.file_url.split("/cvs-bucket/");
+      if (urlParts[1]) {
+        parsePayload = { bucket: "cvs-bucket", filePath: decodeURIComponent(urlParts[1]) };
+      } else {
+        // Fallback: create signed URL and pass as fileUrl
+        const { data: signedData } = await supabase.storage
+          .from("cvs-bucket")
+          .createSignedUrl(decodeURIComponent(cvObj.file_url), 3600);
+        parsePayload = { fileUrl: signedData?.signedUrl || cvObj.file_url };
+      }
+    } else {
+      // For updated CVs (external URLs)
+      parsePayload = { fileUrl: cvObj.updated_file_url || cvObj.file_url };
+    }
+
+    const parseResp = await supabase.functions.invoke("parse-cv", { body: parsePayload });
+    if (parseResp.error) throw new Error(`Failed to parse CV: ${parseResp.error.message}`);
+    const parsed = parseResp.data;
+    if (parsed?.error) throw new Error(`CV parse error: ${parsed.error}`);
+    if (!parsed?.text) throw new Error("No text content extracted from CV");
+    return parsed.text;
+  };
+
   const handleUpdate = async () => {
     setState("loading");
     setErrorMsg("");
@@ -65,31 +94,19 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
       const cvObj = cvs.find((cv: any) => cv.cv_id === selectedCV);
       if (!cvObj) throw new Error("CV not found");
 
-      // Create a signed URL for the CV
-      let cvUrl = cvObj.file_url;
-      const urlParts = cvObj.file_url.split("/cvs-bucket/");
-      if (urlParts[1]) {
-        const { data: signedData } = await supabase.storage
-          .from("cvs-bucket")
-          .createSignedUrl(decodeURIComponent(urlParts[1]), 3600);
-        if (signedData?.signedUrl) cvUrl = signedData.signedUrl;
-      }
-
       const candidateName = selectedCandidateObj?.users?.full_name || cvObj.candidate_name || "Unknown";
 
+      // Parse CV content via edge function
+      const cvText = await parseCV(cvObj, true);
+
       const payload = {
-        // Required IDs
         job_id: job.id,
         cv_id: selectedCV,
         candidate_id: selectedCandidate,
         recruiter_id: recruiterId,
         original_file_name: cvObj.file_name,
-
-        // Candidate & CV info
         candidate_name: candidateName,
-        cv_url: cvUrl,
-
-        // Job description details (no ATS data - just job info for rewriting)
+        cv_content: cvText,
         job_title: job.job_title,
         company_name: job.company_name,
         location: job.location,
