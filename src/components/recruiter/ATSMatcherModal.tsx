@@ -105,8 +105,23 @@ const ATSMatcherModal = ({ job, candidates, cvs, onClose }: ATSMatcherModalProps
       const ucvObj = updatedCVs.find((ucv: any) => ucv.updated_cv_id === selectedUpdatedCV);
       if (!ucvObj) throw new Error("Updated CV not found");
 
+      // Parse updated CV content via edge function
+      let cvText = "";
+      try {
+        const parseResp = await supabase.functions.invoke("parse-cv", {
+          body: { fileUrl: ucvObj.updated_file_url },
+        });
+        if (parseResp.error) throw parseResp.error;
+        if (parseResp.data?.error) throw new Error(parseResp.data.error);
+        cvText = parseResp.data?.text || "";
+      } catch (parseErr: any) {
+        throw new Error(`Failed to parse CV: ${parseErr.message}`);
+      }
+
+      if (!cvText) throw new Error("No text content extracted from CV");
+
       const payload = {
-        cv_url: ucvObj.updated_file_url,
+        cv_content: cvText,
         cv_file_name: ucvObj.updated_file_name,
         candidate_name: ucvObj.candidate_name || "Unknown",
         job_title: job.job_title,
