@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useRecruiterCandidates } from "@/hooks/useRecruiterData";
 import { formatDistanceToNow } from "date-fns";
+import CreateCandidateModal from "@/components/recruiter/CreateCandidateModal";
 
 const getInitials = (name: string) => name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
 
@@ -13,6 +14,7 @@ const RecruiterCandidates = () => {
   const navigate = useNavigate();
   const { data: candidates = [], isLoading } = useRecruiterCandidates();
   const [search, setSearch] = useState("");
+  const [addOpen, setAddOpen] = useState(false);
 
   const filtered = candidates.filter((c: any) => {
     if (!search) return true;
@@ -23,14 +25,16 @@ const RecruiterCandidates = () => {
   });
 
   return (
-    <div className="space-y-6">
+    <>
+      <CreateCandidateModal open={addOpen} onClose={() => setAddOpen(false)} />
+      <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-secondary-900 font-display">Candidates</h1>
             <p className="text-base text-muted-foreground mt-1">{candidates.length} candidate{candidates.length !== 1 ? "s" : ""} in your pipeline</p>
           </div>
-          <Button variant="portal">
+          <Button variant="portal" onClick={() => setAddOpen(true)}>
             <UserPlus className="w-4 h-4" /> Add Candidate
           </Button>
         </div>
@@ -63,7 +67,7 @@ const RecruiterCandidates = () => {
             {search ? "Try adjusting your search term." : "Add candidates to start matching them with opportunities and submitting applications."}
           </p>
           {!search && (
-            <Button variant="portal" size="lg">
+            <Button variant="portal" size="lg" onClick={() => setAddOpen(true)}>
               <UserPlus className="w-4 h-4" /> Add Your First Candidate
             </Button>
           )}
@@ -117,7 +121,8 @@ const RecruiterCandidates = () => {
           })}
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 };
 
