@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import {
-  LayoutDashboard, Briefcase, FileText, User, HelpCircle, LogOut, ChevronLeft, ChevronRight, X,
+  LayoutDashboard, Briefcase, FileText, User, HelpCircle, LogOut, ChevronLeft, ChevronRight, X, MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import wavelynkLogo from "@/assets/wavelynk-logo.jpeg";
@@ -12,6 +12,7 @@ const mainMenuItems = [
   { title: "Dashboard", icon: LayoutDashboard, route: "/candidate/dashboard" },
   { title: "My Applications", icon: Briefcase, route: "/candidate/applications", badgeType: "primary" as const },
   { title: "My CVs", icon: FileText, route: "/candidate/cvs", badgeType: "neutral" as const },
+  { title: "Messages", icon: MessageSquare, route: "/candidate/messages", badgeType: "neutral" as const },
 ];
 
 const secondaryMenuItems = [

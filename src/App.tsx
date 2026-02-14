@@ -33,6 +33,7 @@ import CandidateApplicationsPage from "./pages/CandidateApplicationsPage";
 import CandidateCVsPage from "./pages/CandidateCVsPage";
 import CandidateProfile from "./pages/CandidateProfile";
 import CandidateSupport from "./pages/CandidateSupport";
+import CandidateMessagesPage from "./pages/CandidateMessagesPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -106,6 +107,7 @@ const App = () => (
               <Route path="dashboard" element={<CandidateDashboardPage />} />
               <Route path="applications" element={<CandidateApplicationsPage />} />
               <Route path="cvs" element={<CandidateCVsPage />} />
+              <Route path="messages" element={<CandidateMessagesPage />} />
               <Route path="profile" element={<CandidateProfile />} />
               <Route path="support" element={<CandidateSupport />} />
             </Route>
