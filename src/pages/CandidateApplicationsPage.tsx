@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -12,8 +12,17 @@ import ApplicationDetailsModal from "@/components/candidate/ApplicationDetailsMo
 
 const CandidateApplicationsPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const cd = useCandidateDashboard();
   const [detailApp, setDetailApp] = useState<CandidateApplication | null>(null);
+
+  // Read status from URL params on mount
+  useEffect(() => {
+    const statusParam = searchParams.get("status");
+    if (statusParam) {
+      cd.setStatusFilter(statusParam as any);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

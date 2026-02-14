@@ -313,6 +313,47 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          body: string
+          candidate_id: string
+          created_at: string
+          is_read: boolean
+          message_id: string
+          receiver_user_id: string
+          sender_user_id: string
+          subject: string | null
+        }
+        Insert: {
+          body: string
+          candidate_id: string
+          created_at?: string
+          is_read?: boolean
+          message_id?: string
+          receiver_user_id: string
+          sender_user_id: string
+          subject?: string | null
+        }
+        Update: {
+          body?: string
+          candidate_id?: string
+          created_at?: string
+          is_read?: boolean
+          message_id?: string
+          receiver_user_id?: string
+          sender_user_id?: string
+          subject?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["candidate_id"]
+          },
+        ]
+      }
       recruiters: {
         Row: {
           company_name: string | null
