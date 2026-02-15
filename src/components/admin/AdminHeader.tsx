@@ -22,6 +22,7 @@ interface AdminHeaderProps {
 const breadcrumbMap: Record<string, string> = {
   "/admin/dashboard": "Dashboard",
   "/admin/recruiters": "Recruiters",
+  "/admin/candidates": "Candidates",
   "/admin/analytics": "Analytics",
   "/admin/activity-logs": "Activity Logs",
   "/admin/settings": "Settings",

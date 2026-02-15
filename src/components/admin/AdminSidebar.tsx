@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
+  GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import wavelynkLogo from "@/assets/wavelynk-logo.jpeg";
@@ -20,7 +21,8 @@ import { useAuth } from "@/hooks/useAuth";
 
 const mainMenuItems = [
   { title: "Dashboard", icon: LayoutDashboard, route: "/admin/dashboard" },
-  { title: "Recruiters", icon: Users, route: "/admin/recruiters", badge: "24" },
+  { title: "Recruiters", icon: Users, route: "/admin/recruiters" },
+  { title: "Candidates", icon: GraduationCap, route: "/admin/candidates" },
   { title: "Analytics", icon: BarChart3, route: "/admin/analytics" },
   { title: "Activity Logs", icon: FileText, route: "/admin/activity-logs" },
 ];
@@ -65,16 +67,6 @@ const AdminSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: AdminS
         )}
         <item.icon className={cn("shrink-0", collapsed ? "w-5 h-5" : "w-5 h-5", active ? "text-white" : "text-neutral-400 group-hover:text-primary-400")} />
         {!collapsed && <span className="text-sm font-medium">{item.title}</span>}
-        {!collapsed && "badge" in item && item.badge && (
-          <span className="ml-auto text-xs bg-primary-500 text-white px-2 py-0.5 rounded-full font-medium">
-            {item.badge}
-          </span>
-        )}
-        {collapsed && "badge" in item && item.badge && (
-          <span className="absolute -top-1 -right-1 text-[10px] bg-primary-500 text-white w-5 h-5 rounded-full flex items-center justify-center font-medium">
-            {item.badge}
-          </span>
-        )}
       </NavLink>
     );
 

@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Users, User, Briefcase, Activity, UserPlus, Calendar } from "lucide-react";
+import { Users, User, Briefcase, Activity, UserPlus, Calendar, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import StatsCard from "@/components/admin/StatsCard";
 import DashboardCharts from "@/components/admin/DashboardCharts";
 import RecruitersTable from "@/components/admin/RecruitersTable";
 import CreateRecruiterModal from "@/components/admin/CreateRecruiterModal";
+import CreateCandidateModal from "@/components/admin/CreateCandidateModal";
 import { useAdminStats } from "@/hooks/useAdminData";
 
 const AdminDashboard = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [candidateModalOpen, setCandidateModalOpen] = useState(false);
   const navigate = useNavigate();
   const { data: stats, isLoading } = useAdminStats();
 
@@ -32,10 +34,10 @@ const AdminDashboard = () => {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 text-sm border border-border rounded-lg hover:bg-muted transition-colors text-neutral-600">
+          <Button variant="outline" className="flex items-center gap-2 text-sm">
             <Calendar className="w-4 h-4" />
             Last 30 Days
-          </button>
+          </Button>
         </div>
       </motion.div>
 
@@ -111,17 +113,18 @@ const AdminDashboard = () => {
           </h2>
           <Button variant="portal" onClick={() => setCreateModalOpen(true)}>
             <UserPlus className="w-4 h-4" />
-            Create New Recruiter
+            Create Recruiter
+          </Button>
+          <Button variant="outline" onClick={() => setCandidateModalOpen(true)}>
+            <GraduationCap className="w-4 h-4" />
+            Create Candidate
           </Button>
         </div>
         <RecruitersTable onCreateNew={() => setCreateModalOpen(true)} />
       </motion.div>
 
-      {/* Create Recruiter Modal */}
-      <CreateRecruiterModal
-        open={createModalOpen}
-        onOpenChange={setCreateModalOpen}
-      />
+      <CreateRecruiterModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
+      <CreateCandidateModal open={candidateModalOpen} onOpenChange={setCandidateModalOpen} />
     </div>
   );
 };

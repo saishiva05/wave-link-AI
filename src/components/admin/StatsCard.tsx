@@ -14,42 +14,37 @@ interface StatsCardProps {
 }
 
 const StatsCard = ({
-  title,
-  value,
-  trend,
-  trendUp,
-  icon: Icon,
-  iconBg,
-  iconColor,
-  footerLink,
-  onFooterClick,
+  title, value, trend, trendUp, icon: Icon, iconBg, iconColor, footerLink, onFooterClick,
 }: StatsCardProps) => {
   return (
-    <div className="bg-card border border-border rounded-xl p-6 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 group">
-      <div className="flex items-center gap-3 mb-4">
-        <div className={cn("w-12 h-12 rounded-full flex items-center justify-center shrink-0", iconBg)}>
+    <div className="bg-card border border-border rounded-2xl p-6 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
+      {/* Decorative gradient */}
+      <div className={cn("absolute top-0 left-0 right-0 h-1 rounded-t-2xl opacity-60", iconBg)} />
+      
+      <div className="flex items-start justify-between mb-4">
+        <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110", iconBg)}>
           <Icon className={cn("w-6 h-6", iconColor)} />
         </div>
-        <p className="text-sm font-medium text-muted-foreground">{title}</p>
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted">
+          {trendUp ? (
+            <TrendingUp className="w-3.5 h-3.5 text-success-500" />
+          ) : (
+            <TrendingDown className="w-3.5 h-3.5 text-destructive" />
+          )}
+          <span className={cn("text-xs font-medium", trendUp ? "text-success-600" : "text-destructive")}>{trend}</span>
+        </div>
       </div>
 
-      <p className="text-3xl font-bold text-secondary-900 font-display mb-2">{value}</p>
-
-      <div className="flex items-center gap-1.5">
-        {trendUp ? (
-          <TrendingUp className="w-4 h-4 text-success-500" />
-        ) : (
-          <TrendingDown className="w-4 h-4 text-destructive" />
-        )}
-        <span className={cn("text-sm", trendUp ? "text-success-600" : "text-destructive")}>{trend}</span>
-      </div>
+      <p className="text-sm font-medium text-muted-foreground mb-1">{title}</p>
+      <p className="text-3xl font-bold text-secondary-900 font-display tracking-tight">{value}</p>
 
       {footerLink && (
         <button
           onClick={onFooterClick}
-          className="mt-4 text-sm text-primary hover:underline font-medium"
+          className="mt-4 text-sm text-primary hover:text-primary-600 font-medium flex items-center gap-1 group/link transition-colors"
         >
-          {footerLink} →
+          {footerLink}
+          <span className="transition-transform group-hover/link:translate-x-0.5">→</span>
         </button>
       )}
     </div>
