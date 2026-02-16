@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Briefcase, FileText, User, HelpCircle, LogOut, ChevronLeft, ChevronRight, X, MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import wavelynkLogo from "@/assets/wavelynk-logo.jpeg";
+import wavelynkLogo from "@/assets/wavelynk-logo.png";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -61,8 +61,8 @@ const CandidateSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Ca
   const sidebarContent = (
     <div className="flex flex-col h-full">
       <div className="h-20 flex items-center justify-between px-4 border-b border-border">
-        {!collapsed && <img src={wavelynkLogo} alt="Wave Lynk AI" className="w-28 rounded bg-white p-1" />}
-        {collapsed && <img src={wavelynkLogo} alt="Wave Lynk AI" className="w-8 h-8 rounded bg-white p-0.5 mx-auto object-cover" />}
+        {!collapsed && <img src={wavelynkLogo} alt="WaveLynk" className="h-12 w-auto object-contain rounded-md bg-white p-1.5" />}
+        {collapsed && <img src={wavelynkLogo} alt="WaveLynk" className="w-9 h-9 rounded-md bg-white p-0.5 mx-auto object-contain" />}
         <button onClick={onToggle} className="hidden lg:flex items-center justify-center w-7 h-7 rounded bg-muted hover:bg-neutral-200 text-neutral-500 transition-colors shrink-0">
           {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </button>

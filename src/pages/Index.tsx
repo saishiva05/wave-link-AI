@@ -2,7 +2,7 @@ import { Shield, Briefcase, User } from "lucide-react";
 import { motion } from "framer-motion";
 import PortalCard from "@/components/PortalCard";
 import WavePattern from "@/components/WavePattern";
-import wavelynkLogo from "@/assets/wavelynk-logo.jpeg";
+import wavelynkLogo from "@/assets/wavelynk-logo.png";
 
 const Index = () => {
   return (
@@ -10,7 +10,7 @@ const Index = () => {
       {/* Header */}
       <header className="h-20 flex items-center justify-center bg-card shadow-card sticky top-0 z-50">
         <div className="flex flex-col items-center">
-          <img src={wavelynkLogo} alt="Wave Lynk AI" className="w-36 md:w-44" />
+          <img src={wavelynkLogo} alt="WaveLynk IT Consulting & Services" className="h-14 md:h-16 w-auto object-contain" />
         </div>
       </header>
 
