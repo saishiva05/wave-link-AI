@@ -1,20 +1,28 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Users, User, Briefcase, Activity, UserPlus, Calendar, GraduationCap } from "lucide-react";
+import { Users, User, Briefcase, Activity, UserPlus, Calendar, GraduationCap, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import StatsCard from "@/components/admin/StatsCard";
 import DashboardCharts from "@/components/admin/DashboardCharts";
 import RecruitersTable from "@/components/admin/RecruitersTable";
 import CreateRecruiterModal from "@/components/admin/CreateRecruiterModal";
 import CreateCandidateModal from "@/components/admin/CreateCandidateModal";
-import { useAdminStats } from "@/hooks/useAdminData";
+import CreateJobModal from "@/components/recruiter/CreateJobModal";
+import { useAdminStats, useAdminRecruiters } from "@/hooks/useAdminData";
 
 const AdminDashboard = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [candidateModalOpen, setCandidateModalOpen] = useState(false);
+  const [jobModalOpen, setJobModalOpen] = useState(false);
   const navigate = useNavigate();
   const { data: stats, isLoading } = useAdminStats();
+  const { data: recruitersData } = useAdminRecruiters(1, 100);
+
+  const recruiterOptions = (recruitersData?.recruiters || []).map((r: any) => ({
+    recruiter_id: r.recruiter_id,
+    full_name: r.users?.full_name || "Unknown",
+  }));
 
   return (
     <div className="space-y-8">
@@ -107,24 +115,36 @@ const AdminDashboard = () => {
         transition={{ duration: 0.3, delay: 0.15 }}
         className="space-y-4"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-xl font-bold text-secondary-900 font-display">
             Recently Added Recruiters
           </h2>
-          <Button variant="portal" onClick={() => setCreateModalOpen(true)}>
-            <UserPlus className="w-4 h-4" />
-            Create Recruiter
-          </Button>
-          <Button variant="outline" onClick={() => setCandidateModalOpen(true)}>
-            <GraduationCap className="w-4 h-4" />
-            Create Candidate
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => setJobModalOpen(true)}>
+              <Plus className="w-4 h-4" />
+              Add Job Posting
+            </Button>
+            <Button variant="outline" onClick={() => setCandidateModalOpen(true)}>
+              <GraduationCap className="w-4 h-4" />
+              Create Candidate
+            </Button>
+            <Button variant="portal" onClick={() => setCreateModalOpen(true)}>
+              <UserPlus className="w-4 h-4" />
+              Create Recruiter
+            </Button>
+          </div>
         </div>
         <RecruitersTable onCreateNew={() => setCreateModalOpen(true)} />
       </motion.div>
 
       <CreateRecruiterModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
       <CreateCandidateModal open={candidateModalOpen} onOpenChange={setCandidateModalOpen} />
+      <CreateJobModal
+        open={jobModalOpen}
+        onOpenChange={setJobModalOpen}
+        recruiterId={recruiterOptions[0]?.recruiter_id || ""}
+        recruiterOptions={recruiterOptions}
+      />
     </div>
   );
 };

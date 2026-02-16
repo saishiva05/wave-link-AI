@@ -15,7 +15,7 @@ import {
   GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import wavelynkLogo from "@/assets/wavelynk-logo.jpeg";
+import wavelynkLogo from "@/assets/wavelynk-logo.png";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -89,10 +89,10 @@ const AdminSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: AdminS
       {/* Header */}
       <div className="h-20 flex items-center justify-between px-4 border-b border-white/10">
         {!collapsed && (
-          <img src={wavelynkLogo} alt="Wave Lynk AI" className="w-28 rounded bg-white/90 p-1" />
+          <img src={wavelynkLogo} alt="WaveLynk" className="h-12 w-auto object-contain rounded-md bg-white/95 p-1.5" />
         )}
         {collapsed && (
-          <img src={wavelynkLogo} alt="Wave Lynk AI" className="w-8 h-8 rounded bg-white/90 p-0.5 mx-auto object-cover" />
+          <img src={wavelynkLogo} alt="WaveLynk" className="w-9 h-9 rounded-md bg-white/95 p-0.5 mx-auto object-contain" />
         )}
         <button
           onClick={onToggle}

@@ -18,7 +18,7 @@ import JobDetailsModal from "@/components/recruiter/JobDetailsModal";
 import ATSMatcherModal from "@/components/recruiter/ATSMatcherModal";
 import UpdateCVModal from "@/components/recruiter/UpdateCVModal";
 import GenerateEmailModal from "@/components/recruiter/GenerateEmailModal";
-
+import CreateJobModal from "@/components/recruiter/CreateJobModal";
 const platformOptions = [
   { value: "", label: "All Platforms" },
   { value: "linkedin", label: "LinkedIn" },
@@ -76,7 +76,7 @@ const RecruiterScrapedJobs = () => {
   const [updateCVJob, setUpdateCVJob] = useState<ScrapedJob | null>(null);
   const [viewATSResult, setViewATSResult] = useState<{ result: ATSAnalysisResult; job: ScrapedJob } | null>(null);
   const [emailJob, setEmailJob] = useState<ScrapedJob | null>(null);
-  // Fetch jobs
+  const [createJobOpen, setCreateJobOpen] = useState(false);
   const { data, isLoading } = useScrapedJobs(recruiterId, {
     search, platform: platformFilter, contractType: contractFilter,
     workMode: workModeFilter, dateRange: dateFilter,
@@ -141,7 +141,7 @@ const RecruiterScrapedJobs = () => {
       <ATSMatcherModal job={atsJob} candidates={candidatesData} cvs={cvsData} onClose={() => setAtsJob(null)} />
       <UpdateCVModal job={updateCVJob} candidates={candidatesData} cvs={cvsData} onClose={() => setUpdateCVJob(null)} />
       <GenerateEmailModal job={emailJob} onClose={() => setEmailJob(null)} />
-
+      {recruiterId && <CreateJobModal open={createJobOpen} onOpenChange={setCreateJobOpen} recruiterId={recruiterId} />}
       {/* ATS Results Viewer Modal */}
       {viewATSResult && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setViewATSResult(null)}>
@@ -178,9 +178,14 @@ const RecruiterScrapedJobs = () => {
               <h1 className="text-2xl md:text-4xl font-bold text-secondary-900 font-display">Scraped Jobs</h1>
               <p className="text-base text-muted-foreground mt-1">{totalCount.toLocaleString()} jobs in your database</p>
             </div>
-            <Button variant="portal" onClick={() => navigate("/recruiter/scrape-jobs")}>
-              <Plus className="w-4 h-4" /> Scrape New Jobs
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" onClick={() => setCreateJobOpen(true)}>
+                <Plus className="w-4 h-4" /> Add Job Manually
+              </Button>
+              <Button variant="portal" onClick={() => navigate("/recruiter/scrape-jobs")}>
+                <Plus className="w-4 h-4" /> Scrape New Jobs
+              </Button>
+            </div>
           </div>
         </motion.div>
 

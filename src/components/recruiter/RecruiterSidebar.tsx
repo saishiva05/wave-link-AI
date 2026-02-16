@@ -15,7 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import wavelynkLogo from "@/assets/wavelynk-logo.jpeg";
+import wavelynkLogo from "@/assets/wavelynk-logo.png";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -117,10 +117,10 @@ const RecruiterSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Re
       {/* Header */}
       <div className="h-20 flex items-center justify-between px-4 border-b border-border">
         {!collapsed && (
-          <img src={wavelynkLogo} alt="Wave Lynk AI" className="w-28 rounded bg-white p-1" />
+          <img src={wavelynkLogo} alt="WaveLynk" className="h-12 w-auto object-contain rounded-md bg-white p-1.5" />
         )}
         {collapsed && (
-          <img src={wavelynkLogo} alt="Wave Lynk AI" className="w-8 h-8 rounded bg-white p-0.5 mx-auto object-cover" />
+          <img src={wavelynkLogo} alt="WaveLynk" className="w-9 h-9 rounded-md bg-white p-0.5 mx-auto object-contain" />
         )}
         <button
           onClick={onToggle}
