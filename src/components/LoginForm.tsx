@@ -98,7 +98,7 @@ const LoginForm = ({
         ← Back to portal selection
       </Link>
 
-      <h1 className="font-display text-3xl font-semibold text-secondary-900 mb-2">
+      <h1 className="font-display text-3xl font-semibold text-foreground mb-2">
         {heading}
       </h1>
       <p className="text-muted-foreground mb-10">{subheading}</p>
@@ -109,7 +109,7 @@ const LoginForm = ({
           <span className="text-sm flex-1">{error}</span>
           <button
             onClick={() => setError(null)}
-            className="text-neutral-500 hover:text-neutral-700"
+            className="text-muted-foreground hover:text-foreground"
             aria-label="Dismiss error"
           >
             ×
@@ -120,11 +120,11 @@ const LoginForm = ({
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Email */}
         <div>
-          <label htmlFor={`${role}-email`} className="block text-sm font-medium text-neutral-700 mb-2">
+          <label htmlFor={`${role}-email`} className="block text-sm font-medium text-foreground mb-2">
             Email Address <span className="text-destructive">*</span>
           </label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-500" />
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               id={`${role}-email`}
               type="email"
@@ -140,11 +140,11 @@ const LoginForm = ({
 
         {/* Password */}
         <div>
-          <label htmlFor={`${role}-password`} className="block text-sm font-medium text-neutral-700 mb-2">
+          <label htmlFor={`${role}-password`} className="block text-sm font-medium text-foreground mb-2">
             Password <span className="text-destructive">*</span>
           </label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-500" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               id={`${role}-password`}
               type={showPassword ? "text" : "password"}
@@ -158,7 +158,7 @@ const LoginForm = ({
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
