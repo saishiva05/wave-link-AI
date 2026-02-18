@@ -45,10 +45,10 @@ const CandidateSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Ca
       <NavLink to={item.route} onClick={onMobileClose}
         className={cn("flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group relative",
           collapsed ? "justify-center px-2 mx-1" : "mx-3",
-          active ? "bg-primary-100 text-primary-700 font-semibold" : "text-neutral-600 hover:text-primary-700 hover:bg-primary-50"
+          active ? "bg-primary-100 text-primary font-semibold" : "text-muted-foreground hover:text-primary hover:bg-primary-50"
         )} activeClassName="">
         {active && !collapsed && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full" />}
-        <item.icon className={cn("shrink-0 w-5 h-5", active ? "text-primary" : "text-neutral-500 group-hover:text-primary")} />
+        <item.icon className={cn("shrink-0 w-5 h-5", active ? "text-primary" : "text-muted-foreground group-hover:text-primary")} />
         {!collapsed && <span className="text-sm font-medium">{item.title}</span>}
       </NavLink>
     );
@@ -79,7 +79,7 @@ const CandidateSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Ca
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-semibold shrink-0 border-2 border-card">{initials}</div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-secondary-900 truncate">{fullName || "Candidate"}</p>
+                <p className="text-sm font-semibold text-foreground truncate">{fullName || "Candidate"}</p>
               </div>
             </div>
             <button onClick={() => signOut()} className="flex items-center gap-2 text-sm text-destructive hover:bg-error-50 w-full px-2 py-2 rounded-md transition-colors"><LogOut className="w-4 h-4" /> Logout</button>

@@ -44,8 +44,8 @@ const RecruitersTable = ({ onCreateNew }: RecruitersTableProps) => {
   if (recruiters.length === 0 && !search) {
     return (
       <div className="bg-card border border-border rounded-xl shadow-card flex flex-col items-center justify-center py-16 px-8">
-        <Users className="w-12 h-12 text-neutral-300 mb-4" />
-        <h3 className="text-lg font-semibold text-neutral-700 mb-2">No recruiters yet</h3>
+        <Users className="w-12 h-12 text-muted-foreground mb-4" />
+        <h3 className="text-lg font-semibold text-foreground mb-2">No recruiters yet</h3>
         <p className="text-sm text-muted-foreground mb-6">Create your first recruiter account to get started.</p>
         <Button variant="portal" size="lg" onClick={onCreateNew}><UserPlus className="w-4 h-4" /> Create New Recruiter</Button>
       </div>
@@ -60,7 +60,7 @@ const RecruitersTable = ({ onCreateNew }: RecruitersTableProps) => {
       <div className="p-4 border-b border-border">
         <input type="text" value={search} onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
           placeholder="Search by name, email, or company..."
-          className="w-full max-w-sm h-10 px-3 text-sm rounded-lg border border-border bg-card outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground" />
+          className="w-full max-w-sm h-10 px-3 text-sm rounded-lg border border-border bg-background text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground" />
       </div>
 
       {/* Desktop Table */}
@@ -84,20 +84,20 @@ const RecruitersTable = ({ onCreateNew }: RecruitersTableProps) => {
               const email = user?.email || "";
               const isActive = user?.is_active ?? true;
               return (
-                <tr key={r.recruiter_id} className="border-b border-border hover:bg-muted/50 transition-colors">
+                <tr key={r.recruiter_id} className="border-b border-border hover:bg-muted/50 transition-colors group">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white text-xs font-semibold shrink-0">{getInitials(name)}</div>
+                      <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-semibold shrink-0 group-hover:shadow-glow transition-shadow">{getInitials(name)}</div>
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-secondary-900 truncate">{name}</p>
+                        <p className="text-sm font-medium text-foreground truncate">{name}</p>
                         <p className="text-xs text-muted-foreground truncate">{email}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-neutral-600">{r.company_name || "—"}</td>
-                  <td className="px-4 py-3 text-sm font-semibold text-primary-600">{r.total_jobs_scraped}</td>
-                  <td className="px-4 py-3 text-sm font-semibold text-success-600">{r.total_candidates_managed}</td>
-                  <td className="px-4 py-3 text-sm text-neutral-600">{format(new Date(r.created_at), "MMM d, yyyy")}</td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground">{r.company_name || "—"}</td>
+                  <td className="px-4 py-3 text-sm font-semibold text-primary">{r.total_jobs_scraped}</td>
+                  <td className="px-4 py-3 text-sm font-semibold text-success-500">{r.total_candidates_managed}</td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground">{format(new Date(r.created_at), "MMM d, yyyy")}</td>
                   <td className="px-4 py-3">
                     <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
                       isActive ? "bg-success-50 text-success-700" : "bg-muted text-muted-foreground"
@@ -106,7 +106,7 @@ const RecruitersTable = ({ onCreateNew }: RecruitersTableProps) => {
                   <td className="px-4 py-3 text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <button className="p-1.5 rounded-md hover:bg-muted text-neutral-500 hover:text-primary transition-colors"><MoreVertical className="w-4 h-4" /></button>
+                        <button className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-primary transition-colors"><MoreVertical className="w-4 h-4" /></button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-44">
                         <DropdownMenuItem><Eye className="w-4 h-4 mr-2" /> View Details</DropdownMenuItem>
@@ -133,21 +133,21 @@ const RecruitersTable = ({ onCreateNew }: RecruitersTableProps) => {
           const name = user?.full_name || "Unknown";
           const isActive = user?.is_active ?? true;
           return (
-            <div key={r.recruiter_id} className="p-4 space-y-3">
+            <div key={r.recruiter_id} className="p-4 space-y-3 hover:bg-muted/30 transition-colors">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white text-xs font-semibold">{getInitials(name)}</div>
+                  <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-semibold">{getInitials(name)}</div>
                   <div>
-                    <p className="text-sm font-medium text-secondary-900">{name}</p>
+                    <p className="text-sm font-medium text-foreground">{name}</p>
                     <p className="text-xs text-muted-foreground">{user?.email}</p>
                   </div>
                 </div>
                 <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium", isActive ? "bg-success-50 text-success-700" : "bg-muted text-muted-foreground")}>{isActive ? "Active" : "Inactive"}</span>
               </div>
               <div className="grid grid-cols-3 gap-3 text-center">
-                <div><p className="text-xs text-muted-foreground">Jobs</p><p className="text-sm font-semibold text-primary-600">{r.total_jobs_scraped}</p></div>
-                <div><p className="text-xs text-muted-foreground">Candidates</p><p className="text-sm font-semibold text-success-600">{r.total_candidates_managed}</p></div>
-                <div><p className="text-xs text-muted-foreground">Created</p><p className="text-sm text-neutral-600">{format(new Date(r.created_at), "MMM d")}</p></div>
+                <div><p className="text-xs text-muted-foreground">Jobs</p><p className="text-sm font-semibold text-primary">{r.total_jobs_scraped}</p></div>
+                <div><p className="text-xs text-muted-foreground">Candidates</p><p className="text-sm font-semibold text-success-500">{r.total_candidates_managed}</p></div>
+                <div><p className="text-xs text-muted-foreground">Created</p><p className="text-sm text-muted-foreground">{format(new Date(r.created_at), "MMM d")}</p></div>
               </div>
             </div>
           );
@@ -159,13 +159,13 @@ const RecruitersTable = ({ onCreateNew }: RecruitersTableProps) => {
         <p className="text-sm text-muted-foreground">Showing {(currentPage - 1) * perPage + 1}–{Math.min(currentPage * perPage, total)} of {total} recruiters</p>
         <div className="flex items-center gap-1">
           <button onClick={() => setCurrentPage(Math.max(1, currentPage - 1))} disabled={currentPage === 1}
-            className="p-1.5 rounded border border-border hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"><ChevronLeft className="w-4 h-4" /></button>
+            className="p-1.5 rounded border border-border hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-foreground"><ChevronLeft className="w-4 h-4" /></button>
           {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((p) => (
             <button key={p} onClick={() => setCurrentPage(p)}
-              className={cn("w-8 h-8 rounded text-sm font-medium transition-colors", currentPage === p ? "bg-primary text-white" : "border border-border hover:bg-muted")}>{p}</button>
+              className={cn("w-8 h-8 rounded text-sm font-medium transition-colors", currentPage === p ? "bg-primary text-primary-foreground" : "border border-border hover:bg-muted text-foreground")}>{p}</button>
           ))}
           <button onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages}
-            className="p-1.5 rounded border border-border hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"><ChevronRight className="w-4 h-4" /></button>
+            className="p-1.5 rounded border border-border hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-foreground"><ChevronRight className="w-4 h-4" /></button>
         </div>
       </div>
     </div>

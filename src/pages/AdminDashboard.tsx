@@ -34,7 +34,7 @@ const AdminDashboard = () => {
         className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
       >
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-secondary-900 font-display">
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground font-display">
             Dashboard Overview
           </h1>
           <p className="text-base text-muted-foreground mt-1">
@@ -116,7 +116,7 @@ const AdminDashboard = () => {
         className="space-y-4"
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-xl font-bold text-secondary-900 font-display">
+          <h2 className="text-xl font-bold text-foreground font-display">
             Recently Added Recruiters
           </h2>
           <div className="flex items-center gap-2">
