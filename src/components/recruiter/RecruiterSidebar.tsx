@@ -115,12 +115,12 @@ const RecruiterSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Re
   const sidebarContent = (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="h-20 flex items-center justify-between px-4 border-b border-border">
+      <div className="h-24 flex items-center justify-between px-4 border-b border-border">
         {!collapsed && (
-          <img src={wavelynkLogo} alt="WaveLynk" className="h-12 w-auto object-contain rounded-md bg-white p-1.5" />
+          <img src={wavelynkLogo} alt="WaveLynk" className="h-16 w-auto object-contain rounded-lg bg-white p-2 shadow-sm" />
         )}
         {collapsed && (
-          <img src={wavelynkLogo} alt="WaveLynk" className="w-9 h-9 rounded-md bg-white p-0.5 mx-auto object-contain" />
+          <img src={wavelynkLogo} alt="WaveLynk" className="w-11 h-11 rounded-lg bg-white p-1 mx-auto object-contain shadow-sm" />
         )}
         <button
           onClick={onToggle}

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import ThemeToggle from "@/components/ThemeToggle";
 
 interface AdminHeaderProps {
   onMenuClick: () => void;
@@ -85,7 +86,8 @@ const AdminHeader = ({ onMenuClick }: AdminHeaderProps) => {
       </div>
 
       {/* Right side */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
         {/* Search */}
         <div className="hidden lg:flex items-center bg-muted rounded-lg px-3 py-2 w-[260px] border border-transparent focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
           <Search className="w-4 h-4 text-neutral-500 shrink-0" />

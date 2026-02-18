@@ -33,7 +33,7 @@ const LoginLayout = ({
           <img
             src={wavelynkLogo}
             alt="WaveLynk IT Consulting & Services"
-            className="h-14 lg:h-16 w-auto object-contain mb-8 lg:mb-12 rounded-lg bg-card/90 p-2"
+            className="h-16 lg:h-20 w-auto object-contain mb-8 lg:mb-12 rounded-xl bg-card/90 p-2.5 shadow-sm"
           />
           <h1 className="font-display text-2xl lg:text-4xl font-bold text-primary-foreground mb-4">
             {heading}

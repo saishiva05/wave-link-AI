@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import ThemeToggle from "@/components/ThemeToggle";
 
 interface RecruiterHeaderProps {
   onMenuClick: () => void;
@@ -91,7 +92,8 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
       </div>
 
       {/* Right side */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
         {/* Quick Actions */}
         <div className="relative" ref={quickRef}>
           <button
