@@ -30,22 +30,24 @@ const LoginLayout = ({
           transition={{ duration: 0.4 }}
           className="relative z-10"
         >
-          <img
-            src={wavelynkLogo}
-            alt="WaveLynk IT Consulting & Services"
-            className="h-16 lg:h-20 w-auto object-contain mb-8 lg:mb-12 rounded-xl bg-card/90 p-2.5 shadow-sm"
-          />
+          <div className="inline-block bg-white rounded-2xl p-4 shadow-lg mb-8 lg:mb-12">
+            <img
+              src={wavelynkLogo}
+              alt="WaveLynk IT Consulting & Services"
+              className="h-14 lg:h-16 w-auto object-contain"
+            />
+          </div>
           <h1 className="font-display text-2xl lg:text-4xl font-bold text-primary-foreground mb-4">
             {heading}
           </h1>
-          <p className="text-neutral-300 text-base lg:text-lg leading-relaxed mb-8 lg:mb-12 max-w-md">
+          <p className="text-primary-foreground/70 text-base lg:text-lg leading-relaxed mb-8 lg:mb-12 max-w-md">
             {description}
           </p>
 
           <ul className="hidden lg:flex flex-col gap-5">
             {features.map((feature, i) => (
-              <li key={i} className="flex items-center gap-3 text-neutral-200">
-                <svg className="w-5 h-5 text-primary-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <li key={i} className="flex items-center gap-3 text-primary-foreground/80">
+                <svg className="w-5 h-5 text-primary-foreground/60 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
                 <span className="text-sm lg:text-base">{feature}</span>
@@ -61,7 +63,7 @@ const LoginLayout = ({
       </div>
 
       {/* Right Form Section */}
-      <div className="flex-1 lg:ml-[40%] min-h-screen flex items-center justify-center px-6 py-12 lg:px-16 bg-neutral-50 wave-pattern-bg">
+      <div className="flex-1 lg:ml-[40%] min-h-screen flex items-center justify-center px-6 py-12 lg:px-16 bg-background wave-pattern-bg">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}

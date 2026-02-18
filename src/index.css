@@ -280,6 +280,10 @@
     background-size: cover;
   }
 
+  .dark .wave-pattern-bg {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23148a8a' fill-opacity='0.06' d='M0,224L48,208C96,192,192,160,288,165.3C384,171,480,213,576,218.7C672,224,768,192,864,165.3C960,139,1056,117,1152,128C1248,139,1344,181,1392,202.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+  }
+
   .portal-card {
     @apply bg-card rounded-2xl p-10 border border-border transition-all duration-200 ease-out;
     box-shadow: var(--shadow-md);
@@ -308,7 +312,7 @@
   }
 
   .form-container {
-    @apply bg-card rounded-2xl p-12 w-full max-w-[440px];
+    @apply bg-card rounded-2xl p-12 w-full max-w-[440px] border border-border;
     box-shadow: var(--shadow-lg);
   }
 

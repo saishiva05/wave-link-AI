@@ -89,10 +89,18 @@ const AdminSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: AdminS
       {/* Header */}
       <div className="h-24 flex items-center justify-between px-4 border-b border-white/10">
         {!collapsed && (
-          <img src={wavelynkLogo} alt="WaveLynk" className="h-16 w-auto object-contain rounded-lg bg-white p-2 shadow-sm" />
+          <div className="flex-1 flex justify-center">
+            <div className="bg-white rounded-xl p-2.5 shadow-md">
+              <img src={wavelynkLogo} alt="WaveLynk" className="h-12 w-auto object-contain" />
+            </div>
+          </div>
         )}
         {collapsed && (
-          <img src={wavelynkLogo} alt="WaveLynk" className="w-11 h-11 rounded-lg bg-white p-1 mx-auto object-contain shadow-sm" />
+          <div className="flex-1 flex justify-center">
+            <div className="bg-white rounded-lg p-1.5 shadow-md">
+              <img src={wavelynkLogo} alt="WaveLynk" className="w-9 h-9 object-contain" />
+            </div>
+          </div>
         )}
         <button
           onClick={onToggle}
