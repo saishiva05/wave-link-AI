@@ -88,11 +88,11 @@ const CandidateProfile = () => {
     <div className="space-y-6 max-w-[900px] mx-auto">
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
         <nav className="flex items-center gap-1.5 text-sm mb-4">
-          <button onClick={() => navigate("/candidate/dashboard")} className="text-neutral-500 hover:text-primary transition-colors">Dashboard</button>
-          <span className="text-neutral-300">/</span>
-          <span className="text-secondary-900 font-semibold">My Profile</span>
+          <button onClick={() => navigate("/candidate/dashboard")} className="text-muted-foreground hover:text-primary transition-colors">Dashboard</button>
+          <span className="text-muted-foreground/50">/</span>
+          <span className="text-foreground font-semibold">My Profile</span>
         </nav>
-        <h1 className="text-2xl md:text-4xl font-bold text-secondary-900 font-display">My Profile</h1>
+        <h1 className="text-2xl md:text-4xl font-bold text-foreground font-display">My Profile</h1>
         <p className="text-base text-muted-foreground mt-1">View and manage your profile information</p>
       </motion.div>
 
@@ -109,19 +109,19 @@ const CandidateProfile = () => {
           </div>
 
           <div className="pt-14 px-8 pb-8">
-            <h2 className="text-xl font-bold text-secondary-900">{fullName || "Candidate"}</h2>
-            <p className="text-sm text-neutral-600 flex items-center gap-1.5 mt-1">
+            <h2 className="text-xl font-bold text-foreground">{fullName || "Candidate"}</h2>
+            <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1">
               <Mail className="w-3.5 h-3.5" /> {email}
             </p>
 
             <div className="flex flex-wrap gap-4 mt-4">
-              <span className="flex items-center gap-1.5 text-sm text-neutral-700 bg-primary-50 px-3 py-1.5 rounded-full">
+              <span className="flex items-center gap-1.5 text-sm text-foreground bg-primary-50 px-3 py-1.5 rounded-full">
                 <Briefcase className="w-3.5 h-3.5 text-primary" /> {stats.total} Applications
               </span>
-              <span className="flex items-center gap-1.5 text-sm text-neutral-700 bg-success-50 px-3 py-1.5 rounded-full">
+              <span className="flex items-center gap-1.5 text-sm text-foreground bg-success-50 px-3 py-1.5 rounded-full">
                 <Award className="w-3.5 h-3.5 text-success-500" /> {stats.interviews} Interviews
               </span>
-              <span className="flex items-center gap-1.5 text-sm text-neutral-700 bg-info-50 px-3 py-1.5 rounded-full">
+              <span className="flex items-center gap-1.5 text-sm text-foreground bg-info-50 px-3 py-1.5 rounded-full">
                 <Shield className="w-3.5 h-3.5 text-info-500" /> Managed by {recruiter.name}
               </span>
             </div>
@@ -132,26 +132,26 @@ const CandidateProfile = () => {
       {/* Edit Form */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <div className="bg-card border border-border rounded-xl p-8 shadow-xs">
-          <h3 className="text-lg font-semibold text-secondary-900 font-display mb-6">Personal Information</h3>
+          <h3 className="text-lg font-semibold text-foreground font-display mb-6">Personal Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-neutral-700 flex items-center gap-1.5"><User className="w-3.5 h-3.5" /> Full Name</Label>
+              <Label className="text-sm font-medium text-foreground flex items-center gap-1.5"><User className="w-3.5 h-3.5" /> Full Name</Label>
               <Input value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-neutral-700 flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> Email</Label>
-              <Input value={email || ""} disabled className="bg-neutral-50 cursor-not-allowed" />
+              <Label className="text-sm font-medium text-foreground flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> Email</Label>
+              <Input value={email || ""} disabled className="bg-muted cursor-not-allowed" />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-neutral-700 flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> Phone</Label>
+              <Label className="text-sm font-medium text-foreground flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> Phone</Label>
               <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+1 234 567 8900" />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-neutral-700 flex items-center gap-1.5"><Briefcase className="w-3.5 h-3.5" /> Current Job Title</Label>
+              <Label className="text-sm font-medium text-foreground flex items-center gap-1.5"><Briefcase className="w-3.5 h-3.5" /> Current Job Title</Label>
               <Input value={form.current_job_title} onChange={(e) => setForm({ ...form, current_job_title: e.target.value })} placeholder="e.g. Software Engineer" />
             </div>
             <div className="space-y-2 md:col-span-2">
-              <Label className="text-sm font-medium text-neutral-700 flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> Location</Label>
+              <Label className="text-sm font-medium text-foreground flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> Location</Label>
               <Input value={form.current_location} onChange={(e) => setForm({ ...form, current_location: e.target.value })} placeholder="e.g. New York, NY" />
             </div>
           </div>
@@ -165,16 +165,16 @@ const CandidateProfile = () => {
       {/* Recruiter Info */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
         <div className="bg-card border border-border rounded-xl p-8 shadow-xs">
-          <h3 className="text-lg font-semibold text-secondary-900 font-display mb-4">Assigned Recruiter</h3>
+          <h3 className="text-lg font-semibold text-foreground font-display mb-4">Assigned Recruiter</h3>
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg shrink-0">
               {recruiter.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)}
             </div>
             <div>
-              <p className="font-semibold text-secondary-900">{recruiter.name}</p>
-              <p className="text-sm text-neutral-600">{recruiter.company}</p>
-              <p className="text-sm text-neutral-600 flex items-center gap-1.5 mt-1"><Mail className="w-3.5 h-3.5" /> {recruiter.email}</p>
-              {recruiter.phone && <p className="text-sm text-neutral-600 flex items-center gap-1.5 mt-0.5"><Phone className="w-3.5 h-3.5" /> {recruiter.phone}</p>}
+              <p className="font-semibold text-foreground">{recruiter.name}</p>
+              <p className="text-sm text-muted-foreground">{recruiter.company}</p>
+              <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1"><Mail className="w-3.5 h-3.5" /> {recruiter.email}</p>
+              {recruiter.phone && <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-0.5"><Phone className="w-3.5 h-3.5" /> {recruiter.phone}</p>}
             </div>
           </div>
         </div>

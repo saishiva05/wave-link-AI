@@ -81,7 +81,7 @@ const RecruiterSettingsPage = () => {
   return (
     <div className="space-y-8 max-w-3xl">
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl md:text-3xl font-bold text-secondary-900 font-display">Settings</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground font-display">Settings</h1>
         <p className="text-base text-muted-foreground mt-1">Manage your account and company information</p>
       </motion.div>
 
@@ -94,15 +94,15 @@ const RecruiterSettingsPage = () => {
             <User className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-secondary-900">Personal Information</h2>
+            <h2 className="text-lg font-semibold text-foreground">Personal Information</h2>
             <p className="text-sm text-muted-foreground">Update your profile details</p>
           </div>
         </div>
 
         <div className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-secondary-900 mb-1.5">
-              <Mail className="w-4 h-4 inline mr-1.5 text-neutral-400" />Email
+            <label className="block text-sm font-medium text-foreground mb-1.5">
+              <Mail className="w-4 h-4 inline mr-1.5 text-muted-foreground" />Email
             </label>
             <input type="email" value={profile?.email || ""} disabled
               className="w-full h-11 px-4 text-sm rounded-lg border border-border bg-muted text-muted-foreground cursor-not-allowed" />
@@ -110,19 +110,19 @@ const RecruiterSettingsPage = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-secondary-900 mb-1.5">
-              <User className="w-4 h-4 inline mr-1.5 text-neutral-400" />Full Name
+            <label className="block text-sm font-medium text-foreground mb-1.5">
+              <User className="w-4 h-4 inline mr-1.5 text-muted-foreground" />Full Name
             </label>
             <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)}
-              className="w-full h-11 px-4 text-sm rounded-lg border border-border bg-card outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
+              className="w-full h-11 px-4 text-sm rounded-lg border border-border bg-card text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-secondary-900 mb-1.5">
-              <Phone className="w-4 h-4 inline mr-1.5 text-neutral-400" />Phone Number
+            <label className="block text-sm font-medium text-foreground mb-1.5">
+              <Phone className="w-4 h-4 inline mr-1.5 text-muted-foreground" />Phone Number
             </label>
             <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 9876543210"
-              className="w-full h-11 px-4 text-sm rounded-lg border border-border bg-card outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground" />
+              className="w-full h-11 px-4 text-sm rounded-lg border border-border bg-card text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground" />
           </div>
         </div>
       </motion.div>
@@ -136,26 +136,26 @@ const RecruiterSettingsPage = () => {
             <Building className="w-5 h-5 text-success-500" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-secondary-900">Company Information</h2>
+            <h2 className="text-lg font-semibold text-foreground">Company Information</h2>
             <p className="text-sm text-muted-foreground">Your organization details</p>
           </div>
         </div>
 
         <div className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-secondary-900 mb-1.5">
-              <Building className="w-4 h-4 inline mr-1.5 text-neutral-400" />Company Name
+            <label className="block text-sm font-medium text-foreground mb-1.5">
+              <Building className="w-4 h-4 inline mr-1.5 text-muted-foreground" />Company Name
             </label>
             <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="e.g. Acme Corp"
-              className="w-full h-11 px-4 text-sm rounded-lg border border-border bg-card outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground" />
+              className="w-full h-11 px-4 text-sm rounded-lg border border-border bg-card text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-secondary-900 mb-1.5">
-              <Globe className="w-4 h-4 inline mr-1.5 text-neutral-400" />Company Website
+            <label className="block text-sm font-medium text-foreground mb-1.5">
+              <Globe className="w-4 h-4 inline mr-1.5 text-muted-foreground" />Company Website
             </label>
             <input type="url" value={companyWebsite} onChange={(e) => setCompanyWebsite(e.target.value)} placeholder="https://www.example.com"
-              className="w-full h-11 px-4 text-sm rounded-lg border border-border bg-card outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground" />
+              className="w-full h-11 px-4 text-sm rounded-lg border border-border bg-card text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground" />
           </div>
         </div>
       </motion.div>
