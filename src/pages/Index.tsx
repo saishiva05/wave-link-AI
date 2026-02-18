@@ -10,7 +10,7 @@ const Index = () => {
       {/* Header */}
       <header className="h-20 flex items-center justify-center bg-card shadow-card sticky top-0 z-50">
         <div className="flex flex-col items-center">
-          <img src={wavelynkLogo} alt="WaveLynk IT Consulting & Services" className="h-14 md:h-16 w-auto object-contain" />
+          <img src={wavelynkLogo} alt="WaveLynk IT Consulting & Services" className="h-16 md:h-20 w-auto object-contain" />
         </div>
       </header>
 

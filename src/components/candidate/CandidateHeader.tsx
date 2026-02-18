@@ -3,6 +3,7 @@ import { Menu, Bell, User, Briefcase, FileText, HelpCircle, LogOut, CheckCircle,
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import ThemeToggle from "@/components/ThemeToggle";
 import { useCandidateDashboard } from "@/hooks/useCandidateDashboard";
 import { formatDistanceToNow } from "date-fns";
 
@@ -50,7 +51,8 @@ const CandidateHeader = ({ onMenuClick }: CandidateHeaderProps) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
         {/* Notifications */}
         <div ref={notifRef} className="relative">
           <button onClick={() => setNotifOpen(!notifOpen)} className="relative w-10 h-10 rounded-lg flex items-center justify-center hover:bg-muted text-neutral-600 transition-colors">

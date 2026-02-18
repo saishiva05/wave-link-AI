@@ -60,9 +60,9 @@ const CandidateSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Ca
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
-      <div className="h-20 flex items-center justify-between px-4 border-b border-border">
-        {!collapsed && <img src={wavelynkLogo} alt="WaveLynk" className="h-12 w-auto object-contain rounded-md bg-white p-1.5" />}
-        {collapsed && <img src={wavelynkLogo} alt="WaveLynk" className="w-9 h-9 rounded-md bg-white p-0.5 mx-auto object-contain" />}
+      <div className="h-24 flex items-center justify-between px-4 border-b border-border">
+        {!collapsed && <img src={wavelynkLogo} alt="WaveLynk" className="h-16 w-auto object-contain rounded-lg bg-white p-2 shadow-sm" />}
+        {collapsed && <img src={wavelynkLogo} alt="WaveLynk" className="w-11 h-11 rounded-lg bg-white p-1 mx-auto object-contain shadow-sm" />}
         <button onClick={onToggle} className="hidden lg:flex items-center justify-center w-7 h-7 rounded bg-muted hover:bg-neutral-200 text-neutral-500 transition-colors shrink-0">
           {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
