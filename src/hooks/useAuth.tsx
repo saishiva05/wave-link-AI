@@ -11,6 +11,7 @@ interface UserProfile {
   full_name: string;
   phone: string | null;
   is_active: boolean;
+  avatar_url: string | null;
 }
 
 interface AuthContextType {

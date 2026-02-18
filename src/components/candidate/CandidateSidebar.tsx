@@ -60,18 +60,11 @@ const CandidateSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Ca
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
-      <div className="h-24 flex items-center justify-between px-4 border-b border-border">
+      <div className="h-20 flex items-center justify-between px-3 border-b border-border">
         {!collapsed && (
           <div className="flex-1 flex justify-center">
             <div className="bg-white dark:bg-white rounded-xl p-2.5 shadow-md">
-              <img src={wavelynkLogo} alt="WaveLynk" className="h-12 w-auto object-contain" />
-            </div>
-          </div>
-        )}
-        {collapsed && (
-          <div className="flex-1 flex justify-center">
-            <div className="bg-white dark:bg-white rounded-lg p-1.5 shadow-md">
-              <img src={wavelynkLogo} alt="WaveLynk" className="w-9 h-9 object-contain" />
+              <img src={wavelynkLogo} alt="WaveLynk" className="h-10 w-auto object-contain" />
             </div>
           </div>
         )}

@@ -11,7 +11,7 @@ interface CreateUserRequest {
   email: string;
   full_name: string;
   password: string;
-  role: "recruiter" | "candidate";
+  role: "admin" | "recruiter" | "candidate";
   phone?: string;
   company_name?: string;
   company_website?: string;
@@ -72,10 +72,10 @@ serve(async (req: Request) => {
 
     const body: CreateUserRequest = await req.json();
 
-    // Only admins can create recruiters
-    if (body.role === "recruiter" && !isAdmin) {
+    // Only admins can create admins or recruiters
+    if ((body.role === "recruiter" || body.role === "admin") && !isAdmin) {
       return new Response(
-        JSON.stringify({ error: "Only admins can create recruiter accounts" }),
+        JSON.stringify({ error: `Only admins can create ${body.role} accounts` }),
         { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
