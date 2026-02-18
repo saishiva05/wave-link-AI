@@ -32,7 +32,7 @@ const Index = () => {
             <p className="text-sm tracking-widest text-primary font-medium uppercase mb-3">
               AI-Powered Recruitment Intelligence
             </p>
-            <h1 className="font-display text-4xl md:text-5xl font-bold text-secondary-900 mb-4">
+            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
               Welcome to Wave Lynk AI
             </h1>
             <p className="text-lg text-muted-foreground">

@@ -78,11 +78,11 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
           className="lg:hidden flex items-center justify-center w-9 h-9 rounded-md hover:bg-muted transition-colors"
           aria-label="Open menu"
         >
-          <Menu className="w-5 h-5 text-neutral-600" />
+          <Menu className="w-5 h-5 text-muted-foreground" />
         </button>
 
         <div>
-          <h1 className="text-lg md:text-xl font-bold text-secondary-900 font-display">
+          <h1 className="text-lg md:text-xl font-bold text-foreground font-display">
             {getGreeting()}, {fullName?.split(" ")[0] || "there"}
           </h1>
           <p className="text-xs md:text-sm text-muted-foreground">
@@ -139,7 +139,7 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
         <div className="relative" ref={notifRef}>
           <button
             onClick={() => { setShowNotifications(!showNotifications); setShowUserMenu(false); setShowQuickActions(false); }}
-            className="relative flex items-center justify-center w-9 h-9 rounded-full hover:bg-primary-50 text-neutral-600 hover:text-primary transition-colors"
+            className="relative flex items-center justify-center w-9 h-9 rounded-full hover:bg-primary-50 text-muted-foreground hover:text-primary transition-colors"
             aria-label="Notifications"
           >
             <Bell className="w-5 h-5" />
@@ -151,7 +151,7 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
           {showNotifications && (
             <div className="absolute right-0 top-12 w-[340px] bg-card rounded-xl border border-border shadow-elevated overflow-hidden animate-scale-in z-50">
               <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-                <h3 className="font-semibold text-sm text-secondary-900">Notifications</h3>
+                <h3 className="font-semibold text-sm text-foreground">Notifications</h3>
                 {unreadCount > 0 && (
                   <button onClick={markAllRead} className="text-xs text-primary hover:underline">
                     Mark all as read
@@ -194,7 +194,7 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
           {showUserMenu && (
             <div className="absolute right-0 top-12 w-56 bg-card rounded-xl border border-border shadow-elevated overflow-hidden animate-scale-in z-50">
               <div className="px-4 py-3 border-b border-border">
-                <p className="text-sm font-semibold text-secondary-900">{fullName || "Recruiter"}</p>
+                <p className="text-sm font-semibold text-foreground">{fullName || "Recruiter"}</p>
                 <p className="text-xs text-muted-foreground">{email || ""}</p>
               </div>
               <div className="p-1.5">
@@ -207,7 +207,7 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
                     key={item.label}
                     className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-md text-sm text-foreground hover:bg-muted transition-colors"
                   >
-                    <item.icon className="w-4 h-4 text-neutral-500" />
+                    <item.icon className="w-4 h-4 text-muted-foreground" />
                     {item.label}
                   </button>
                 ))}
@@ -217,7 +217,7 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
                   onClick={closeAll}
                   className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-md text-sm text-foreground hover:bg-muted transition-colors"
                 >
-                  <HelpCircle className="w-4 h-4 text-neutral-500" />
+                  <HelpCircle className="w-4 h-4 text-muted-foreground" />
                   Help & Support
                 </Link>
                 <div className="my-1 border-t border-border" />

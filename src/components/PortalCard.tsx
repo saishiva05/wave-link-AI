@@ -43,7 +43,7 @@ const PortalCard = ({
         <Icon className="w-7 h-7 text-primary" strokeWidth={1.8} />
       </div>
 
-      <h2 className="font-display text-2xl font-semibold text-secondary-900 mb-3">
+      <h2 className="font-display text-2xl font-semibold text-foreground mb-3">
         {title}
       </h2>
 
@@ -60,7 +60,7 @@ const PortalCard = ({
       {features && (
         <ul className="w-full text-left space-y-3 mb-6">
           {features.map((feature, i) => (
-            <li key={i} className="flex items-center gap-2 text-sm text-neutral-700">
+            <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
               <svg className="w-4 h-4 text-success-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>

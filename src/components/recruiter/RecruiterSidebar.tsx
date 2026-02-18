@@ -64,8 +64,8 @@ const RecruiterSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Re
           "flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group relative",
           collapsed ? "justify-center px-2 mx-1" : "mx-3",
           active
-            ? "bg-primary-100 text-primary-700 font-semibold"
-            : "text-neutral-600 hover:text-primary-700 hover:bg-primary-50"
+            ? "bg-primary-100 text-primary font-semibold"
+            : "text-muted-foreground hover:text-primary hover:bg-primary-50"
         )}
         activeClassName=""
       >
@@ -75,7 +75,7 @@ const RecruiterSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Re
         <item.icon
           className={cn(
             "shrink-0 w-5 h-5",
-            active ? "text-primary" : "text-neutral-500 group-hover:text-primary"
+            active ? "text-primary" : "text-muted-foreground group-hover:text-primary"
           )}
         />
         {!collapsed && <span className="text-sm font-medium">{item.title}</span>}
@@ -158,7 +158,7 @@ const RecruiterSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Re
                 {initials}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-secondary-900 truncate">{fullName || "Recruiter"}</p>
+                <p className="text-sm font-semibold text-foreground truncate">{fullName || "Recruiter"}</p>
               </div>
             </div>
             <button
