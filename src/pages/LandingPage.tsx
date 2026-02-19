@@ -1,10 +1,11 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import {
   Search, FileText, Brain, Users, BarChart3,
   Zap, Target, Clock, CheckCircle2, ArrowRight, Star,
   Globe, Sparkles, GraduationCap, Rocket, ShieldCheck,
-  TrendingUp, HeartHandshake, Eye, MessageSquare
+  TrendingUp, HeartHandshake, Eye, MessageSquare, ChevronDown
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -80,6 +81,57 @@ const whyUs = [
   { icon: TrendingUp, title: "AI + Human Expertise", description: "AI finds the jobs. Real recruiters submit and follow up. The best of both worlds." },
   { icon: Target, title: "Personalized Job Matching", description: "Not random applications. Every job is matched to your skills, location, and career goals." },
 ];
+const faqs = [
+  { q: "Is Wave Lynk AI really free for students?", a: "Yes, 100% free. You never pay anything. Our service is funded by the companies and recruiters who use our platform to find talent like you." },
+  { q: "How does the AI find jobs for me?", a: "Our AI agents scan hundreds of job boards including LinkedIn and JSearch 24/7. They match listings to your skills, experience, location preferences, and career goals — so you only see relevant opportunities." },
+  { q: "Do I need to apply to jobs myself?", a: "No! That's the best part. Your assigned recruiter handles all applications on your behalf. They submit tailored, ATS-optimized resumes for each role. You just focus on preparing for interviews." },
+  { q: "What kind of jobs will I be matched with?", a: "Only legitimate, full-time positions with real companies. No contract gigs, no C2C, no staffing agencies. Direct-hire roles that align with your career path and qualifications." },
+  { q: "How long does it take to get hired?", a: "It varies by field and experience, but most students start receiving interview calls within 1–2 weeks of signing up. Some have landed offers in as little as 3 weeks." },
+  { q: "Can I track my applications?", a: "Absolutely. Your candidate dashboard shows every application in real-time — submitted, under review, interview scheduled, offer received. Full transparency at every stage." },
+  { q: "What makes Wave Lynk different from other job platforms?", a: "We combine AI technology with real human recruiters. While other platforms just list jobs, we actively apply on your behalf with optimized resumes and follow up with employers. It's like having a personal career agent." },
+  { q: "Is my data safe?", a: "Yes. We use enterprise-grade encryption and never share your personal information with third parties without your consent. Your resume and data are only used to match you with jobs." },
+];
+
+const FAQAccordion = () => {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <div className="space-y-3">
+      {faqs.map((faq, i) => (
+        <motion.div
+          key={i}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-30px" }}
+          variants={fadeUp}
+          custom={i * 0.5}
+          className="rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/30 transition-colors duration-300"
+        >
+          <button
+            onClick={() => setOpenIndex(openIndex === i ? null : i)}
+            className="w-full flex items-center justify-between p-6 text-left gap-4"
+          >
+            <span className="font-display font-semibold text-foreground">{faq.q}</span>
+            <ChevronDown className={`w-5 h-5 text-muted-foreground shrink-0 transition-transform duration-300 ${openIndex === i ? "rotate-180" : ""}`} />
+          </button>
+          <AnimatePresence>
+            {openIndex === i && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: easeOut }}
+                className="overflow-hidden"
+              >
+                <p className="px-6 pb-6 text-muted-foreground leading-relaxed">{faq.a}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      ))}
+    </div>
+  );
+};
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -101,6 +153,7 @@ const LandingPage = () => {
             <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
             <a href="#why-us" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Why Us</a>
             <a href="#testimonials" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Success Stories</a>
+            <a href="#faq" className="text-sm text-muted-foreground hover:text-foreground transition-colors">FAQ</a>
           </div>
 
           <div className="flex items-center gap-3">
@@ -350,6 +403,30 @@ const LandingPage = () => {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="py-24 bg-muted/30">
+        <div className="max-w-3xl mx-auto px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="text-center mb-16"
+          >
+            <motion.p variants={fadeUp} custom={0} className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
+              FAQs
+            </motion.p>
+            <motion.h2 variants={fadeUp} custom={1} className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Frequently Asked Questions
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="text-muted-foreground text-lg">
+              Everything you need to know before getting started.
+            </motion.p>
+          </motion.div>
+
+          <FAQAccordion />
         </div>
       </section>
 
