@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
+import LandingPage from "./pages/LandingPage";
 import AdminLogin from "./pages/AdminLogin";
 import RecruiterLogin from "./pages/RecruiterLogin";
 import CandidateLogin from "./pages/CandidateLogin";
@@ -55,7 +56,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Index />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/recruiter/login" element={<RecruiterLogin />} />
