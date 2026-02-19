@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
-  Search, FileText, Brain, Users, BarChart3, Shield,
+  Search, FileText, Brain, Users, BarChart3,
   Zap, Target, Clock, CheckCircle2, ArrowRight, Star,
-  Briefcase, Globe, Sparkles, ChevronRight, Mail
+  Globe, Sparkles, GraduationCap, Rocket, ShieldCheck,
+  TrendingUp, HeartHandshake, Eye, MessageSquare
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -21,56 +22,63 @@ const fadeUp = {
 };
 
 const stats = [
-  { value: "10x", label: "Faster Hiring", icon: Zap },
-  { value: "95%", label: "ATS Match Rate", icon: Target },
-  { value: "500+", label: "Jobs Scraped Daily", icon: Globe },
-  { value: "24/7", label: "AI-Powered Support", icon: Clock },
+  { value: "10x", label: "Faster Job Placement", icon: Zap },
+  { value: "95%", label: "Resume-to-Job Match", icon: Target },
+  { value: "500+", label: "Jobs Found Daily", icon: Globe },
+  { value: "Zero", label: "Effort From You", icon: Clock },
 ];
 
 const features = [
   {
     icon: Search,
-    title: "AI Job Scraping",
-    description: "Automatically scrape and aggregate job listings from LinkedIn, JSearch, and more — all in one dashboard.",
+    title: "We Find Jobs For You",
+    description: "Our AI scans LinkedIn, JSearch, and top job boards 24/7 — finding roles that match your skills, experience, and career goals automatically.",
   },
   {
     icon: Brain,
-    title: "ATS Resume Matching",
-    description: "Our AI analyzes candidate CVs against job descriptions and provides detailed ATS compatibility scores.",
+    title: "AI-Optimized Resumes",
+    description: "Your CV gets tailored for every job application. Our ATS matching engine ensures your resume beats filters and lands on recruiter desks.",
   },
   {
     icon: FileText,
-    title: "Smart CV Management",
-    description: "Upload, organize, and optimize candidate resumes. AI-powered suggestions to improve match rates.",
+    title: "One CV, Unlimited Versions",
+    description: "Upload your resume once. We create optimized versions for each application — highlighting the right skills for every role.",
   },
   {
-    icon: Users,
-    title: "Candidate Pipeline",
-    description: "Track candidates through every stage — from application to offer. Full visibility for recruiters and candidates.",
+    icon: Eye,
+    title: "Track Everything in Real-Time",
+    description: "See exactly where each application stands — submitted, reviewed, interview scheduled, offer received. No more guessing.",
   },
   {
-    icon: BarChart3,
-    title: "Real-Time Analytics",
-    description: "Platform-wide insights on hiring trends, application success rates, and recruiter performance.",
+    icon: HeartHandshake,
+    title: "Dedicated Recruiter Support",
+    description: "You're assigned a real recruiter who works on your behalf — sourcing jobs, submitting applications, and advocating for you.",
   },
   {
-    icon: Mail,
-    title: "AI Email Generation",
-    description: "Generate personalized outreach emails tailored to specific job postings and candidate profiles.",
+    icon: MessageSquare,
+    title: "Direct Communication",
+    description: "Message your recruiter anytime. Get updates, ask questions, and stay informed throughout your entire job search journey.",
   },
 ];
 
 const howItWorks = [
-  { step: "01", title: "Scrape Jobs", description: "AI agents scan multiple job platforms and aggregate relevant listings based on your criteria.", icon: Search },
-  { step: "02", title: "Match Candidates", description: "Upload CVs and let our ATS matcher score candidates against job requirements instantly.", icon: Target },
-  { step: "03", title: "Apply & Track", description: "Submit applications and track every stage from submission to offer in real-time.", icon: CheckCircle2 },
-  { step: "04", title: "Hire Smarter", description: "Use analytics and AI insights to optimize your recruitment strategy and close faster.", icon: Sparkles },
+  { step: "01", title: "Sign Up & Upload CV", description: "Create your profile and upload your resume. That's all you need to do — we handle the rest.", icon: GraduationCap },
+  { step: "02", title: "AI Finds Your Dream Jobs", description: "Our AI agents scrape hundreds of job platforms daily and match you with roles that fit your profile perfectly.", icon: Search },
+  { step: "03", title: "We Apply On Your Behalf", description: "Your dedicated recruiter submits tailored applications with AI-optimized resumes — so you never miss an opportunity.", icon: Rocket },
+  { step: "04", title: "You Get Hired", description: "Track every application in real-time, attend interviews with confidence, and land your dream job.", icon: Sparkles },
 ];
 
 const testimonials = [
-  { name: "Sarah M.", role: "Senior Recruiter", quote: "Wave Lynk AI cut our time-to-hire by 60%. The ATS matching is incredibly accurate.", rating: 5 },
-  { name: "James K.", role: "Hiring Manager", quote: "The job scraping feature alone saves us hours every day. Game-changing platform.", rating: 5 },
-  { name: "Priya R.", role: "Candidate", quote: "I could track every application in real-time. The transparency gave me so much confidence.", rating: 5 },
+  { name: "Ankit S.", role: "Software Engineer — Hired in 3 weeks", quote: "I was struggling with applications for months. Wave Lynk AI found me the perfect role and my recruiter handled everything. I just showed up to interviews!", rating: 5 },
+  { name: "Maria L.", role: "Data Analyst — Landed $95K offer", quote: "The ATS-optimized resume was a game changer. I went from zero callbacks to 5 interview calls in one week.", rating: 5 },
+  { name: "David C.", role: "UX Designer — 4 offers in 2 weeks", quote: "I could track every application in real-time. The transparency and recruiter support gave me so much confidence.", rating: 5 },
+];
+
+const whyUs = [
+  { icon: Zap, title: "100% Free For Students", description: "You pay nothing. Our recruiters work on your behalf at zero cost to you." },
+  { icon: ShieldCheck, title: "Only Legit, Full-Time Roles", description: "No contract gigs. No C2C. Only direct, full-time positions with real companies." },
+  { icon: TrendingUp, title: "AI + Human Expertise", description: "AI finds the jobs. Real recruiters submit and follow up. The best of both worlds." },
+  { icon: Target, title: "Personalized Job Matching", description: "Not random applications. Every job is matched to your skills, location, and career goals." },
 ];
 
 const LandingPage = () => {
@@ -89,10 +97,10 @@ const LandingPage = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
             <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How It Works</a>
-            <a href="#testimonials" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Testimonials</a>
-            <a href="#portals" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Portals</a>
+            <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
+            <a href="#why-us" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Why Us</a>
+            <a href="#testimonials" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Success Stories</a>
           </div>
 
           <div className="flex items-center gap-3">
@@ -104,13 +112,6 @@ const LandingPage = () => {
               className="font-semibold"
             >
               Sign In
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => navigate("/login")}
-              className="font-semibold hidden sm:inline-flex"
-            >
-              Get Started
             </Button>
           </div>
         </div>
@@ -129,24 +130,23 @@ const LandingPage = () => {
             className="text-center max-w-4xl mx-auto"
           >
             <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-primary">AI-Powered Recruitment Intelligence</span>
+              <GraduationCap className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-primary">Built for Students & Job Seekers</span>
             </motion.div>
 
             <motion.h1 variants={fadeUp} custom={1} className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight mb-6">
-              Hire Smarter with{" "}
-              <span className="text-primary">AI-Driven</span>{" "}
-              Recruitment
+              Stop Applying.{" "}
+              <span className="text-primary">Start Getting Hired.</span>
             </motion.h1>
 
             <motion.p variants={fadeUp} custom={2} className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-              Wave Lynk AI combines intelligent job scraping, ATS resume matching, and candidate tracking 
-              to streamline your entire recruitment pipeline — from sourcing to hiring.
+              Upload your resume once. Our AI finds the best jobs, optimizes your CV for each role, 
+              and a dedicated recruiter applies on your behalf. You just show up for interviews.
             </motion.p>
 
             <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="lg" onClick={() => navigate("/login")} className="text-base px-8 h-14 font-semibold shadow-lg hover:shadow-xl transition-all">
-                Get Started Free <ArrowRight className="ml-2 w-5 h-5" />
+                Get Started — It's Free <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
               <Button variant="outline" size="lg" onClick={() => {
                 document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
@@ -154,6 +154,10 @@ const LandingPage = () => {
                 See How It Works
               </Button>
             </motion.div>
+
+            <motion.p variants={fadeUp} custom={4} className="mt-4 text-sm text-muted-foreground">
+              No credit card required • 100% free for candidates • Your dream job is waiting
+            </motion.p>
           </motion.div>
 
           {/* Stats Bar */}
@@ -174,8 +178,8 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-24 bg-muted/30">
+      {/* How It Works */}
+      <section id="how-it-works" className="py-24 bg-muted/30">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial="hidden"
@@ -184,53 +188,14 @@ const LandingPage = () => {
             className="text-center mb-16"
           >
             <motion.p variants={fadeUp} custom={0} className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
-              Platform Features
+              Simple as 1-2-3-4
             </motion.p>
             <motion.h2 variants={fadeUp} custom={1} className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Everything You Need to Recruit Smarter
+              From Resume Upload to Job Offer
             </motion.h2>
             <motion.p variants={fadeUp} custom={2} className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              A complete suite of AI-powered tools designed for modern recruiters and candidates.
+              We do the heavy lifting. You focus on acing your interviews.
             </motion.p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, i) => (
-              <motion.div
-                key={feature.title}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                variants={fadeUp}
-                custom={i}
-                className="group p-8 rounded-2xl bg-card border border-border hover:border-primary/40 hover:shadow-xl transition-all duration-300 cursor-default"
-              >
-                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
-                  <feature.icon className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="font-display text-xl font-semibold text-foreground mb-3">{feature.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section id="how-it-works" className="py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            className="text-center mb-16"
-          >
-            <motion.p variants={fadeUp} custom={0} className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
-              How It Works
-            </motion.p>
-            <motion.h2 variants={fadeUp} custom={1} className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-              From Sourcing to Hiring in 4 Steps
-            </motion.h2>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -261,8 +226,8 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section id="testimonials" className="py-24 bg-muted/30">
+      {/* Features Section */}
+      <section id="features" className="py-24">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial="hidden"
@@ -271,10 +236,93 @@ const LandingPage = () => {
             className="text-center mb-16"
           >
             <motion.p variants={fadeUp} custom={0} className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
-              Testimonials
+              What You Get
             </motion.p>
             <motion.h2 variants={fadeUp} custom={1} className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Trusted by Recruiters & Candidates
+              Your Entire Job Search, Handled
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              No more endless scrolling, no more tailoring resumes, no more guessing. We take care of everything.
+            </motion.p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((feature, i) => (
+              <motion.div
+                key={feature.title}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+                variants={fadeUp}
+                custom={i}
+                className="group p-8 rounded-2xl bg-card border border-border hover:border-primary/40 hover:shadow-xl transition-all duration-300 cursor-default"
+              >
+                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
+                  <feature.icon className="w-7 h-7 text-primary" />
+                </div>
+                <h3 className="font-display text-xl font-semibold text-foreground mb-3">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Us Section */}
+      <section id="why-us" className="py-24 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="text-center mb-16"
+          >
+            <motion.p variants={fadeUp} custom={0} className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
+              Why Wave Lynk AI
+            </motion.p>
+            <motion.h2 variants={fadeUp} custom={1} className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Why Students Trust Us
+            </motion.h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {whyUs.map((item, i) => (
+              <motion.div
+                key={item.title}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+                variants={fadeUp}
+                custom={i}
+                className="flex gap-5 p-6 rounded-2xl bg-card border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300"
+              >
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <item.icon className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-display text-lg font-semibold text-foreground mb-1">{item.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{item.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section id="testimonials" className="py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="text-center mb-16"
+          >
+            <motion.p variants={fadeUp} custom={0} className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
+              Success Stories
+            </motion.p>
+            <motion.h2 variants={fadeUp} custom={1} className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Students Who Landed Their Dream Jobs
             </motion.h2>
           </motion.div>
 
@@ -305,65 +353,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Portal Access */}
-      <section id="portals" className="py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            className="text-center mb-16"
-          >
-            <motion.p variants={fadeUp} custom={0} className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
-              Access Portals
-            </motion.p>
-            <motion.h2 variants={fadeUp} custom={1} className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Choose Your Portal
-            </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="text-muted-foreground text-lg max-w-xl mx-auto">
-              Three dedicated experiences tailored for every role in the recruitment process.
-            </motion.p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[
-              { icon: Shield, title: "Admin", description: "Platform management, analytics, and user administration.", href: "/admin/login", color: "from-secondary to-secondary/80" },
-              { icon: Briefcase, title: "Recruiter", description: "Job scraping, ATS matching, candidate management, and AI tools.", href: "/recruiter/login", featured: true, color: "from-primary to-primary/80" },
-              { icon: Users, title: "Candidate", description: "Application tracking, CV management, and real-time status updates.", href: "/candidate/login", color: "from-accent-foreground to-accent-foreground/80" },
-            ].map((portal, i) => (
-              <motion.div
-                key={portal.title}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                variants={fadeUp}
-                custom={i}
-                onClick={() => navigate(portal.href)}
-                className={`group relative p-8 rounded-2xl border cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
-                  portal.featured
-                    ? "bg-primary/5 border-primary/40 ring-1 ring-primary/20"
-                    : "bg-card border-border hover:border-primary/30"
-                }`}
-              >
-                {portal.featured && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-xs font-semibold bg-primary text-primary-foreground rounded-full">
-                    Most Popular
-                  </span>
-                )}
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${portal.color} flex items-center justify-center mb-6 mx-auto`}>
-                  <portal.icon className="w-8 h-8 text-primary-foreground" />
-                </div>
-                <h3 className="font-display text-xl font-semibold text-foreground text-center mb-2">{portal.title} Portal</h3>
-                <p className="text-muted-foreground text-center text-sm mb-6">{portal.description}</p>
-                <div className="flex items-center justify-center gap-2 text-primary font-semibold text-sm group-hover:gap-3 transition-all">
-                  Sign In <ChevronRight className="w-4 h-4" />
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-6">
@@ -377,18 +366,22 @@ const LandingPage = () => {
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
             <motion.div variants={fadeUp} custom={0} className="relative z-10">
+              <GraduationCap className="w-12 h-12 text-primary mx-auto mb-6" />
               <h2 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-                Ready to Transform Your Recruitment?
+                Your Dream Job Is One Click Away
               </h2>
-              <p className="text-primary-foreground/80 text-lg mb-8 max-w-xl mx-auto">
-                Join Wave Lynk AI today and experience the future of intelligent hiring.
+              <p className="text-primary-foreground/80 text-lg mb-4 max-w-xl mx-auto">
+                Join hundreds of students who stopped struggling with job applications and started getting hired — with the power of AI and real recruiter support.
+              </p>
+              <p className="text-primary-foreground/60 text-sm mb-8">
+                It's completely free. No hidden costs. No commitments.
               </p>
               <Button
                 size="lg"
                 onClick={() => navigate("/login")}
                 className="bg-primary text-primary-foreground hover:bg-primary/90 text-base px-10 h-14 font-semibold shadow-lg"
               >
-                Get Started Now <ArrowRight className="ml-2 w-5 h-5" />
+                Get Started For Free <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </motion.div>
           </motion.div>
@@ -407,26 +400,26 @@ const LandingPage = () => {
                 <span className="font-display text-lg font-bold text-foreground">Wave Lynk AI</span>
               </div>
               <p className="text-muted-foreground text-sm max-w-sm leading-relaxed">
-                WaveLynk IT Consulting & Services — AI-powered recruitment intelligence platform 
-                helping recruiters hire smarter and candidates land their dream jobs.
+                WaveLynk IT Consulting & Services — helping students and job seekers land their dream careers 
+                with AI-powered job matching and dedicated recruiter support. 100% free for candidates.
               </p>
             </div>
 
             <div>
               <h4 className="font-semibold text-foreground mb-4">Platform</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
                 <li><a href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</a></li>
-                <li><a href="#testimonials" className="hover:text-foreground transition-colors">Testimonials</a></li>
+                <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
+                <li><a href="#why-us" className="hover:text-foreground transition-colors">Why Us</a></li>
+                <li><a href="#testimonials" className="hover:text-foreground transition-colors">Success Stories</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold text-foreground mb-4">Access</h4>
+              <h4 className="font-semibold text-foreground mb-4">Get Started</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><button onClick={() => navigate("/admin/login")} className="hover:text-foreground transition-colors">Admin Portal</button></li>
-                <li><button onClick={() => navigate("/recruiter/login")} className="hover:text-foreground transition-colors">Recruiter Portal</button></li>
-                <li><button onClick={() => navigate("/candidate/login")} className="hover:text-foreground transition-colors">Candidate Portal</button></li>
+                <li><button onClick={() => navigate("/login")} className="hover:text-foreground transition-colors">Sign In</button></li>
+                <li><a href="mailto:support@wavelynk.ai" className="hover:text-foreground transition-colors">Contact Support</a></li>
               </ul>
             </div>
           </div>
@@ -436,7 +429,7 @@ const LandingPage = () => {
               © {new Date().getFullYear()} WaveLynk IT Consulting & Services. All rights reserved.
             </p>
             <p className="text-sm text-muted-foreground">
-              Powered by AI • Built for Recruiters
+              Powered by AI • Built for Students
             </p>
           </div>
         </div>
