@@ -346,24 +346,70 @@ const LandingPage = () => {
         </AnimatePresence>
       </motion.nav>
 
-      {/* Hero Section with Video Background */}
-      <section ref={heroRef} className="relative overflow-hidden min-h-[90vh] flex items-center">
-        {/* Video Background */}
-        <div className="absolute inset-0 z-0">
+      {/* Hero Section */}
+      <section ref={heroRef} className="relative overflow-hidden min-h-[92vh] flex items-center">
+        {/* Animated gradient mesh background */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          {/* Large animated gradient blobs */}
+          <motion.div
+            className="absolute w-[800px] h-[800px] rounded-full pointer-events-none"
+            style={{
+              background: "radial-gradient(circle, hsl(var(--primary) / 0.18) 0%, transparent 65%)",
+              top: "-20%",
+              left: "-10%",
+              filter: "blur(80px)",
+            }}
+            animate={{
+              x: [0, 80, -40, 0],
+              y: [0, -60, 40, 0],
+              scale: [1, 1.15, 0.95, 1],
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute w-[600px] h-[600px] rounded-full pointer-events-none"
+            style={{
+              background: "radial-gradient(circle, hsl(174 72% 33% / 0.12) 0%, transparent 65%)",
+              top: "20%",
+              right: "-15%",
+              filter: "blur(60px)",
+            }}
+            animate={{
+              x: [0, -60, 30, 0],
+              y: [0, 50, -30, 0],
+              scale: [1.1, 0.9, 1.2, 1.1],
+            }}
+            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          />
+          <motion.div
+            className="absolute w-[500px] h-[500px] rounded-full pointer-events-none"
+            style={{
+              background: "radial-gradient(circle, hsl(215 60% 18% / 0.08) 0%, transparent 65%)",
+              bottom: "-10%",
+              left: "30%",
+              filter: "blur(70px)",
+            }}
+            animate={{
+              x: [0, 40, -60, 0],
+              y: [0, -40, 20, 0],
+              scale: [0.95, 1.1, 1, 0.95],
+            }}
+            transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", delay: 4 }}
+          />
+          {/* Subtle video background */}
           <video
             autoPlay
             muted
             loop
             playsInline
-            className="w-full h-full object-cover opacity-[0.06] dark:opacity-[0.04]"
-            poster=""
+            className="w-full h-full object-cover opacity-[0.03] dark:opacity-[0.02] absolute inset-0"
           >
             <source src="https://cdn.pixabay.com/video/2020/08/09/46674-449627613_large.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background" />
         </div>
 
-        {/* Animated particles */}
+        {/* Floating particles */}
         <FloatingParticle delay={0} size={8} x="10%" y="20%" duration={6} />
         <FloatingParticle delay={1} size={6} x="80%" y="15%" duration={7} />
         <FloatingParticle delay={2} size={10} x="60%" y="70%" duration={8} />
@@ -372,76 +418,168 @@ const LandingPage = () => {
         <FloatingParticle delay={1.5} size={12} x="40%" y="30%" duration={7} />
         <FloatingParticle delay={2.5} size={4} x="70%" y="85%" duration={6} />
 
-        <GlowingOrbs />
+        {/* Radial light behind heading */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] pointer-events-none"
+          style={{
+            background: "radial-gradient(ellipse, hsl(var(--primary) / 0.08) 0%, transparent 70%)",
+          }}
+        />
 
         {/* Grid pattern overlay */}
-        <div className="absolute inset-0 opacity-[0.015] pointer-events-none"
+        <div className="absolute inset-0 opacity-[0.012] pointer-events-none"
           style={{
             backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
             backgroundSize: '60px 60px',
           }}
         />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-12 pb-24 md:pt-20 md:pb-36 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-16 pb-24 md:pt-24 md:pb-40 w-full">
           <motion.div
             initial="hidden"
             animate="visible"
             className="text-center max-w-5xl mx-auto"
           >
-            <motion.div variants={scaleIn} custom={0} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/10 border border-primary/20 mb-10 backdrop-blur-sm">
+            {/* Badge */}
+            <motion.div
+              variants={scaleIn}
+              custom={0}
+              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full mb-10 backdrop-blur-md border border-primary/25 relative overflow-hidden"
+            >
+              {/* Shimmer sweep on badge */}
+              <motion.div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: "linear-gradient(90deg, transparent 0%, hsl(var(--primary) / 0.1) 50%, transparent 100%)",
+                }}
+                animate={{ x: ["-100%", "200%"] }}
+                transition={{ duration: 3, repeat: Infinity, repeatDelay: 4, ease: "easeInOut" }}
+              />
               <motion.div
                 animate={{ rotate: [0, 15, -15, 0] }}
                 transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
               >
                 <GraduationCap className="w-4 h-4 text-primary" />
               </motion.div>
-              <span className="text-sm font-semibold text-primary">Built for Students & Job Seekers</span>
+              <span className="text-sm font-semibold text-primary relative z-10">Built for Students & Job Seekers</span>
               <motion.div
-                animate={{ scale: [1, 1.3, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
+                animate={{ scale: [1, 1.5, 1], opacity: [0.7, 1, 0.7] }}
+                transition={{ duration: 2, repeat: Infinity }}
                 className="w-2 h-2 rounded-full bg-primary"
               />
             </motion.div>
 
-            <motion.h1 variants={fadeUp} custom={1} className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold leading-[0.95] mb-8 tracking-tight">
-              Stop Applying.{" "}
+            {/* Main Heading with animated gradient text */}
+            <motion.h1
+              variants={fadeUp}
+              custom={1}
+              className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-extrabold leading-[0.95] mb-8 tracking-tight"
+            >
+              <motion.span
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.7 }}
+              >
+                Stop Applying.
+              </motion.span>{" "}
               <span className="relative inline-block">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary to-primary/70">
-                  Start Getting Hired.
-                </span>
                 <motion.span
-                  className="absolute -bottom-2 left-0 h-1.5 bg-gradient-to-r from-primary to-primary/40 rounded-full"
+                  className="text-transparent bg-clip-text relative z-10"
+                  style={{
+                    backgroundImage: "linear-gradient(135deg, hsl(var(--primary)), hsl(174 65% 42%), hsl(174 72% 33%), hsl(var(--primary)))",
+                    backgroundSize: "300% 100%",
+                  }}
+                  animate={{
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                  }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  Start Getting Hired.
+                </motion.span>
+                {/* Animated underline */}
+                <motion.span
+                  className="absolute -bottom-2 left-0 h-1.5 rounded-full"
+                  style={{
+                    background: "linear-gradient(90deg, hsl(var(--primary)), hsl(174 65% 42%), hsl(var(--primary) / 0.3))",
+                    backgroundSize: "200% 100%",
+                  }}
                   initial={{ width: 0 }}
-                  animate={{ width: "100%" }}
-                  transition={{ delay: 1, duration: 0.8, ease: easeOut }}
+                  animate={{ width: "100%", backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+                  transition={{
+                    width: { delay: 1.2, duration: 0.8, ease: easeOut },
+                    backgroundPosition: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 2 },
+                  }}
+                />
+                {/* Glow behind text */}
+                <motion.div
+                  className="absolute inset-0 -z-10 blur-3xl pointer-events-none"
+                  style={{ background: "hsl(var(--primary) / 0.15)" }}
+                  animate={{ opacity: [0.3, 0.6, 0.3] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 />
               </span>
             </motion.h1>
 
-            <motion.p variants={fadeUp} custom={2} className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
+            {/* Subtitle with word-by-word fade */}
+            <motion.p
+              variants={fadeUp}
+              custom={2}
+              className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed"
+            >
               Upload your resume once. Our AI finds the best jobs, optimizes your CV for each role, 
-              and a dedicated recruiter applies on your behalf. <span className="text-foreground font-medium">You just show up for interviews.</span>
+              and a dedicated recruiter applies on your behalf.{" "}
+              <motion.span
+                className="text-foreground font-semibold"
+                animate={{ color: ["hsl(var(--foreground))", "hsl(var(--primary))", "hsl(var(--foreground))"] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+              >
+                You just show up for interviews.
+              </motion.span>
             </motion.p>
 
-            <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                <Button size="lg" onClick={() => navigate("/login")} className="text-base px-10 h-16 font-bold shadow-xl hover:shadow-2xl transition-all rounded-2xl text-lg">
+            {/* CTA Buttons */}
+            <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row items-center justify-center gap-5">
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className="relative group"
+              >
+                {/* Button glow pulse */}
+                <motion.div
+                  className="absolute -inset-1 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{ background: "hsl(var(--primary) / 0.3)", filter: "blur(12px)" }}
+                  animate={{ scale: [1, 1.05, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                <Button size="lg" onClick={() => navigate("/login")} className="relative text-base px-10 h-16 font-bold shadow-xl hover:shadow-2xl transition-all rounded-2xl text-lg">
                   Get Started — It's Free <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }}>
                 <Button variant="outline" size="lg" onClick={() => {
                   document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
-                }} className="text-base px-10 h-16 font-bold rounded-2xl text-lg border-2 hover:bg-primary/5">
+                }} className="text-base px-10 h-16 font-bold rounded-2xl text-lg border-2 hover:bg-primary/5 hover:border-primary/40 transition-all">
                   <Play className="mr-2 w-5 h-5" /> See How It Works
                 </Button>
               </motion.div>
             </motion.div>
 
-            <motion.div variants={fadeUp} custom={4} className="mt-6 flex items-center justify-center gap-6 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-primary" /> No credit card</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-primary" /> 100% free</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-primary" /> Instant access</span>
+            {/* Trust indicators */}
+            <motion.div variants={fadeUp} custom={4} className="mt-8 flex items-center justify-center gap-6 md:gap-8 text-sm text-muted-foreground flex-wrap">
+              {[
+                { icon: CheckCircle2, text: "No credit card" },
+                { icon: CheckCircle2, text: "100% free" },
+                { icon: CheckCircle2, text: "Instant access" },
+              ].map((item, i) => (
+                <motion.span
+                  key={item.text}
+                  className="flex items-center gap-1.5"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.5 + i * 0.15, duration: 0.4 }}
+                >
+                  <item.icon className="w-4 h-4 text-primary" /> {item.text}
+                </motion.span>
+              ))}
             </motion.div>
           </motion.div>
 
@@ -449,23 +587,29 @@ const LandingPage = () => {
           <motion.div
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.8 }}
-            className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6 max-w-5xl mx-auto"
+            transition={{ delay: 1, duration: 0.8 }}
+            className="mt-28 grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6 max-w-5xl mx-auto"
           >
             {stats.map((stat, i) => (
               <motion.div
                 key={stat.label}
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                className="text-center p-8 rounded-3xl bg-card/60 backdrop-blur-lg border border-border/50 hover:border-primary/40 hover:shadow-xl transition-all duration-500 group"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2 + i * 0.15, duration: 0.5 }}
+                whileHover={{ y: -8, scale: 1.03 }}
+                className="relative text-center p-8 rounded-3xl bg-card/50 backdrop-blur-xl border border-border/50 hover:border-primary/40 transition-all duration-500 group overflow-hidden"
               >
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
-                  <stat.icon className="w-6 h-6 text-primary" />
+                {/* Shimmer on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                <div className="relative z-10">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
+                    <stat.icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <div className="font-display text-4xl lg:text-5xl font-black text-foreground">
+                    <AnimatedCounter target={stat.value} suffix={stat.suffix} />
+                  </div>
+                  <div className="text-sm text-muted-foreground mt-2 font-medium">{stat.label}</div>
                 </div>
-                <div className="font-display text-4xl lg:text-5xl font-black text-foreground">
-                  <AnimatedCounter target={stat.value} suffix={stat.suffix} />
-                </div>
-                <div className="text-sm text-muted-foreground mt-2 font-medium">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
