@@ -11,12 +11,13 @@ import ApplicationStatusChart from "@/components/candidate/ApplicationStatusChar
 import RecentApplicationsList from "@/components/candidate/RecentApplicationsList";
 import RecruiterInfoCard from "@/components/candidate/RecruiterInfoCard";
 import ApplicationDetailsModal from "@/components/candidate/ApplicationDetailsModal";
+import AdminJobPostingsSection from "@/components/candidate/AdminJobPostingsSection";
 import WavePattern from "@/components/WavePattern";
 
 const CandidateDashboardPage = () => {
   const navigate = useNavigate();
   const { fullName } = useAuth();
-  const { recentApplications, recruiter, stats, chartData, isLoading, cvs } = useCandidateDashboard();
+  const { recentApplications, recruiter, stats, chartData, isLoading, cvs, adminJobPostings } = useCandidateDashboard();
   const [detailApp, setDetailApp] = useState<CandidateApplication | null>(null);
   const firstName = fullName?.split(" ")[0] || "there";
 
@@ -108,6 +109,13 @@ const CandidateDashboardPage = () => {
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.15 }}>
           <RecentApplicationsList applications={recentApplications} onViewDetails={setDetailApp} onViewAll={() => navigate("/candidate/applications")} />
         </motion.div>
+
+        {/* Admin Job Postings */}
+        {adminJobPostings.length > 0 && (
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.18 }}>
+            <AdminJobPostingsSection jobs={adminJobPostings} />
+          </motion.div>
+        )}
 
         {/* Recruiter Info */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.2 }}>
