@@ -326,6 +326,7 @@ export function useCandidateDashboard() {
   return {
     applications: paginatedApplications, allFilteredApplications: filteredApplications, recentApplications,
     cvs, recruiter: recruiterInfo, notifications, unreadCount, markAllRead, stats, chartData,
+    adminJobPostings,
     search, setSearch, statusFilter, setStatusFilter, dateFilter, setDateFilter,
     typeFilter, setTypeFilter, locationFilter, setLocationFilter, uniqueLocations,
     viewMode, setViewMode, page, setPage, totalPages, perPage,
