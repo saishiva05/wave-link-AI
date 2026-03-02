@@ -4,6 +4,7 @@ import {
   ChevronUp, ChevronDown, ExternalLink, DollarSign,
   Clock, Building2, Wand2, FileCheck2, FileEdit,
   ChevronRight, Mail, Sparkles, Copy, Check,
+  Send, CheckCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -25,9 +26,11 @@ interface JobTableViewProps {
   onUpdateCV: (job: ScrapedJob) => void;
   onGenerateEmail: (job: ScrapedJob) => void;
   onViewATSResult: (job: ScrapedJob) => void;
+  onApplyToJob: (job: ScrapedJob) => void;
   atsAnalyses: Record<string, any[]>;
   updatedCVsMap: Record<string, any[]>;
   generatedEmailsMap: Record<string, any[]>;
+  jobApplicationsMap: Record<string, any[]>;
   sortField: string;
   sortDir: "asc" | "desc";
   onSort: (field: string) => void;
@@ -83,8 +86,8 @@ const ATSScoreBadge = ({ score, onClick }: { score: number; onClick: () => void 
 
 const JobTableView = ({
   jobs, selectedIds, onToggleSelect, onSelectAll, allSelected,
-  onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, atsAnalyses,
-  updatedCVsMap, generatedEmailsMap, sortField, sortDir, onSort,
+  onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, onApplyToJob, atsAnalyses,
+  updatedCVsMap, generatedEmailsMap, jobApplicationsMap, sortField, sortDir, onSort,
 }: JobTableViewProps) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -135,6 +138,7 @@ const JobTableView = ({
                 const hasATS = atsAnalysesForJob.length > 0;
                 const updatedCVs = updatedCVsMap[job.id] || [];
                 const generatedEmails = generatedEmailsMap[job.id] || [];
+                const jobApplications = jobApplicationsMap[job.id] || [];
                 return (
                   <JobExpandableRow
                     key={job.id}
@@ -145,6 +149,7 @@ const JobTableView = ({
                     atsAnalyses={atsAnalysesForJob}
                     updatedCVs={updatedCVs}
                     generatedEmails={generatedEmails}
+                    jobApplications={jobApplications}
                     onToggle={() => setExpandedId(isExpanded ? null : job.id)}
                     onToggleSelect={() => onToggleSelect(job.id)}
                     onViewDetails={() => onViewDetails(job)}
@@ -152,6 +157,7 @@ const JobTableView = ({
                     onUpdateCV={() => onUpdateCV(job)}
                     onGenerateEmail={() => onGenerateEmail(job)}
                     onViewATSResult={() => onViewATSResult(job)}
+                    onApplyToJob={() => onApplyToJob(job)}
                   />
                 );
               })}
@@ -164,13 +170,14 @@ const JobTableView = ({
 };
 
 const JobExpandableRow = ({
-  job, selected, isExpanded, hasATS, atsAnalyses: atsAnalysesForJob, updatedCVs, generatedEmails,
-  onToggle, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult,
+  job, selected, isExpanded, hasATS, atsAnalyses: atsAnalysesForJob, updatedCVs, generatedEmails, jobApplications,
+  onToggle, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, onApplyToJob,
 }: {
   job: ScrapedJob; selected: boolean; isExpanded: boolean; hasATS: boolean;
-  atsAnalyses: any[]; updatedCVs: any[]; generatedEmails: any[];
+  atsAnalyses: any[]; updatedCVs: any[]; generatedEmails: any[]; jobApplications: any[];
   onToggle: () => void; onToggleSelect: () => void; onViewDetails: () => void;
   onRunATS: () => void; onUpdateCV: () => void; onGenerateEmail: () => void; onViewATSResult: () => void;
+  onApplyToJob: () => void;
 }) => {
   const { toast } = useToast();
   const [showEmails, setShowEmails] = useState(false);
