@@ -345,9 +345,7 @@ const JobExpandableRow = ({
                   <Eye className="w-4 h-4" /> View Details
                 </button>
 
-                <a href={job.job_apply_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-all">
-                  <ExternalLink className="w-4 h-4" /> Apply Externally
-                </a>
+                <ApplyExternallyButton job={job} />
 
                 <div className="ml-auto">
                   <button className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/5 transition-all">

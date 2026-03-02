@@ -72,6 +72,8 @@ const ApplyToJobModal = ({ job, candidates, updatedCVs, atsAnalyses, onClose }: 
         recruiter_id: recruiterId,
         application_status: "submitted",
         ats_analysis_id: atsAnalysis?.analysis_id || null,
+        apply_started_at: new Date().toISOString(),
+        apply_completed_at: new Date().toISOString(),
       });
 
       if (error) throw error;
