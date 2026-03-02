@@ -50,10 +50,18 @@ const ApplicationCard = ({ application, onViewDetails }: ApplicationCardProps) =
         <span className={cn("px-3 py-1 rounded-full text-xs font-medium", badge.bg, badge.text)}>{badge.label}</span>
       </div>
 
-      {/* CV */}
-      <p className="text-xs text-neutral-600 flex items-center gap-1 truncate mb-3 mt-auto">
-        <FileText className="w-3 h-3 text-neutral-500 shrink-0" /> CV: {application.cv_file_name}
-      </p>
+      {/* CV & Recruiter */}
+      <div className="space-y-1.5 mt-auto mb-3">
+        <p className="text-xs text-neutral-600 flex items-center gap-1 truncate">
+          <FileText className="w-3 h-3 text-neutral-500 shrink-0" /> CV: {application.cv_file_name}
+        </p>
+        {application.updated_cv_file_name && (
+          <p className="text-xs text-teal-600 font-medium flex items-center gap-1 truncate">
+            ✨ Optimized: {application.updated_cv_file_name}
+          </p>
+        )}
+        <p className="text-[10px] text-muted-foreground">Applied by: {application.recruiter_name}</p>
+      </div>
 
       {/* Actions */}
       <div className="flex gap-2 pt-3 border-t border-border">
