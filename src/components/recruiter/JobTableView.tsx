@@ -86,7 +86,41 @@ const ATSScoreBadge = ({ score, onClick }: { score: number; onClick: () => void 
   );
 };
 
-const JobTableView = ({
+/**
+ * Tracks the time a recruiter spends on the external apply page.
+ * Records apply_started_at when clicked, shows elapsed time.
+ */
+const ApplyExternallyButton = ({ job }: { job: ScrapedJob }) => {
+  const [startedAt, setStartedAt] = useState<Date | null>(null);
+  const [elapsed, setElapsed] = useState<number>(0);
+
+  const handleClick = useCallback(() => {
+    const now = new Date();
+    setStartedAt(now);
+    window.open(job.job_apply_url, "_blank");
+    // Start timer
+    const interval = setInterval(() => {
+      setElapsed(Math.round((Date.now() - now.getTime()) / 1000));
+    }, 1000);
+    // Store interval for cleanup
+    setTimeout(() => clearInterval(interval), 3600000); // 1hr max
+    return () => clearInterval(interval);
+  }, [job.job_apply_url]);
+
+  return (
+    <div className="inline-flex items-center gap-2">
+      <button onClick={handleClick} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-info-600 hover:text-info-700 hover:bg-info-50 transition-all">
+        <ExternalLink className="w-4 h-4" /> Apply Externally
+      </button>
+      {startedAt && elapsed > 0 && (
+        <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-1 rounded-full">
+          ⏱ {Math.floor(elapsed / 60)}:{(elapsed % 60).toString().padStart(2, '0')}
+        </span>
+      )}
+    </div>
+  );
+};
+
   jobs, selectedIds, onToggleSelect, onSelectAll, allSelected,
   onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, onApplyToJob, atsAnalyses,
   updatedCVsMap, generatedEmailsMap, jobApplicationsMap, sortField, sortDir, onSort,
