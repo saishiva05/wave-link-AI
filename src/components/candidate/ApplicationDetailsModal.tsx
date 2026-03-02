@@ -94,15 +94,15 @@ const ApplicationDetailsModal = ({ application, onClose }: ApplicationDetailsMod
           <h3 className="text-lg font-semibold text-secondary-900 font-display mb-4">Job Description</h3>
           <div className="text-sm text-neutral-700 leading-relaxed whitespace-pre-line mb-8 max-w-[700px]">{application.job_description}</div>
 
-          {/* CV Used */}
+          {/* Resume Submitted */}
           <h3 className="text-lg font-semibold text-secondary-900 font-display mb-4">Resume Submitted</h3>
-          <div className="bg-neutral-50 border border-border rounded-lg p-5 flex items-center gap-4 mb-8">
+          <div className="bg-neutral-50 border border-border rounded-lg p-5 flex items-center gap-4 mb-4">
             <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center", isPdf ? "bg-error-50" : "bg-info-50")}>
               <FileText className={cn("w-7 h-7", isPdf ? "text-error-500" : "text-info-500")} />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-secondary-900 truncate">{application.cv_file_name}</p>
-              <p className="text-xs text-neutral-600 flex items-center gap-1 mt-0.5"><Calendar className="w-3 h-3" /> Uploaded Jan 15, 2026</p>
+              <p className="text-xs text-neutral-600 mt-0.5">Original CV</p>
             </div>
             <div className="flex gap-2 shrink-0">
               <button className="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center text-primary hover:bg-primary-100 transition-colors" title="Preview">
@@ -111,6 +111,50 @@ const ApplicationDetailsModal = ({ application, onClose }: ApplicationDetailsMod
               <button className="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center text-primary hover:bg-primary-100 transition-colors" title="Download">
                 <Download className="w-4 h-4" />
               </button>
+            </div>
+          </div>
+
+          {/* Updated/Optimized CV */}
+          {application.updated_cv_file_name && (
+            <div className="bg-teal-50 border border-teal-200 rounded-lg p-5 flex items-center gap-4 mb-8">
+              <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-teal-100">
+                <FileText className="w-7 h-7 text-teal-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-secondary-900 truncate">{application.updated_cv_file_name}</p>
+                <p className="text-xs text-teal-700 font-medium mt-0.5">✨ Optimized Resume (Used for Application)</p>
+              </div>
+              {application.updated_cv_file_url && (
+                <div className="flex gap-2 shrink-0">
+                  <button
+                    onClick={() => window.open(application.updated_cv_file_url!, "_blank")}
+                    className="w-9 h-9 rounded-lg bg-teal-100 flex items-center justify-center text-teal-700 hover:bg-teal-200 transition-colors"
+                    title="Preview"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                  <a
+                    href={application.updated_cv_file_url!}
+                    download={application.updated_cv_file_name}
+                    className="w-9 h-9 rounded-lg bg-teal-100 flex items-center justify-center text-teal-700 hover:bg-teal-200 transition-colors"
+                    title="Download"
+                  >
+                    <Download className="w-4 h-4" />
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+          {!application.updated_cv_file_name && <div className="mb-8" />}
+
+          {/* Recruiter Info */}
+          <div className="bg-neutral-50 border border-border rounded-lg p-4 flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+              {application.recruiter_name?.charAt(0) || "R"}
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Applied by Recruiter</p>
+              <p className="text-sm font-semibold text-secondary-900">{application.recruiter_name}</p>
             </div>
           </div>
 
