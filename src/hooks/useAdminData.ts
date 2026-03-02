@@ -140,3 +140,73 @@ export function useAdminChartData(range: string) {
     },
   });
 }
+
+export function useAdminRecruiterSessions() {
+  return useQuery({
+    queryKey: ["admin", "recruiter-sessions"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("recruiter_sessions")
+        .select(`
+          session_id,
+          recruiter_id,
+          user_id,
+          logged_in_at,
+          logged_out_at,
+          recruiters!recruiter_sessions_recruiter_id_fkey (
+            users!recruiters_user_id_fkey (full_name, email)
+          )
+        `)
+        .order("logged_in_at", { ascending: false })
+        .limit(100);
+
+      if (error) throw error;
+
+      // Group by recruiter for summary
+      const byRecruiter: Record<string, {
+        recruiter_id: string;
+        name: string;
+        email: string;
+        sessions: { logged_in_at: string; logged_out_at: string | null; duration_minutes: number | null }[];
+        total_minutes: number;
+        last_active: string;
+        is_online: boolean;
+      }> = {};
+
+      (data || []).forEach((s: any) => {
+        const rid = s.recruiter_id;
+        if (!byRecruiter[rid]) {
+          byRecruiter[rid] = {
+            recruiter_id: rid,
+            name: s.recruiters?.users?.full_name || "Unknown",
+            email: s.recruiters?.users?.email || "",
+            sessions: [],
+            total_minutes: 0,
+            last_active: s.logged_in_at,
+            is_online: false,
+          };
+        }
+
+        const duration = s.logged_out_at
+          ? Math.round((new Date(s.logged_out_at).getTime() - new Date(s.logged_in_at).getTime()) / 60000)
+          : null;
+
+        byRecruiter[rid].sessions.push({
+          logged_in_at: s.logged_in_at,
+          logged_out_at: s.logged_out_at,
+          duration_minutes: duration,
+        });
+
+        if (duration !== null) {
+          byRecruiter[rid].total_minutes += duration;
+        }
+
+        if (!s.logged_out_at) {
+          byRecruiter[rid].is_online = true;
+        }
+      });
+
+      return Object.values(byRecruiter).sort((a, b) => new Date(b.last_active).getTime() - new Date(a.last_active).getTime());
+    },
+  });
+}

@@ -7,9 +7,11 @@ import {
   Send, CheckCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
 } from "@/components/ui/tooltip";
@@ -81,6 +83,41 @@ const ATSScoreBadge = ({ score, onClick }: { score: number; onClick: () => void 
     <button onClick={onClick} className={cn("inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all hover:scale-105 hover:shadow-md cursor-pointer", color)} title="Click to view full ATS analysis">
       <Wand2 className="w-3 h-3" />{score}%
     </button>
+  );
+};
+
+/**
+ * Tracks the time a recruiter spends on the external apply page.
+ * Records apply_started_at when clicked, shows elapsed time.
+ */
+const ApplyExternallyButton = ({ job }: { job: ScrapedJob }) => {
+  const [startedAt, setStartedAt] = useState<Date | null>(null);
+  const [elapsed, setElapsed] = useState<number>(0);
+
+  const handleClick = useCallback(() => {
+    const now = new Date();
+    setStartedAt(now);
+    window.open(job.job_apply_url, "_blank");
+    // Start timer
+    const interval = setInterval(() => {
+      setElapsed(Math.round((Date.now() - now.getTime()) / 1000));
+    }, 1000);
+    // Store interval for cleanup
+    setTimeout(() => clearInterval(interval), 3600000); // 1hr max
+    return () => clearInterval(interval);
+  }, [job.job_apply_url]);
+
+  return (
+    <div className="inline-flex items-center gap-2">
+      <button onClick={handleClick} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-info-600 hover:text-info-700 hover:bg-info-50 transition-all">
+        <ExternalLink className="w-4 h-4" /> Apply Externally
+      </button>
+      {startedAt && elapsed > 0 && (
+        <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-1 rounded-full">
+          ⏱ {Math.floor(elapsed / 60)}:{(elapsed % 60).toString().padStart(2, '0')}
+        </span>
+      )}
+    </div>
   );
 };
 
@@ -345,9 +382,7 @@ const JobExpandableRow = ({
                   <Eye className="w-4 h-4" /> View Details
                 </button>
 
-                <a href={job.job_apply_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-all">
-                  <ExternalLink className="w-4 h-4" /> Apply Externally
-                </a>
+                <ApplyExternallyButton job={job} />
 
                 <div className="ml-auto">
                   <button className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/5 transition-all">

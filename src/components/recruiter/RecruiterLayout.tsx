@@ -3,10 +3,12 @@ import { Outlet } from "react-router-dom";
 import RecruiterSidebar from "./RecruiterSidebar";
 import RecruiterHeader from "./RecruiterHeader";
 import { cn } from "@/lib/utils";
+import { useRecruiterSessionTracking } from "@/hooks/useRecruiterSessions";
 
 const RecruiterLayout = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  useRecruiterSessionTracking();
 
   return (
     <div className="min-h-screen bg-background">

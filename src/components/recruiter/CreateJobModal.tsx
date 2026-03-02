@@ -36,6 +36,7 @@ const CreateJobModal = ({ open, onOpenChange, recruiterId, recruiterOptions }: C
   const mutation = useMutation({
     mutationFn: async () => {
       const rid = recruiterOptions ? selectedRecruiterId : recruiterId;
+      const isAdmin = !!recruiterOptions && recruiterOptions.length > 0;
       const { error } = await supabase.from("scraped_jobs").insert({
         recruiter_id: rid,
         job_title: form.job_title,
@@ -49,6 +50,7 @@ const CreateJobModal = ({ open, onOpenChange, recruiterId, recruiterOptions }: C
         job_apply_url: form.job_apply_url || "#",
         platform_type: "linkedin" as const,
         scrape_filters_used: { source: "manual" },
+        is_admin_posting: isAdmin,
       });
       if (error) throw error;
     },

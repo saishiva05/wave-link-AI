@@ -21,6 +21,9 @@ export interface CandidateApplication {
   cv_id: string;
   recruiter_notes: string | null;
   platform_type: string;
+  recruiter_name: string;
+  updated_cv_file_name: string | null;
+  updated_cv_file_url: string | null;
   timeline: { status: string; date: string; notes?: string }[];
 }
 
@@ -73,10 +76,28 @@ export function useCandidateDashboard() {
           ),
           cvs!job_applications_cv_id_fkey (
             file_name, cv_id
+          ),
+          recruiters!job_applications_recruiter_id_fkey (
+            users!recruiters_user_id_fkey (full_name)
           )
         `)
         .eq("candidate_id", candidateId!)
         .order("applied_at", { ascending: false });
+
+      // Fetch updated CVs for this candidate's applications
+      const jobIds = (data || []).map((a: any) => a.job_id);
+      const cvIds = (data || []).map((a: any) => a.cv_id);
+      let updatedCVsMap: Record<string, any> = {};
+      if (jobIds.length > 0 && cvIds.length > 0) {
+        const { data: ucvData } = await supabase
+          .from("updated_cvs")
+          .select("cv_id, job_id, updated_file_name, updated_file_url")
+          .eq("candidate_id", candidateId!)
+          .in("job_id", jobIds);
+        (ucvData || []).forEach((ucv: any) => {
+          updatedCVsMap[`${ucv.job_id}-${ucv.cv_id}`] = ucv;
+        });
+      }
 
       if (error) throw error;
 
@@ -94,6 +115,9 @@ export function useCandidateDashboard() {
         if (a.application_status !== "pending" && a.application_status !== "submitted") {
           timeline.push({ status: "Application Submitted", date: a.applied_at });
         }
+
+        const ucvKey = `${a.job_id}-${a.cv_id}`;
+        const updatedCV = updatedCVsMap[ucvKey] || null;
 
         return {
           application_id: a.application_id,
@@ -113,6 +137,9 @@ export function useCandidateDashboard() {
           cv_id: a.cvs?.cv_id || a.cv_id,
           recruiter_notes: a.recruiter_notes,
           platform_type: a.scraped_jobs?.platform_type || "",
+          recruiter_name: (a as any).recruiters?.users?.full_name || "Unknown",
+          updated_cv_file_name: updatedCV?.updated_file_name || null,
+          updated_cv_file_url: updatedCV?.updated_file_url || null,
           timeline,
         };
       });
@@ -139,6 +166,22 @@ export function useCandidateDashboard() {
         is_primary: cv.is_primary,
         uploaded_at: cv.uploaded_at,
       }));
+    },
+  });
+
+  // Fetch admin-posted jobs visible to all candidates
+  const { data: adminJobPostings = [] } = useQuery({
+    queryKey: ["candidate", "admin-job-postings"],
+    enabled: !!candidateId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("scraped_jobs")
+        .select("job_id, job_title, company_name, location, contract_type, work_type, experience_level, salary_range, job_description, job_apply_url, platform_type, scraped_at")
+        .eq("is_admin_posting", true)
+        .eq("is_active", true)
+        .order("scraped_at", { ascending: false });
+      if (error) throw error;
+      return data || [];
     },
   });
 
@@ -283,6 +326,7 @@ export function useCandidateDashboard() {
   return {
     applications: paginatedApplications, allFilteredApplications: filteredApplications, recentApplications,
     cvs, recruiter: recruiterInfo, notifications, unreadCount, markAllRead, stats, chartData,
+    adminJobPostings,
     search, setSearch, statusFilter, setStatusFilter, dateFilter, setDateFilter,
     typeFilter, setTypeFilter, locationFilter, setLocationFilter, uniqueLocations,
     viewMode, setViewMode, page, setPage, totalPages, perPage,
