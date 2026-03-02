@@ -169,6 +169,22 @@ export function useCandidateDashboard() {
     },
   });
 
+  // Fetch admin-posted jobs visible to all candidates
+  const { data: adminJobPostings = [] } = useQuery({
+    queryKey: ["candidate", "admin-job-postings"],
+    enabled: !!candidateId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("scraped_jobs")
+        .select("job_id, job_title, company_name, location, contract_type, work_type, experience_level, salary_range, job_description, job_apply_url, platform_type, scraped_at")
+        .eq("is_admin_posting", true)
+        .eq("is_active", true)
+        .order("scraped_at", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
   // Fetch assigned recruiter info
   const { data: recruiter } = useQuery({
     queryKey: ["candidate", "recruiter", candidateId],
