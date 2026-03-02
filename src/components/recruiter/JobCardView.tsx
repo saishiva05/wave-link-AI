@@ -1,7 +1,7 @@
 import { ScrapedJob } from "@/data/mockScrapedJobs";
 import {
   MapPin, Eye, ExternalLink, DollarSign, Clock, Building2,
-  Wand2, FileEdit, Search, Mail, ChevronDown,
+  Wand2, FileEdit, Search, Mail, ChevronDown, Send, CheckCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -17,9 +17,11 @@ interface JobCardViewProps {
   onUpdateCV: (job: ScrapedJob) => void;
   onGenerateEmail: (job: ScrapedJob) => void;
   onViewATSResult: (job: ScrapedJob) => void;
+  onApplyToJob: (job: ScrapedJob) => void;
   atsAnalyses: Record<string, any[]>;
   updatedCVsMap: Record<string, any[]>;
   generatedEmailsMap: Record<string, any[]>;
+  jobApplicationsMap: Record<string, any[]>;
 }
 
 const timeAgo = (dateStr: string | undefined) => {
@@ -43,7 +45,7 @@ const PlatformBadge = ({ platform }: { platform: string }) => {
   );
 };
 
-const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, atsAnalyses, updatedCVsMap, generatedEmailsMap }: JobCardViewProps) => {
+const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, onApplyToJob, atsAnalyses, updatedCVsMap, generatedEmailsMap, jobApplicationsMap }: JobCardViewProps) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   if (jobs.length === 0) {
@@ -66,6 +68,7 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
         const hasATS = atsAnalysesForJob.length > 0;
         const updatedCVs = updatedCVsMap[job.id] || [];
         const hasEmails = (generatedEmailsMap[job.id] || []).length > 0;
+        const jobApplications = jobApplicationsMap[job.id] || [];
         const latestATS = atsAnalysesForJob[0];
 
         return (
@@ -185,12 +188,28 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                       <Mail className="w-4 h-4" /> Generate Email
                     </button>
                   )}
+                  {/* Step 4: Apply to Job */}
+                  {updatedCVs.length > 0 && hasATS ? (
+                    jobApplications.length > 0 ? (
+                      <span className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-success-100 text-success-700 border border-success-200">
+                        <CheckCircle className="w-4 h-4" /> Applied ({jobApplications.length})
+                      </span>
+                    ) : (
+                      <button onClick={() => onApplyToJob(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-all">
+                        <Send className="w-4 h-4" /> Apply to Job
+                      </button>
+                    )
+                  ) : (
+                    <span className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium bg-muted text-muted-foreground border border-border cursor-not-allowed opacity-60">
+                      <Send className="w-4 h-4" /> Apply (Complete steps first)
+                    </span>
+                  )}
                   <div className="flex items-center gap-2 pt-1">
                     <button onClick={() => onViewDetails(job)} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
                       <Eye className="w-3.5 h-3.5" /> Details
                     </button>
                     <a href={job.job_apply_url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-blue-600 hover:bg-blue-50 transition-all">
-                      <ExternalLink className="w-3.5 h-3.5" /> Apply
+                      <ExternalLink className="w-3.5 h-3.5" /> External
                     </a>
                   </div>
                 </div>
