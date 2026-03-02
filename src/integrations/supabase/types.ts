@@ -240,6 +240,8 @@ export type Database = {
           application_id: string
           application_status: Database["public"]["Enums"]["application_status"]
           applied_at: string
+          apply_completed_at: string | null
+          apply_started_at: string | null
           ats_analysis_id: string | null
           candidate_id: string
           cv_id: string
@@ -253,6 +255,8 @@ export type Database = {
           application_id?: string
           application_status?: Database["public"]["Enums"]["application_status"]
           applied_at?: string
+          apply_completed_at?: string | null
+          apply_started_at?: string | null
           ats_analysis_id?: string | null
           candidate_id: string
           cv_id: string
@@ -266,6 +270,8 @@ export type Database = {
           application_id?: string
           application_status?: Database["public"]["Enums"]["application_status"]
           applied_at?: string
+          apply_completed_at?: string | null
+          apply_started_at?: string | null
           ats_analysis_id?: string | null
           candidate_id?: string
           cv_id?: string
@@ -354,6 +360,41 @@ export type Database = {
           },
         ]
       }
+      recruiter_sessions: {
+        Row: {
+          created_at: string
+          logged_in_at: string
+          logged_out_at: string | null
+          recruiter_id: string
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          logged_in_at?: string
+          logged_out_at?: string | null
+          recruiter_id: string
+          session_id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          logged_in_at?: string
+          logged_out_at?: string | null
+          recruiter_id?: string
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recruiter_sessions_recruiter_id_fkey"
+            columns: ["recruiter_id"]
+            isOneToOne: false
+            referencedRelation: "recruiters"
+            referencedColumns: ["recruiter_id"]
+          },
+        ]
+      }
       recruiters: {
         Row: {
           company_name: string | null
@@ -415,6 +456,7 @@ export type Database = {
           experience_level: string | null
           external_job_id: string | null
           is_active: boolean
+          is_admin_posting: boolean
           job_apply_url: string
           job_description: string
           job_id: string
@@ -434,6 +476,7 @@ export type Database = {
           experience_level?: string | null
           external_job_id?: string | null
           is_active?: boolean
+          is_admin_posting?: boolean
           job_apply_url: string
           job_description: string
           job_id?: string
@@ -453,6 +496,7 @@ export type Database = {
           experience_level?: string | null
           external_job_id?: string | null
           is_active?: boolean
+          is_admin_posting?: boolean
           job_apply_url?: string
           job_description?: string
           job_id?: string
