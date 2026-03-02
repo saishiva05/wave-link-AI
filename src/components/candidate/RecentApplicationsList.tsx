@@ -62,9 +62,13 @@ const RecentApplicationsList = ({ applications, onViewDetails, onViewAll }: Rece
                     <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-neutral-500" /> Applied {formatDistanceToNow(new Date(app.applied_at), { addSuffix: true })}</span>
                     <span className="flex items-center gap-1"><FileText className="w-3.5 h-3.5 text-neutral-500" /> {app.contract_type}</span>
                   </div>
-                  <p className="text-xs text-neutral-600 mt-2 flex items-center gap-1">
-                    <FileText className="w-3 h-3 text-neutral-500" /> CV: {app.cv_file_name}
-                  </p>
+                  <div className="flex items-center gap-3 mt-2 text-xs text-neutral-600">
+                    <span className="flex items-center gap-1"><FileText className="w-3 h-3 text-neutral-500" /> CV: {app.cv_file_name}</span>
+                    {app.updated_cv_file_name && (
+                      <span className="flex items-center gap-1 text-teal-600 font-medium">✨ Optimized: {app.updated_cv_file_name}</span>
+                    )}
+                    <span className="text-muted-foreground">by {app.recruiter_name}</span>
+                  </div>
                 </div>
 
                 {/* Status & Action */}
