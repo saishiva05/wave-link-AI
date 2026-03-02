@@ -111,7 +111,15 @@ const AdminDashboard = () => {
         <DashboardCharts />
       </motion.div>
 
-      {/* Recent Recruiters Table */}
+      {/* Recruiter Activity Tracker */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.12 }}
+      >
+        <RecruiterActivityTracker />
+      </motion.div>
+
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
