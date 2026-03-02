@@ -10,6 +10,7 @@ import CreateRecruiterModal from "@/components/admin/CreateRecruiterModal";
 import CreateCandidateModal from "@/components/admin/CreateCandidateModal";
 import CreateAdminModal from "@/components/admin/CreateAdminModal";
 import CreateJobModal from "@/components/recruiter/CreateJobModal";
+import RecruiterActivityTracker from "@/components/admin/RecruiterActivityTracker";
 import { useAdminStats, useAdminRecruiters } from "@/hooks/useAdminData";
 
 const AdminDashboard = () => {
