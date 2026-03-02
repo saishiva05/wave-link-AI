@@ -121,6 +121,7 @@ const ApplyExternallyButton = ({ job }: { job: ScrapedJob }) => {
   );
 };
 
+const JobTableView = ({
   jobs, selectedIds, onToggleSelect, onSelectAll, allSelected,
   onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, onApplyToJob, atsAnalyses,
   updatedCVsMap, generatedEmailsMap, jobApplicationsMap, sortField, sortDir, onSort,
