@@ -4,6 +4,7 @@ import {
   ChevronUp, ChevronDown, ExternalLink, DollarSign,
   Clock, Building2, Wand2, FileCheck2, FileEdit,
   ChevronRight, Mail, Sparkles, Copy, Check,
+  Send, CheckCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -25,9 +26,11 @@ interface JobTableViewProps {
   onUpdateCV: (job: ScrapedJob) => void;
   onGenerateEmail: (job: ScrapedJob) => void;
   onViewATSResult: (job: ScrapedJob) => void;
+  onApplyToJob: (job: ScrapedJob) => void;
   atsAnalyses: Record<string, any[]>;
   updatedCVsMap: Record<string, any[]>;
   generatedEmailsMap: Record<string, any[]>;
+  jobApplicationsMap: Record<string, any[]>;
   sortField: string;
   sortDir: "asc" | "desc";
   onSort: (field: string) => void;
@@ -83,8 +86,8 @@ const ATSScoreBadge = ({ score, onClick }: { score: number; onClick: () => void 
 
 const JobTableView = ({
   jobs, selectedIds, onToggleSelect, onSelectAll, allSelected,
-  onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, atsAnalyses,
-  updatedCVsMap, generatedEmailsMap, sortField, sortDir, onSort,
+  onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, onApplyToJob, atsAnalyses,
+  updatedCVsMap, generatedEmailsMap, jobApplicationsMap, sortField, sortDir, onSort,
 }: JobTableViewProps) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -135,6 +138,7 @@ const JobTableView = ({
                 const hasATS = atsAnalysesForJob.length > 0;
                 const updatedCVs = updatedCVsMap[job.id] || [];
                 const generatedEmails = generatedEmailsMap[job.id] || [];
+                const jobApplications = jobApplicationsMap[job.id] || [];
                 return (
                   <JobExpandableRow
                     key={job.id}
@@ -145,6 +149,7 @@ const JobTableView = ({
                     atsAnalyses={atsAnalysesForJob}
                     updatedCVs={updatedCVs}
                     generatedEmails={generatedEmails}
+                    jobApplications={jobApplications}
                     onToggle={() => setExpandedId(isExpanded ? null : job.id)}
                     onToggleSelect={() => onToggleSelect(job.id)}
                     onViewDetails={() => onViewDetails(job)}
@@ -152,6 +157,7 @@ const JobTableView = ({
                     onUpdateCV={() => onUpdateCV(job)}
                     onGenerateEmail={() => onGenerateEmail(job)}
                     onViewATSResult={() => onViewATSResult(job)}
+                    onApplyToJob={() => onApplyToJob(job)}
                   />
                 );
               })}
@@ -164,13 +170,14 @@ const JobTableView = ({
 };
 
 const JobExpandableRow = ({
-  job, selected, isExpanded, hasATS, atsAnalyses: atsAnalysesForJob, updatedCVs, generatedEmails,
-  onToggle, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult,
+  job, selected, isExpanded, hasATS, atsAnalyses: atsAnalysesForJob, updatedCVs, generatedEmails, jobApplications,
+  onToggle, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, onApplyToJob,
 }: {
   job: ScrapedJob; selected: boolean; isExpanded: boolean; hasATS: boolean;
-  atsAnalyses: any[]; updatedCVs: any[]; generatedEmails: any[];
+  atsAnalyses: any[]; updatedCVs: any[]; generatedEmails: any[]; jobApplications: any[];
   onToggle: () => void; onToggleSelect: () => void; onViewDetails: () => void;
   onRunATS: () => void; onUpdateCV: () => void; onGenerateEmail: () => void; onViewATSResult: () => void;
+  onApplyToJob: () => void;
 }) => {
   const { toast } = useToast();
   const [showEmails, setShowEmails] = useState(false);
@@ -310,6 +317,28 @@ const JobExpandableRow = ({
                   </button>
                 )}
 
+                {/* Step 4: Apply to Job (after CV updated + ATS analyzed) */}
+                {hasUpdatedCVs && hasATS ? (
+                  jobApplications.length > 0 ? (
+                    <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-success-100 text-success-700 border border-success-200">
+                      <CheckCircle className="w-4 h-4" /> Applied ({jobApplications.length})
+                    </span>
+                  ) : (
+                    <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:shadow-md transition-all hover:scale-[1.02]">
+                      <Send className="w-4 h-4" /> Apply to Job
+                    </button>
+                  )
+                ) : (
+                  <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-muted text-muted-foreground border border-border cursor-not-allowed opacity-60">
+                    <Send className="w-4 h-4" /> Apply (Complete steps first)
+                  </span>
+                )}
+                {jobApplications.length > 0 && (
+                  <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-blue-600 hover:bg-blue-50 transition-all">
+                    <Send className="w-3.5 h-3.5" /> Apply More
+                  </button>
+                )}
+
                 <div className="h-8 w-px bg-border mx-1" />
 
                 <button onClick={onViewDetails} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
@@ -317,7 +346,7 @@ const JobExpandableRow = ({
                 </button>
 
                 <a href={job.job_apply_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-all">
-                  <ExternalLink className="w-4 h-4" /> Apply
+                  <ExternalLink className="w-4 h-4" /> Apply Externally
                 </a>
 
                 <div className="ml-auto">

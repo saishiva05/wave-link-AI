@@ -532,6 +532,47 @@ export function useJobGeneratedEmails(jobIds: string[]) {
   });
 }
 
+export function useJobApplicationsMap(jobIds: string[]) {
+  const { recruiterId } = useAuth();
+
+  return useQuery({
+    queryKey: ["recruiter", "job-applications-map", recruiterId, jobIds],
+    enabled: !!recruiterId && jobIds.length > 0,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("job_applications")
+        .select(`
+          application_id,
+          job_id,
+          candidate_id,
+          cv_id,
+          application_status,
+          applied_at,
+          candidates!job_applications_candidate_id_fkey (
+            users!candidates_user_id_fkey (
+              full_name
+            )
+          )
+        `)
+        .eq("recruiter_id", recruiterId!)
+        .in("job_id", jobIds)
+        .order("applied_at", { ascending: false });
+
+      if (error) throw error;
+
+      const byJob: Record<string, any[]> = {};
+      (data || []).forEach((a: any) => {
+        if (!byJob[a.job_id]) byJob[a.job_id] = [];
+        byJob[a.job_id].push({
+          ...a,
+          candidate_name: a.candidates?.users?.full_name || "Unknown",
+        });
+      });
+      return byJob;
+    },
+  });
+}
+
 export function useScrapeHistory() {
   const { recruiterId } = useAuth();
 

@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ScrapedJob, mapDbJob } from "@/data/mockScrapedJobs";
-import { useScrapedJobs, useRecruiterCandidates, useRecruiterCVs, useJobATSAnalyses, useJobUpdatedCVs, useJobGeneratedEmails } from "@/hooks/useRecruiterData";
+import { useScrapedJobs, useRecruiterCandidates, useRecruiterCVs, useJobATSAnalyses, useJobUpdatedCVs, useJobGeneratedEmails, useJobApplicationsMap } from "@/hooks/useRecruiterData";
 import ATSResultsView, { type ATSAnalysisResult } from "@/components/recruiter/ATSResultsView";
 import { useAuth } from "@/hooks/useAuth";
 import FilterDropdown from "@/components/recruiter/FilterDropdown";
@@ -19,6 +19,7 @@ import ATSMatcherModal from "@/components/recruiter/ATSMatcherModal";
 import UpdateCVModal from "@/components/recruiter/UpdateCVModal";
 import GenerateEmailModal from "@/components/recruiter/GenerateEmailModal";
 import CreateJobModal from "@/components/recruiter/CreateJobModal";
+import ApplyToJobModal from "@/components/recruiter/ApplyToJobModal";
 const platformOptions = [
   { value: "", label: "All Platforms" },
   { value: "linkedin", label: "LinkedIn" },
@@ -77,6 +78,7 @@ const RecruiterScrapedJobs = () => {
   const [viewATSResult, setViewATSResult] = useState<{ result: ATSAnalysisResult; job: ScrapedJob } | null>(null);
   const [emailJob, setEmailJob] = useState<ScrapedJob | null>(null);
   const [createJobOpen, setCreateJobOpen] = useState(false);
+  const [applyJob, setApplyJob] = useState<ScrapedJob | null>(null);
   const { data, isLoading } = useScrapedJobs(recruiterId, {
     search, platform: platformFilter, contractType: contractFilter,
     workMode: workModeFilter, dateRange: dateFilter,
@@ -96,6 +98,7 @@ const RecruiterScrapedJobs = () => {
   const { data: atsAnalyses = {} } = useJobATSAnalyses(jobIds);
   const { data: updatedCVsMap = {} } = useJobUpdatedCVs(jobIds);
   const { data: generatedEmailsMap = {} } = useJobGeneratedEmails(jobIds);
+  const { data: jobApplicationsMap = {} } = useJobApplicationsMap(jobIds);
 
   // Active filters
   const activeFilters: { label: string; onRemove: () => void }[] = [];
@@ -142,6 +145,13 @@ const RecruiterScrapedJobs = () => {
       <UpdateCVModal job={updateCVJob} candidates={candidatesData} cvs={cvsData} onClose={() => setUpdateCVJob(null)} />
       <GenerateEmailModal job={emailJob} onClose={() => setEmailJob(null)} />
       {recruiterId && <CreateJobModal open={createJobOpen} onOpenChange={setCreateJobOpen} recruiterId={recruiterId} />}
+      <ApplyToJobModal
+        job={applyJob}
+        candidates={candidatesData}
+        updatedCVs={applyJob ? (updatedCVsMap[applyJob.id] || []) : []}
+        atsAnalyses={applyJob ? (atsAnalyses[applyJob.id] || []) : []}
+        onClose={() => setApplyJob(null)}
+      />
       {/* ATS Results Viewer Modal */}
       {viewATSResult && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setViewATSResult(null)}>
@@ -265,9 +275,11 @@ const RecruiterScrapedJobs = () => {
               allSelected={jobs.length > 0 && selectedIds.size === jobs.length}
                onViewDetails={setDetailJob} onRunATS={setAtsJob} onUpdateCV={setUpdateCVJob} onGenerateEmail={setEmailJob}
               onViewATSResult={handleViewATSResult}
+              onApplyToJob={setApplyJob}
               atsAnalyses={atsAnalyses}
               updatedCVsMap={updatedCVsMap}
               generatedEmailsMap={generatedEmailsMap}
+              jobApplicationsMap={jobApplicationsMap}
               sortField={sortField} sortDir={sortDir} onSort={handleSort}
             />
           ) : (
@@ -275,9 +287,11 @@ const RecruiterScrapedJobs = () => {
               jobs={jobs} selectedIds={selectedIds} onToggleSelect={toggleSelect}
                onViewDetails={setDetailJob} onRunATS={setAtsJob} onUpdateCV={setUpdateCVJob} onGenerateEmail={setEmailJob}
               onViewATSResult={handleViewATSResult}
+              onApplyToJob={setApplyJob}
               atsAnalyses={atsAnalyses}
               updatedCVsMap={updatedCVsMap}
               generatedEmailsMap={generatedEmailsMap}
+              jobApplicationsMap={jobApplicationsMap}
             />
           )}
         </motion.div>
