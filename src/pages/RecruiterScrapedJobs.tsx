@@ -162,11 +162,6 @@ const RecruiterScrapedJobs = () => {
         atsAnalyses={atsAnalyses}
         onClose={() => { setBatchATSOpen(false); setSelectedIds(new Set()); }}
       />
-        candidates={candidatesData}
-        updatedCVs={applyJob ? (updatedCVsMap[applyJob.id] || []) : []}
-        atsAnalyses={applyJob ? (atsAnalyses[applyJob.id] || []) : []}
-        onClose={() => setApplyJob(null)}
-      />
       {/* ATS Results Viewer Modal */}
       {viewATSResult && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setViewATSResult(null)}>
