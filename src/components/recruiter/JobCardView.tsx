@@ -150,7 +150,17 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
               {/* Expanded actions */}
               {isExpanded && (
                 <div className="pt-3 space-y-2 animate-accordion-down">
-                  {/* Step 1: Update CV (always available) */}
+                  {/* Step 1: ATS Analysis (always available) */}
+                  {hasATS ? (
+                    <button onClick={() => onViewATSResult(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-all">
+                      <Eye className="w-4 h-4" /> View ATS Results ({atsAnalysesForJob.length})
+                    </button>
+                  ) : (
+                    <button onClick={() => onRunATS(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-all">
+                      <Wand2 className="w-4 h-4" /> Run ATS Analysis
+                    </button>
+                  )}
+                  {/* Step 2: Update CV (always available) */}
                   {updatedCVs.length > 0 ? (
                     <>
                       <div className="w-full"><UpdatedCVsBadge updatedCVs={updatedCVs} /></div>
@@ -162,22 +172,6 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                     <button onClick={() => onUpdateCV(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-100 transition-all">
                       <FileEdit className="w-4 h-4" /> Update CV
                     </button>
-                  )}
-                  {/* Step 2: ATS Analysis (only after CV updated) */}
-                  {updatedCVs.length > 0 ? (
-                    hasATS ? (
-                      <button onClick={() => onViewATSResult(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-all">
-                        <Eye className="w-4 h-4" /> View ATS Results ({atsAnalysesForJob.length})
-                      </button>
-                    ) : (
-                      <button onClick={() => onRunATS(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-all">
-                        <Wand2 className="w-4 h-4" /> Run ATS Analysis
-                      </button>
-                    )
-                  ) : (
-                    <span className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium bg-muted text-muted-foreground border border-border cursor-not-allowed opacity-60">
-                      <Wand2 className="w-4 h-4" /> Run ATS (Update CV first)
-                    </span>
                   )}
                   {hasEmails ? (
                     <button onClick={() => onGenerateEmail(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 transition-all">
