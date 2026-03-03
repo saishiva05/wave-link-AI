@@ -20,6 +20,7 @@ import UpdateCVModal from "@/components/recruiter/UpdateCVModal";
 import GenerateEmailModal from "@/components/recruiter/GenerateEmailModal";
 import CreateJobModal from "@/components/recruiter/CreateJobModal";
 import ApplyToJobModal from "@/components/recruiter/ApplyToJobModal";
+import BatchATSModal from "@/components/recruiter/BatchATSModal";
 const platformOptions = [
   { value: "", label: "All Platforms" },
   { value: "linkedin", label: "LinkedIn" },
@@ -79,6 +80,7 @@ const RecruiterScrapedJobs = () => {
   const [emailJob, setEmailJob] = useState<ScrapedJob | null>(null);
   const [createJobOpen, setCreateJobOpen] = useState(false);
   const [applyJob, setApplyJob] = useState<ScrapedJob | null>(null);
+  const [batchATSOpen, setBatchATSOpen] = useState(false);
   const { data, isLoading } = useScrapedJobs(recruiterId, {
     search, platform: platformFilter, contractType: contractFilter,
     workMode: workModeFilter, dateRange: dateFilter,
@@ -152,6 +154,14 @@ const RecruiterScrapedJobs = () => {
         atsAnalyses={applyJob ? (atsAnalyses[applyJob.id] || []) : []}
         onClose={() => setApplyJob(null)}
       />
+      <BatchATSModal
+        open={batchATSOpen}
+        jobs={jobs}
+        candidates={candidatesData}
+        cvs={cvsData}
+        atsAnalyses={atsAnalyses}
+        onClose={() => { setBatchATSOpen(false); setSelectedIds(new Set()); }}
+      />
       {/* ATS Results Viewer Modal */}
       {viewATSResult && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setViewATSResult(null)}>
@@ -189,6 +199,9 @@ const RecruiterScrapedJobs = () => {
               <p className="text-base text-muted-foreground mt-1">{totalCount.toLocaleString()} jobs in your database</p>
             </div>
             <div className="flex items-center gap-2">
+              <Button variant="outline" onClick={() => setBatchATSOpen(true)}>
+                <Sparkles className="w-4 h-4" /> Batch ATS
+              </Button>
               <Button variant="outline" onClick={() => setCreateJobOpen(true)}>
                 <Plus className="w-4 h-4" /> Add Job Manually
               </Button>
@@ -237,7 +250,7 @@ const RecruiterScrapedJobs = () => {
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="sticky top-16 z-20 bg-primary rounded-xl px-5 py-3.5 flex items-center justify-between shadow-card">
             <span className="text-sm font-medium text-primary-foreground">{selectedIds.size} job{selectedIds.size > 1 ? "s" : ""} selected</span>
             <div className="flex items-center gap-2">
-              <Button size="sm" className="bg-white text-primary hover:bg-white/90 text-xs font-semibold"><Sparkles className="w-3.5 h-3.5" /> Run ATS</Button>
+              <Button size="sm" className="bg-white text-primary hover:bg-white/90 text-xs font-semibold" onClick={() => setBatchATSOpen(true)}><Sparkles className="w-3.5 h-3.5" /> Run ATS</Button>
               <Button size="sm" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-xs"><Download className="w-3.5 h-3.5" /> Export</Button>
               <Button size="sm" variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-xs"><Trash className="w-3.5 h-3.5" /> Delete</Button>
               <button onClick={() => setSelectedIds(new Set())} className="text-primary-foreground/80 hover:text-primary-foreground ml-2"><X className="w-4 h-4" /></button>

@@ -152,9 +152,14 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                 <div className="pt-3 space-y-2 animate-accordion-down">
                   {/* Step 1: ATS Analysis (always available) */}
                   {hasATS ? (
-                    <button onClick={() => onViewATSResult(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-all">
-                      <Eye className="w-4 h-4" /> View ATS Results ({atsAnalysesForJob.length})
-                    </button>
+                    <>
+                      <button onClick={() => onViewATSResult(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-all">
+                        <Eye className="w-4 h-4" /> View ATS Results ({atsAnalysesForJob.length})
+                      </button>
+                      <button onClick={() => onRunATS(job)} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-purple-600 hover:bg-purple-50 transition-all">
+                        <Wand2 className="w-3.5 h-3.5" /> Re-run ATS Analysis
+                      </button>
+                    </>
                   ) : (
                     <button onClick={() => onRunATS(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-all">
                       <Wand2 className="w-4 h-4" /> Run ATS Analysis
