@@ -31,6 +31,7 @@ import RecruiterApplications from "./pages/RecruiterApplications";
 import RecruiterSettingsPage from "./pages/RecruiterSettingsPage";
 import RecruiterSupportPage from "./pages/RecruiterSupportPage";
 import RecruiterMessagesPage from "./pages/RecruiterMessagesPage";
+import RecruiterJobPostingsPage from "./pages/RecruiterJobPostingsPage";
 import CandidateLayout from "./components/candidate/CandidateLayout";
 import CandidateDashboardPage from "./pages/CandidateDashboardPage";
 import CandidateApplicationsPage from "./pages/CandidateApplicationsPage";
@@ -38,6 +39,7 @@ import CandidateCVsPage from "./pages/CandidateCVsPage";
 import CandidateProfile from "./pages/CandidateProfile";
 import CandidateSupport from "./pages/CandidateSupport";
 import CandidateMessagesPage from "./pages/CandidateMessagesPage";
+import CandidateJobPostingsPage from "./pages/CandidateJobPostingsPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -94,6 +96,7 @@ const App = () => (
               <Route path="dashboard" element={<RecruiterDashboard />} />
               <Route path="scrape-jobs" element={<RecruiterScrapeJobs />} />
               <Route path="scraped-jobs" element={<RecruiterScrapedJobs />} />
+              <Route path="job-postings" element={<RecruiterJobPostingsPage />} />
               <Route path="cv-management" element={<RecruiterCVManagement />} />
               <Route path="candidates" element={<RecruiterCandidates />} />
               <Route path="applications" element={<RecruiterApplications />} />
@@ -113,6 +116,7 @@ const App = () => (
             >
               <Route path="dashboard" element={<CandidateDashboardPage />} />
               <Route path="applications" element={<CandidateApplicationsPage />} />
+              <Route path="job-postings" element={<CandidateJobPostingsPage />} />
               <Route path="cvs" element={<CandidateCVsPage />} />
               <Route path="messages" element={<CandidateMessagesPage />} />
               <Route path="profile" element={<CandidateProfile />} />
