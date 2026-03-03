@@ -9,17 +9,21 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Loader2, Briefcase } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface CreateJobModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   recruiterId: string;
-  /** If provided (admin mode), show recruiter selector */
+  /** If provided (admin mode with recruiter list), show recruiter selector */
   recruiterOptions?: { recruiter_id: string; full_name: string }[];
+  /** Admin posting mode - no recruiter needed, uses auth user_id to find a dummy recruiter or self */
+  adminMode?: boolean;
 }
 
-const CreateJobModal = ({ open, onOpenChange, recruiterId, recruiterOptions }: CreateJobModalProps) => {
+const CreateJobModal = ({ open, onOpenChange, recruiterId, recruiterOptions, adminMode }: CreateJobModalProps) => {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   const [selectedRecruiterId, setSelectedRecruiterId] = useState(recruiterId);
   const [form, setForm] = useState({
     job_title: "",
@@ -35,8 +39,26 @@ const CreateJobModal = ({ open, onOpenChange, recruiterId, recruiterOptions }: C
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const rid = recruiterOptions ? selectedRecruiterId : recruiterId;
-      const isAdmin = !!recruiterOptions && recruiterOptions.length > 0;
+      let rid = recruiterId;
+      
+      if (adminMode) {
+        // For admin mode, get the first recruiter or use a placeholder approach
+        // Admin posts don't need a specific recruiter - find any recruiter to satisfy FK
+        const { data: firstRecruiter } = await supabase
+          .from("recruiters")
+          .select("recruiter_id")
+          .limit(1)
+          .single();
+        
+        if (!firstRecruiter) {
+          throw new Error("No recruiters exist yet. Please create a recruiter first.");
+        }
+        rid = firstRecruiter.recruiter_id;
+      } else if (recruiterOptions && recruiterOptions.length > 0) {
+        rid = selectedRecruiterId;
+      }
+
+      const isAdmin = !!adminMode || (!!recruiterOptions && recruiterOptions.length > 0);
       const { error } = await supabase.from("scraped_jobs").insert({
         recruiter_id: rid,
         job_title: form.job_title,
@@ -58,6 +80,7 @@ const CreateJobModal = ({ open, onOpenChange, recruiterId, recruiterOptions }: C
       toast.success("Job posting created successfully!");
       queryClient.invalidateQueries({ queryKey: ["recruiter"] });
       queryClient.invalidateQueries({ queryKey: ["admin"] });
+      queryClient.invalidateQueries({ queryKey: ["candidate"] });
       onOpenChange(false);
       setForm({
         job_title: "", company_name: "", location: "", contract_type: "Full-time",
@@ -89,14 +112,19 @@ const CreateJobModal = ({ open, onOpenChange, recruiterId, recruiterOptions }: C
               <Briefcase className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <DialogTitle className="text-xl font-bold font-display">Add Job Posting</DialogTitle>
-              <p className="text-sm text-muted-foreground mt-0.5">Manually add a job to the system</p>
+              <DialogTitle className="text-xl font-bold font-display">
+                {adminMode ? "Post Job (Admin)" : "Add Job Posting"}
+              </DialogTitle>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                {adminMode ? "This job will be visible to all recruiters and candidates" : "Manually add a job to the system"}
+              </p>
             </div>
           </div>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-          {recruiterOptions && recruiterOptions.length > 0 && (
+          {/* Only show recruiter selector when recruiterOptions provided (not adminMode) */}
+          {recruiterOptions && recruiterOptions.length > 0 && !adminMode && (
             <div className="space-y-2">
               <Label>Assign to Recruiter *</Label>
               <Select value={selectedRecruiterId} onValueChange={setSelectedRecruiterId}>
@@ -175,7 +203,7 @@ const CreateJobModal = ({ open, onOpenChange, recruiterId, recruiterOptions }: C
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
             <Button type="submit" variant="portal" disabled={mutation.isPending}>
               {mutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-              Create Job Posting
+              {adminMode ? "Post Job" : "Create Job Posting"}
             </Button>
           </div>
         </form>
