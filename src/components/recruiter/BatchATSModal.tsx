@@ -33,7 +33,7 @@ interface JobResult {
 }
 
 const MAX_BATCH = 10;
-const DELAY_BETWEEN_MS = 60_000; // 1 minute
+const DELAY_BETWEEN_MS = 10_000; // 10 seconds
 
 const formatBytes = (bytes: number | null) => {
   if (!bytes) return "";
@@ -151,7 +151,7 @@ const BatchATSModal = ({ open, jobs, candidates, cvs, atsAnalyses, onClose }: Ba
       return;
     }
 
-    // Process jobs sequentially with delay
+    const processJobs = async () => {
     for (let i = 0; i < selectedJobs.length; i++) {
       const job = selectedJobs[i];
       setJobResults((prev) => prev.map((r, idx) => idx === i ? { ...r, status: "running" } : r));
@@ -224,8 +224,12 @@ const BatchATSModal = ({ open, jobs, candidates, cvs, atsAnalyses, onClose }: Ba
       }
     }
 
-    queryClient.invalidateQueries({ queryKey: ["recruiter", "job-ats-analyses"] });
-    setStep("results");
+      queryClient.invalidateQueries({ queryKey: ["recruiter", "job-ats-analyses"] });
+      setStep("results");
+    };
+
+    // Run in background so user can see results as they come in
+    processJobs();
   };
 
   const handleClose = () => {
@@ -280,7 +284,7 @@ const BatchATSModal = ({ open, jobs, candidates, cvs, atsAnalyses, onClose }: Ba
             <p className="text-sm text-muted-foreground mt-1">
               {step === "select-jobs" && `Select up to ${MAX_BATCH} jobs to analyze (${unanalyzedCount} unanalyzed)`}
               {step === "select-cv" && `Choose a candidate resume for ${selectedJobIds.size} selected jobs`}
-              {step === "running" && "Processing jobs with 1-minute intervals..."}
+              {step === "running" && "Processing jobs with 10-second intervals..."}
               {step === "results" && "Analysis complete for all selected jobs"}
             </p>
           </div>
@@ -415,7 +419,7 @@ const BatchATSModal = ({ open, jobs, candidates, cvs, atsAnalyses, onClose }: Ba
 
               <div className="notice-info flex items-start gap-2 mt-4">
                 <Info className="w-4 h-4 text-info-500 shrink-0 mt-0.5" />
-                <p className="text-sm">The selected resume will be analyzed against all {selectedJobIds.size} jobs. Jobs are processed with a 1-minute gap between each.</p>
+                <p className="text-sm">The selected resume will be analyzed against all {selectedJobIds.size} jobs. Jobs are processed with a 10-second gap between each.</p>
               </div>
             </>
           )}
