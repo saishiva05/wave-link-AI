@@ -345,21 +345,15 @@ const JobExpandableRow = ({
                   </button>
                 )}
 
-                {/* Step 4: Apply to Job (after CV updated + ATS analyzed) */}
-                {hasUpdatedCVs && hasATS ? (
-                  jobApplications.length > 0 ? (
-                    <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-success-100 text-success-700 border border-success-200">
-                      <CheckCircle className="w-4 h-4" /> Applied ({jobApplications.length})
-                    </span>
-                  ) : (
-                    <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:shadow-md transition-all hover:scale-[1.02]">
-                      <Send className="w-4 h-4" /> Apply to Job
-                    </button>
-                  )
-                ) : (
-                  <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-muted text-muted-foreground border border-border cursor-not-allowed opacity-60">
-                    <Send className="w-4 h-4" /> Apply (Complete steps first)
+                {/* Step 4: Apply to Job */}
+                {jobApplications.length > 0 ? (
+                  <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-success-100 text-success-700 border border-success-200">
+                    <CheckCircle className="w-4 h-4" /> Applied ({jobApplications.length})
                   </span>
+                ) : (
+                  <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:shadow-md transition-all hover:scale-[1.02]">
+                    <Send className="w-4 h-4" /> Apply to Job
+                  </button>
                 )}
                 {jobApplications.length > 0 && (
                   <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-blue-600 hover:bg-blue-50 transition-all">
