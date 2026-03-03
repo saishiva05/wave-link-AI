@@ -247,7 +247,7 @@ const RecruiterScrapedJobs = () => {
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="sticky top-16 z-20 bg-primary rounded-xl px-5 py-3.5 flex items-center justify-between shadow-card">
             <span className="text-sm font-medium text-primary-foreground">{selectedIds.size} job{selectedIds.size > 1 ? "s" : ""} selected</span>
             <div className="flex items-center gap-2">
-              <Button size="sm" className="bg-white text-primary hover:bg-white/90 text-xs font-semibold"><Sparkles className="w-3.5 h-3.5" /> Run ATS</Button>
+              <Button size="sm" className="bg-white text-primary hover:bg-white/90 text-xs font-semibold" onClick={() => setBatchATSOpen(true)}><Sparkles className="w-3.5 h-3.5" /> Run ATS</Button>
               <Button size="sm" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-xs"><Download className="w-3.5 h-3.5" /> Export</Button>
               <Button size="sm" variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-xs"><Trash className="w-3.5 h-3.5" /> Delete</Button>
               <button onClick={() => setSelectedIds(new Set())} className="text-primary-foreground/80 hover:text-primary-foreground ml-2"><X className="w-4 h-4" /></button>
