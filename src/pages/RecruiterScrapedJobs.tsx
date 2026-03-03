@@ -150,6 +150,7 @@ const RecruiterScrapedJobs = () => {
       <ApplyToJobModal
         job={applyJob}
         candidates={candidatesData}
+        cvs={cvsData}
         updatedCVs={applyJob ? (updatedCVsMap[applyJob.id] || []) : []}
         atsAnalyses={applyJob ? (atsAnalyses[applyJob.id] || []) : []}
         onClose={() => setApplyJob(null)}
