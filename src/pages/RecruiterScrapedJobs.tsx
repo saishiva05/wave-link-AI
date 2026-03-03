@@ -199,6 +199,9 @@ const RecruiterScrapedJobs = () => {
               <p className="text-base text-muted-foreground mt-1">{totalCount.toLocaleString()} jobs in your database</p>
             </div>
             <div className="flex items-center gap-2">
+              <Button variant="outline" onClick={() => setBatchATSOpen(true)}>
+                <Sparkles className="w-4 h-4" /> Batch ATS
+              </Button>
               <Button variant="outline" onClick={() => setCreateJobOpen(true)}>
                 <Plus className="w-4 h-4" /> Add Job Manually
               </Button>
