@@ -59,13 +59,10 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
   const selectedCandidateObj = candidates.find((c: any) => c.candidate_id === selectedCandidate);
 
   const parseCV = async (cvObj: any, useSignedUrl = true): Promise<string> => {
-    // Try parsing via edge function
     let parsePayload: any = {};
-
     const originalFileName = cvObj.file_name || cvObj.original_file_name || cvObj.updated_file_name || "";
 
     if (useSignedUrl) {
-      // For original CVs in cvs-bucket, use bucket + filePath
       const urlParts = cvObj.file_url.split("/cvs-bucket/");
       if (urlParts[1]) {
         parsePayload = { bucket: "cvs-bucket", filePath: decodeURIComponent(urlParts[1]), fileName: originalFileName };
@@ -99,7 +96,22 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
       // Parse CV content via edge function
       const cvText = await parseCV(cvObj, true);
 
-      const payload = {
+      // Fetch ATS analysis data for this job+CV if available
+      let atsAnalysisData: any = null;
+      if (recruiterId) {
+        const { data: atsData } = await supabase
+          .from("ats_analyses")
+          .select("*")
+          .eq("job_id", job.id)
+          .eq("recruiter_id", recruiterId)
+          .order("analyzed_at", { ascending: false })
+          .limit(1);
+        if (atsData && atsData.length > 0) {
+          atsAnalysisData = atsData[0];
+        }
+      }
+
+      const payload: any = {
         job_id: job.id,
         cv_id: selectedCV,
         candidate_id: selectedCandidate,
@@ -119,6 +131,13 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
         published_date: job.published_date,
         scraped_at: job.scraped_at || "",
       };
+
+      // Include ATS analysis info if available
+      if (atsAnalysisData) {
+        payload.ats_analysis_id = atsAnalysisData.analysis_id;
+        payload.ats_score = atsAnalysisData.ats_score;
+        payload.ats_analysis_result = atsAnalysisData.analysis_result;
+      }
 
       const response = await fetch("https://n8n.srv1340079.hstgr.cloud/webhook/update cv", {
         method: "POST",
@@ -145,6 +164,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
             updated_file_url: updatedFileUrl,
             updated_file_size_bytes: result?.file_size || null,
             webhook_response: result,
+            ats_analysis_id: atsAnalysisData?.analysis_id || null,
           });
           queryClient.invalidateQueries({ queryKey: ["recruiter", "job-updated-cvs"] });
         } catch (dbErr) {
@@ -161,12 +181,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
   };
 
   const handleClose = () => {
-    setSelectedCandidate("");
-    setSelectedCV("");
-    setCandidateSearch("");
-    setState("form");
-    setUpdateResult(null);
-    setErrorMsg("");
+    setSelectedCandidate(""); setSelectedCV(""); setCandidateSearch(""); setState("form"); setUpdateResult(null); setErrorMsg("");
     onClose();
   };
 
@@ -207,80 +222,46 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
 
               {/* Candidate selection */}
               <div className="mb-5">
-                <label className="block text-sm font-medium text-foreground/80 mb-2">
-                  Select Candidate <span className="text-destructive">*</span>
-                </label>
+                <label className="block text-sm font-medium text-foreground/80 mb-2">Select Candidate <span className="text-destructive">*</span></label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <input
-                    value={candidateSearch}
-                    onChange={(e) => setCandidateSearch(e.target.value)}
-                    placeholder="Search candidates..."
-                    className="w-full h-10 pl-9 pr-3 text-sm rounded-lg border border-border bg-card outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 mb-2"
-                  />
+                  <input value={candidateSearch} onChange={(e) => setCandidateSearch(e.target.value)} placeholder="Search candidates..." className="w-full h-10 pl-9 pr-3 text-sm rounded-lg border border-border bg-card outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 mb-2" />
                 </div>
                 <div className="max-h-[180px] overflow-y-auto border border-border rounded-lg">
                   {filteredCandidates.map((c: any) => (
-                    <button
-                      key={c.candidate_id}
-                      type="button"
-                      onClick={() => { setSelectedCandidate(c.candidate_id); setSelectedCV(""); }}
-                      className={cn(
-                        "w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors",
-                        selectedCandidate === c.candidate_id ? "bg-primary-100" : "hover:bg-muted/50"
-                      )}
-                    >
-                      <div className="w-8 h-8 rounded-full bg-info-500 flex items-center justify-center text-primary-foreground text-xs font-semibold shrink-0">
-                        {getInitials(c.users?.full_name || "?")}
-                      </div>
+                    <button key={c.candidate_id} type="button" onClick={() => { setSelectedCandidate(c.candidate_id); setSelectedCV(""); }}
+                      className={cn("w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors", selectedCandidate === c.candidate_id ? "bg-primary-100" : "hover:bg-muted/50")}>
+                      <div className="w-8 h-8 rounded-full bg-info-500 flex items-center justify-center text-primary-foreground text-xs font-semibold shrink-0">{getInitials(c.users?.full_name || "?")}</div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-secondary-900 truncate">{c.users?.full_name}</p>
                         <p className="text-xs text-muted-foreground">{c.users?.email}</p>
                       </div>
                     </button>
                   ))}
-                  {filteredCandidates.length === 0 && (
-                    <p className="text-sm text-muted-foreground text-center py-4">No candidates found</p>
-                  )}
+                  {filteredCandidates.length === 0 && <p className="text-sm text-muted-foreground text-center py-4">No candidates found</p>}
                 </div>
               </div>
 
               {/* CV selection */}
               {selectedCandidate && (
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-foreground/80 mb-2">
-                    Select CV to Update <span className="text-destructive">*</span>
-                  </label>
+                  <label className="block text-sm font-medium text-foreground/80 mb-2">Select CV to Update <span className="text-destructive">*</span></label>
                   {candidateCVs.length === 0 ? (
                     <p className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">No CVs uploaded for this candidate.</p>
                   ) : (
                     <div className="space-y-2">
                       {candidateCVs.map((cv: any) => (
-                        <button
-                          key={cv.cv_id}
-                          type="button"
-                          onClick={() => setSelectedCV(cv.cv_id)}
-                          className={cn(
-                            "w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-all",
-                            selectedCV === cv.cv_id ? "border-info-500 bg-info-50" : "border-border hover:bg-muted/50"
-                          )}
-                        >
+                        <button key={cv.cv_id} type="button" onClick={() => setSelectedCV(cv.cv_id)}
+                          className={cn("w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-all", selectedCV === cv.cv_id ? "border-info-500 bg-info-50" : "border-border hover:bg-muted/50")}>
                           <FileText className="w-5 h-5 text-muted-foreground shrink-0" />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <span className="text-sm font-medium text-secondary-900 truncate">{cv.file_name}</span>
-                              {cv.is_primary && (
-                                <span className="text-[10px] font-semibold bg-success-50 text-success-700 px-1.5 py-0.5 rounded shrink-0">Primary</span>
-                              )}
+                              {cv.is_primary && <span className="text-[10px] font-semibold bg-success-50 text-success-700 px-1.5 py-0.5 rounded shrink-0">Primary</span>}
                             </div>
-                            <p className="text-xs text-muted-foreground mt-0.5">
-                              {formatBytes(cv.file_size_bytes)} • Uploaded {new Date(cv.uploaded_at).toLocaleDateString()}
-                            </p>
+                            <p className="text-xs text-muted-foreground mt-0.5">{formatBytes(cv.file_size_bytes)} • Uploaded {new Date(cv.uploaded_at).toLocaleDateString()}</p>
                           </div>
-                          <div className={cn(
-                            "w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0",
-                            selectedCV === cv.cv_id ? "border-info-500 bg-info-500" : "border-muted-foreground/30"
-                          )}>
+                          <div className={cn("w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0", selectedCV === cv.cv_id ? "border-info-500 bg-info-500" : "border-muted-foreground/30")}>
                             {selectedCV === cv.cv_id && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                           </div>
                         </button>
@@ -292,7 +273,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
 
               <div className="notice-info flex items-start gap-2">
                 <Info className="w-4 h-4 text-info-500 shrink-0 mt-0.5" />
-                <p className="text-sm">This will send the selected CV along with the job description to our AI for resume rewriting. The updated CV will be optimized for this specific job.</p>
+                <p className="text-sm">This will send the selected CV along with the job description and ATS analysis data (if available) to our AI for resume rewriting.</p>
               </div>
             </>
           )}
@@ -301,32 +282,24 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <Loader2 className="w-12 h-12 text-info-500 animate-spin" />
               <h3 className="text-lg font-bold text-secondary-900 font-display mt-6">Updating CV with AI...</h3>
-              <p className="text-sm text-muted-foreground mt-2">Rewriting resume based on job description. This may take 30–60 seconds.</p>
+              <p className="text-sm text-muted-foreground mt-2">Rewriting resume based on job description & ATS insights. This may take 30–60 seconds.</p>
             </div>
           )}
 
           {state === "success" && (
             <div className="flex flex-col items-center justify-center py-8 text-center">
-              <div className="w-16 h-16 rounded-full bg-success-50 flex items-center justify-center">
-                <CheckCircle className="w-10 h-10 text-success-500" />
-              </div>
+              <div className="w-16 h-16 rounded-full bg-success-50 flex items-center justify-center"><CheckCircle className="w-10 h-10 text-success-500" /></div>
               <h3 className="text-xl font-bold text-secondary-900 font-display mt-6">CV Updated Successfully!</h3>
               <p className="text-sm text-muted-foreground mt-2">The CV has been rewritten with optimized content based on the job requirements.</p>
-
               {updateResult && (
                 <div className="mt-6 w-full text-left bg-muted/50 border border-border rounded-lg p-4 max-h-[200px] overflow-y-auto">
                   <h4 className="text-sm font-semibold text-secondary-900 mb-2">Update Details</h4>
-                  <pre className="text-xs text-muted-foreground whitespace-pre-wrap break-words">
-                    {typeof updateResult === "string" ? updateResult : JSON.stringify(updateResult, null, 2)}
-                  </pre>
+                  <pre className="text-xs text-muted-foreground whitespace-pre-wrap break-words">{typeof updateResult === "string" ? updateResult : JSON.stringify(updateResult, null, 2)}</pre>
                 </div>
               )}
-
               <div className="flex gap-3 mt-6 w-full">
                 {(updateResult?.updated_cv_url || updateResult?.file_url || updateResult?.download_url) && (
-                  <Button variant="portal" className="flex-1" onClick={handleDownloadUpdated}>
-                    <Download className="w-4 h-4" /> Download Updated CV
-                  </Button>
+                  <Button variant="portal" className="flex-1" onClick={handleDownloadUpdated}><Download className="w-4 h-4" /> Download Updated CV</Button>
                 )}
                 <Button variant="outline" className="flex-1" onClick={handleClose}>Close</Button>
               </div>
@@ -335,9 +308,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
 
           {state === "error" && (
             <div className="flex flex-col items-center justify-center py-10 text-center">
-              <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center">
-                <XCircle className="w-10 h-10 text-destructive" />
-              </div>
+              <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center"><XCircle className="w-10 h-10 text-destructive" /></div>
               <h3 className="text-xl font-bold text-secondary-900 font-display mt-6">Update Failed</h3>
               <p className="text-sm text-muted-foreground mt-2">{errorMsg || "Something went wrong. Please try again."}</p>
               <div className="flex gap-3 mt-8 w-full">
@@ -352,9 +323,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
         {state === "form" && (
           <div className="px-6 py-4 border-t border-border flex items-center justify-between shrink-0">
             <Button variant="ghost" onClick={handleClose}>Cancel</Button>
-            <Button variant="portal-info" onClick={handleUpdate} disabled={!selectedCandidate || !selectedCV}>
-              <FilePen className="w-4 h-4" /> Update CV
-            </Button>
+            <Button variant="portal-info" onClick={handleUpdate} disabled={!selectedCandidate || !selectedCV}><FilePen className="w-4 h-4" /> Update CV</Button>
           </div>
         )}
       </div>
