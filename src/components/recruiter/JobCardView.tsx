@@ -194,20 +194,14 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                     </button>
                   )}
                   {/* Step 4: Apply to Job */}
-                  {updatedCVs.length > 0 && hasATS ? (
-                    jobApplications.length > 0 ? (
-                      <span className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-success-100 text-success-700 border border-success-200">
-                        <CheckCircle className="w-4 h-4" /> Applied ({jobApplications.length})
-                      </span>
-                    ) : (
-                      <button onClick={() => onApplyToJob(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-all">
-                        <Send className="w-4 h-4" /> Apply to Job
-                      </button>
-                    )
-                  ) : (
-                    <span className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium bg-muted text-muted-foreground border border-border cursor-not-allowed opacity-60">
-                      <Send className="w-4 h-4" /> Apply (Complete steps first)
+                  {jobApplications.length > 0 ? (
+                    <span className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-success-100 text-success-700 border border-success-200">
+                      <CheckCircle className="w-4 h-4" /> Applied ({jobApplications.length})
                     </span>
+                  ) : (
+                    <button onClick={() => onApplyToJob(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-all">
+                      <Send className="w-4 h-4" /> Apply to Job
+                    </button>
                   )}
                   <div className="flex items-center gap-2 pt-1">
                     <button onClick={() => onViewDetails(job)} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
