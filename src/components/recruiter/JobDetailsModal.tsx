@@ -46,8 +46,9 @@ const JobDetailsModal = ({ job, onClose, onRunATS }: JobDetailsModalProps) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const platformLabel = job.platform === "linkedin" ? "LinkedIn" : "JSearch";
-  const platformColor = job.platform === "linkedin" ? "bg-info-50 text-info-500 border-info-200" : "bg-secondary-100 text-secondary-600 border-secondary-200";
+  const platformLabel = job.platform.charAt(0).toUpperCase() + job.platform.slice(1);
+  const isLinkedIn = job.platform.toLowerCase() === "linkedin";
+  const platformColor = isLinkedIn ? "bg-info-50 text-info-500 border-info-200" : "bg-secondary-100 text-secondary-600 border-secondary-200";
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={onClose}>
@@ -58,7 +59,7 @@ const JobDetailsModal = ({ job, onClose, onRunATS }: JobDetailsModalProps) => {
         {/* Accent bar */}
         <div className={cn(
           "h-1.5 w-full",
-          job.platform === "linkedin" ? "bg-info-500" : "bg-secondary-400"
+          isLinkedIn ? "bg-info-500" : "bg-secondary-400"
         )} />
 
         {/* Header */}
