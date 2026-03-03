@@ -7,6 +7,7 @@ import {
   FileUp,
   Users,
   ClipboardCheck,
+  MessageSquare,
   Settings,
   HelpCircle,
   LogOut,
@@ -26,6 +27,7 @@ const mainMenuItems = [
   { title: "CV Management", icon: FileUp, route: "/recruiter/cv-management" },
   { title: "Candidates", icon: Users, route: "/recruiter/candidates", badgeText: "23", badgeType: "neutral" as const },
   { title: "Applications", icon: ClipboardCheck, route: "/recruiter/applications", badgeText: "5", badgeType: "warning" as const },
+  { title: "Messages", icon: MessageSquare, route: "/recruiter/messages" },
 ];
 
 const secondaryMenuItems = [

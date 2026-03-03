@@ -5,6 +5,9 @@ import RecruiterStatsCards from "@/components/recruiter/RecruiterStatsCards";
 import PlatformBreakdown from "@/components/recruiter/PlatformBreakdown";
 import RecruiterCharts from "@/components/recruiter/RecruiterCharts";
 import ActivityFeed from "@/components/recruiter/ActivityFeed";
+import RecruiterAdminJobPostingsSection from "@/components/recruiter/AdminJobPostingsSection";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const fadeUp = {
   initial: { opacity: 0, y: 8 },
@@ -12,6 +15,19 @@ const fadeUp = {
 };
 
 const RecruiterDashboard = () => {
+  const { data: adminJobs = [] } = useQuery({
+    queryKey: ["recruiter", "admin-job-postings"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("scraped_jobs")
+        .select("job_id, job_title, company_name, location, contract_type, work_type, salary_range, job_apply_url, scraped_at")
+        .eq("is_admin_posting", true)
+        .eq("is_active", true)
+        .order("scraped_at", { ascending: false });
+      return data || [];
+    },
+  });
+
   return (
     <div className="space-y-8">
       {/* Welcome Banner */}
@@ -38,6 +54,13 @@ const RecruiterDashboard = () => {
       <motion.div {...fadeUp} transition={{ duration: 0.3, delay: 0.1 }}>
         <RecruiterStatsCards />
       </motion.div>
+
+      {/* Admin Job Postings */}
+      {adminJobs.length > 0 && (
+        <motion.div {...fadeUp} transition={{ duration: 0.3, delay: 0.12 }}>
+          <RecruiterAdminJobPostingsSection jobs={adminJobs} />
+        </motion.div>
+      )}
 
       {/* Platform Breakdown */}
       <motion.div {...fadeUp} transition={{ duration: 0.3, delay: 0.15 }}>
