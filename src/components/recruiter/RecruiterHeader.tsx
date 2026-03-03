@@ -20,6 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import ThemeToggle from "@/components/ThemeToggle";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface RecruiterHeaderProps {
   onMenuClick: () => void;
@@ -39,7 +40,7 @@ const mockNotifications = [
 ];
 
 const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
-  const { fullName, email, signOut } = useAuth();
+  const { fullName, email, signOut, profile } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(false);
@@ -186,16 +187,27 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
         <div className="relative" ref={userRef}>
           <button
             onClick={() => { setShowUserMenu(!showUserMenu); setShowNotifications(false); setShowQuickActions(false); }}
-            className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground text-sm font-semibold border-2 border-primary-400 shadow-sm hover:ring-2 hover:ring-primary/30 transition-all cursor-pointer"
+            className="rounded-full border-2 border-primary-400 shadow-sm hover:ring-2 hover:ring-primary/30 transition-all cursor-pointer"
           >
-            {initials}
+            <Avatar className="w-10 h-10">
+              <AvatarImage src={profile?.avatar_url || undefined} alt={fullName || "Recruiter"} />
+              <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">{initials}</AvatarFallback>
+            </Avatar>
           </button>
 
           {showUserMenu && (
             <div className="absolute right-0 top-12 w-56 bg-card rounded-xl border border-border shadow-elevated overflow-hidden animate-scale-in z-50">
               <div className="px-4 py-3 border-b border-border">
-                <p className="text-sm font-semibold text-foreground">{fullName || "Recruiter"}</p>
-                <p className="text-xs text-muted-foreground">{email || ""}</p>
+                <div className="flex items-center gap-3">
+                  <Avatar className="w-10 h-10">
+                    <AvatarImage src={profile?.avatar_url || undefined} alt={fullName || "Recruiter"} />
+                    <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">{initials}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{fullName || "Recruiter"}</p>
+                    <p className="text-xs text-muted-foreground">{email || ""}</p>
+                  </div>
+                </div>
               </div>
               <div className="p-1.5">
                 {[
