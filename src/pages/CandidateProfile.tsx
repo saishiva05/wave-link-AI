@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { User, Mail, Phone, MapPin, Briefcase, Award, Save, Loader2, Shield, Camera } from "lucide-react";
@@ -13,7 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const CandidateProfile = () => {
   const navigate = useNavigate();
-  const { user, fullName, email, profile } = useAuth();
+  const { user, fullName, email, profile, refreshProfile } = useAuth();
   const { recruiter, stats } = useCandidateDashboard();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -43,7 +43,7 @@ const CandidateProfile = () => {
   });
 
   // Sync form when data loads
-  useState(() => {
+  useEffect(() => {
     if (candidateData) {
       setForm((prev) => ({
         ...prev,
@@ -52,12 +52,12 @@ const CandidateProfile = () => {
         current_location: candidateData.current_location || "",
       }));
     }
-  });
+  }, [candidateData]);
 
   // Sync avatar from profile
-  useState(() => {
-    if (profile?.avatar_url) setAvatarUrl(profile.avatar_url);
-  });
+  useEffect(() => {
+    setAvatarUrl(profile?.avatar_url || null);
+  }, [profile?.avatar_url]);
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -80,7 +80,9 @@ const CandidateProfile = () => {
       const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(filePath);
       const url = `${publicUrl}?t=${Date.now()}`;
       await supabase.from("users").update({ avatar_url: url }).eq("user_id", user.id);
+      await refreshProfile();
       setAvatarUrl(url);
+      queryClient.invalidateQueries({ queryKey: ["candidate"] });
       toast({ title: "Profile photo updated!" });
     } catch (err: any) {
       toast({ title: "Upload failed", description: err.message, variant: "destructive" });
@@ -108,7 +110,8 @@ const CandidateProfile = () => {
         if (candError) throw candError;
       }
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await refreshProfile();
       queryClient.invalidateQueries({ queryKey: ["candidate"] });
       toast({ title: "Profile updated successfully!" });
     },

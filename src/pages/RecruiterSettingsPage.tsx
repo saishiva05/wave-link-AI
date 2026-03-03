@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 
 const RecruiterSettingsPage = () => {
-  const { user, profile, recruiterId } = useAuth();
+  const { user, profile, recruiterId, refreshProfile } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -67,7 +67,9 @@ const RecruiterSettingsPage = () => {
       const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(filePath);
       const url = `${publicUrl}?t=${Date.now()}`;
       await supabase.from("users").update({ avatar_url: url }).eq("user_id", user.id);
+      await refreshProfile();
       setAvatarUrl(url);
+      queryClient.invalidateQueries({ queryKey: ["recruiter"] });
       toast({ title: "Profile photo updated!" });
     } catch (err: any) {
       toast({ title: "Upload failed", description: err.message, variant: "destructive" });
@@ -92,6 +94,7 @@ const RecruiterSettingsPage = () => {
         .update({ company_name: companyName || null, company_website: companyWebsite || null, phone: phone || null })
         .eq("recruiter_id", recruiterId);
       if (recruiterError) throw recruiterError;
+      await refreshProfile();
       queryClient.invalidateQueries({ queryKey: ["recruiter"] });
       toast({ title: "Settings saved", description: "Your profile has been updated successfully." });
     } catch (err: any) {
