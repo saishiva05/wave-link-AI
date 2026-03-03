@@ -9,7 +9,7 @@ export interface ScrapedJob {
   contract_type: string;
   work_type: string;
   experience_level: string;
-  platform: "linkedin" | "jsearch";  // maps to platform_type
+  platform: string;  // maps to platform_type
   published_date: string;
   job_description: string;
   job_apply_url: string;

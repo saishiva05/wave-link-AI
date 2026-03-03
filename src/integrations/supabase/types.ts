@@ -462,7 +462,7 @@ export type Database = {
           job_id: string
           job_title: string
           location: string
-          platform_type: Database["public"]["Enums"]["platform_type"]
+          platform_type: string
           published_date: string | null
           recruiter_id: string
           salary_range: string | null
@@ -482,7 +482,7 @@ export type Database = {
           job_id?: string
           job_title: string
           location: string
-          platform_type: Database["public"]["Enums"]["platform_type"]
+          platform_type: string
           published_date?: string | null
           recruiter_id: string
           salary_range?: string | null
@@ -502,7 +502,7 @@ export type Database = {
           job_id?: string
           job_title?: string
           location?: string
-          platform_type?: Database["public"]["Enums"]["platform_type"]
+          platform_type?: string
           published_date?: string | null
           recruiter_id?: string
           salary_range?: string | null
@@ -687,7 +687,6 @@ export type Database = {
         | "offer_received"
         | "hired"
         | "declined"
-      platform_type: "linkedin" | "jsearch"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -826,7 +825,6 @@ export const Constants = {
         "hired",
         "declined",
       ],
-      platform_type: ["linkedin", "jsearch"],
     },
   },
 } as const
