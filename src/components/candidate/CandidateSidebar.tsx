@@ -12,7 +12,7 @@ const mainMenuItems = [
   { title: "Dashboard", icon: LayoutDashboard, route: "/candidate/dashboard" },
   { title: "My Applications", icon: Briefcase, route: "/candidate/applications", badgeType: "primary" as const },
   { title: "Job Postings", icon: Newspaper, route: "/candidate/job-postings", badgeType: "neutral" as const },
-  { title: "My CVs", icon: FileText, route: "/candidate/cvs", badgeType: "neutral" as const },
+  { title: "My Resumes", icon: FileText, route: "/candidate/cvs", badgeType: "neutral" as const },
   { title: "Messages", icon: MessageSquare, route: "/candidate/messages", badgeType: "neutral" as const },
 ];
 
