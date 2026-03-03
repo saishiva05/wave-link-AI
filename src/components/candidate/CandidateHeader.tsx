@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useCandidateDashboard } from "@/hooks/useCandidateDashboard";
-import { formatDistanceToNow } from "date-fns";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface CandidateHeaderProps {
   onMenuClick: () => void;
@@ -13,7 +13,7 @@ interface CandidateHeaderProps {
 
 const CandidateHeader = ({ onMenuClick }: CandidateHeaderProps) => {
   const navigate = useNavigate();
-  const { fullName, email, signOut } = useAuth();
+  const { fullName, email, signOut, profile } = useAuth();
   const { notifications, unreadCount, markAllRead, stats } = useCandidateDashboard();
   const [notifOpen, setNotifOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -88,11 +88,19 @@ const CandidateHeader = ({ onMenuClick }: CandidateHeaderProps) => {
 
         {/* Profile */}
         <div ref={profileRef} className="relative">
-          <button onClick={() => setProfileOpen(!profileOpen)} className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-semibold border-2 border-primary-400 hover:ring-2 hover:ring-primary/30 transition-all">{initials}</button>
+          <button onClick={() => setProfileOpen(!profileOpen)} className="rounded-full border-2 border-primary-400 hover:ring-2 hover:ring-primary/30 transition-all">
+            <Avatar className="w-10 h-10">
+              <AvatarImage src={profile?.avatar_url || undefined} alt={fullName || "Candidate"} />
+              <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">{initials}</AvatarFallback>
+            </Avatar>
+          </button>
           {profileOpen && (
             <div className="absolute right-0 mt-2 w-[240px] bg-card border border-border rounded-xl shadow-elevated overflow-hidden animate-scale-in z-50">
               <div className="p-4 text-center border-b border-border">
-                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold mx-auto">{initials}</div>
+                <Avatar className="w-12 h-12 mx-auto">
+                  <AvatarImage src={profile?.avatar_url || undefined} alt={fullName || "Candidate"} />
+                  <AvatarFallback className="bg-primary text-primary-foreground font-semibold">{initials}</AvatarFallback>
+                </Avatar>
                 <p className="text-sm font-semibold text-foreground mt-2">{fullName || "Candidate"}</p>
                 <p className="text-xs text-muted-foreground">{email || ""}</p>
               </div>
