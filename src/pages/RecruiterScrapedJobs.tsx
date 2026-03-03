@@ -20,6 +20,7 @@ import UpdateCVModal from "@/components/recruiter/UpdateCVModal";
 import GenerateEmailModal from "@/components/recruiter/GenerateEmailModal";
 import CreateJobModal from "@/components/recruiter/CreateJobModal";
 import ApplyToJobModal from "@/components/recruiter/ApplyToJobModal";
+import BatchATSModal from "@/components/recruiter/BatchATSModal";
 const platformOptions = [
   { value: "", label: "All Platforms" },
   { value: "linkedin", label: "LinkedIn" },
@@ -79,6 +80,7 @@ const RecruiterScrapedJobs = () => {
   const [emailJob, setEmailJob] = useState<ScrapedJob | null>(null);
   const [createJobOpen, setCreateJobOpen] = useState(false);
   const [applyJob, setApplyJob] = useState<ScrapedJob | null>(null);
+  const [batchATSOpen, setBatchATSOpen] = useState(false);
   const { data, isLoading } = useScrapedJobs(recruiterId, {
     search, platform: platformFilter, contractType: contractFilter,
     workMode: workModeFilter, dateRange: dateFilter,
