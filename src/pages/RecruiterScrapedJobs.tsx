@@ -72,7 +72,7 @@ const RecruiterScrapedJobs = () => {
 
   // View & sort
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
-  const [sortField, setSortField] = useState("published_date");
+  const [sortField, setSortField] = useState("scraped_at");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [page, setPage] = useState(1);
 
