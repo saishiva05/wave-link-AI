@@ -165,6 +165,9 @@ const JobTableView = ({
                 <th className="px-3 py-4 text-center font-bold text-secondary-700 text-[11px] uppercase tracking-widest w-24">
                   <span className="flex items-center justify-center gap-1"><FileCheck2 className="w-3 h-3" /> CV</span>
                 </th>
+                <th className="px-3 py-4 text-center font-bold text-secondary-700 text-[11px] uppercase tracking-widest w-24">
+                  <span className="flex items-center justify-center gap-1">Applicants</span>
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/60">
@@ -290,12 +293,21 @@ const JobExpandableRow = ({
             <span className="text-xs text-muted-foreground/30 italic">None</span>
           )}
         </td>
+        <td className="px-3 py-4 text-center">
+          {(job.applications_count ?? 0) > 0 ? (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+              {job.applications_count} applied
+            </span>
+          ) : (
+            <span className="text-xs text-muted-foreground/30 italic">0</span>
+          )}
+        </td>
       </tr>
 
       {/* Expanded panel */}
       {isExpanded && (
         <tr>
-          <td colSpan={9} className="px-0 py-0">
+          <td colSpan={10} className="px-0 py-0">
             <div className="bg-gradient-to-r from-muted/40 via-card to-muted/40 border-t border-b border-border/50 px-6 py-5 animate-accordion-down space-y-4">
               {/* Action Buttons - Flow: Update CV first → then ATS Analysis */}
               <div className="flex flex-wrap items-center gap-3">
