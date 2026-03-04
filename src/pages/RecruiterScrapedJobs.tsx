@@ -50,6 +50,15 @@ const workModeOptions = [
   { value: "Hybrid", label: "Hybrid" },
 ];
 
+const applicantsOptions = [
+  { value: "", label: "All Applicants" },
+  { value: "0", label: "No Applicants (0)" },
+  { value: "1-10", label: "1 – 10" },
+  { value: "11-50", label: "11 – 50" },
+  { value: "51-100", label: "51 – 100" },
+  { value: "100+", label: "100+" },
+];
+
 const ITEMS_PER_PAGE = 10;
 
 const RecruiterScrapedJobs = () => {
@@ -62,6 +71,7 @@ const RecruiterScrapedJobs = () => {
   const [dateFilter, setDateFilter] = useState("");
   const [contractFilter, setContractFilter] = useState<string[]>([]);
   const [workModeFilter, setWorkModeFilter] = useState("");
+  const [applicantsFilter, setApplicantsFilter] = useState("");
 
   // View & sort
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
