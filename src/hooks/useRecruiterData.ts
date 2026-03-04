@@ -238,6 +238,7 @@ export function useScrapedJobs(recruiterId: string | null, filters: {
   sortDir: "asc" | "desc";
   page: number;
   perPage: number;
+  applicantsRange?: string;
 }) {
   return useQuery({
     queryKey: ["recruiter", "scraped-jobs", recruiterId, filters],
@@ -268,6 +269,20 @@ export function useScrapedJobs(recruiterId: string | null, filters: {
         else if (filters.dateRange === "30d") startDate = new Date(now.getTime() - 30 * 86400000);
         else startDate = new Date(0);
         query = query.gte("scraped_at", startDate.toISOString());
+      }
+
+      if (filters.applicantsRange) {
+        if (filters.applicantsRange === "0") {
+          query = query.eq("applications_count", 0);
+        } else if (filters.applicantsRange === "1-10") {
+          query = query.gte("applications_count", 1).lte("applications_count", 10);
+        } else if (filters.applicantsRange === "11-50") {
+          query = query.gte("applications_count", 11).lte("applications_count", 50);
+        } else if (filters.applicantsRange === "51-100") {
+          query = query.gte("applications_count", 51).lte("applications_count", 100);
+        } else if (filters.applicantsRange === "100+") {
+          query = query.gte("applications_count", 101);
+        }
       }
 
       const ascending = filters.sortDir === "asc";

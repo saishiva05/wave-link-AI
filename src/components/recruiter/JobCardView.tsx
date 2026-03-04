@@ -136,6 +136,11 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                 <span className="flex items-center gap-1.5 text-muted-foreground/70">
                   <Clock className="w-3 h-3" />Scraped {timeAgo(job.scraped_at)}
                 </span>
+                {(job.applications_count ?? 0) > 0 && (
+                  <span className="flex items-center gap-1.5 text-blue-600 font-semibold">
+                    <Send className="w-3 h-3" />{job.applications_count} applicants
+                  </span>
+                )}
               </div>
 
               {updatedCVs.length > 0 && (

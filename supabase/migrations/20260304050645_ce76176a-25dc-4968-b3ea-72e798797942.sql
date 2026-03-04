@@ -1,0 +1,1 @@
+ALTER TABLE public.scraped_jobs ADD COLUMN applications_count integer DEFAULT 0;
