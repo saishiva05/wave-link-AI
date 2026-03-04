@@ -55,10 +55,6 @@ const applicantsOptions = [
   { value: "none", label: "No Data" },
   { value: "has_applicants", label: "Has Applicants" },
 ];
-  { value: "11-50", label: "11 – 50" },
-  { value: "51-100", label: "51 – 100" },
-  { value: "100+", label: "100+" },
-];
 
 const ITEMS_PER_PAGE = 10;
 
