@@ -192,11 +192,11 @@ const RecruiterScrapeJobs = () => {
           <nav className="flex items-center gap-1.5 text-sm mb-4">
             <button onClick={() => navigate("/recruiter/dashboard")} className="text-neutral-500 hover:text-primary transition-colors">Dashboard</button>
             <span className="text-neutral-300">/</span>
-            <span className="text-secondary-900 font-semibold">Scrape Jobs</span>
+            <span className="text-secondary-900 font-semibold">Find Jobs</span>
           </nav>
-          <h1 className="text-2xl md:text-4xl font-bold text-secondary-900 font-display">Scrape Jobs</h1>
+          <h1 className="text-2xl md:text-4xl font-bold text-secondary-900 font-display">Find Jobs</h1>
           <p className="text-base md:text-lg text-muted-foreground mt-2 max-w-3xl leading-relaxed">
-            Find and scrape job postings from LinkedIn and JSearch. After scraping, ATS analysis will automatically run on the first 20 jobs.
+            Discover job postings from LinkedIn and JSearch. After collecting, ATS analysis will automatically run on the first 20 jobs.
           </p>
         </motion.div>
 

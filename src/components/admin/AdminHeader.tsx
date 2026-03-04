@@ -32,7 +32,7 @@ const breadcrumbMap: Record<string, string> = {
 
 const mockNotifications = [
   { id: 1, text: "New recruiter Sarah Johnson created", time: "2 hours ago", read: false, icon: UserPlus },
-  { id: 2, text: "Recruiter Mike Chen scraped 45 new jobs", time: "4 hours ago", read: false, icon: UserPlus },
+  { id: 2, text: "Recruiter Mike Chen found 45 new jobs", time: "4 hours ago", read: false, icon: UserPlus },
   { id: 3, text: "System update completed successfully", time: "1 day ago", read: true, icon: CheckCheck },
 ];
 

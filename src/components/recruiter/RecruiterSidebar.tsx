@@ -23,12 +23,12 @@ import { useAuth } from "@/hooks/useAuth";
 
 const mainMenuItems = [
   { title: "Dashboard", icon: LayoutDashboard, route: "/recruiter/dashboard" },
-  { title: "Scrape Jobs", icon: Search, route: "/recruiter/scrape-jobs", badgeText: "New", badgeType: "primary" as const },
-  { title: "Scraped Jobs", icon: Briefcase, route: "/recruiter/scraped-jobs", badgeText: "1,284", badgeType: "neutral" as const },
+  { title: "Find Jobs", icon: Search, route: "/recruiter/scrape-jobs" },
+  { title: "Job Board", icon: Briefcase, route: "/recruiter/scraped-jobs" },
   { title: "CV Management", icon: FileUp, route: "/recruiter/cv-management" },
-  { title: "Job Postings", icon: Newspaper, route: "/recruiter/job-postings", badgeText: "Admin", badgeType: "primary" as const },
-  { title: "Candidates", icon: Users, route: "/recruiter/candidates", badgeText: "23", badgeType: "neutral" as const },
-  { title: "Applications", icon: ClipboardCheck, route: "/recruiter/applications", badgeText: "5", badgeType: "warning" as const },
+  { title: "Job Postings", icon: Newspaper, route: "/recruiter/job-postings" },
+  { title: "Candidates", icon: Users, route: "/recruiter/candidates" },
+  { title: "Applications", icon: ClipboardCheck, route: "/recruiter/applications" },
   { title: "Messages", icon: MessageSquare, route: "/recruiter/messages" },
 ];
 

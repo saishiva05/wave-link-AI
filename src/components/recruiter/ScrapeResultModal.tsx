@@ -28,7 +28,7 @@ const ScrapeResultModal = ({ result, platform, location, onClose, onViewJobs, on
               <CheckCircle className="w-10 h-10 text-success-500" />
             </div>
             <h2 className="text-2xl md:text-3xl font-bold text-secondary-900 font-display mt-6">
-              Jobs Successfully Scraped!
+              Jobs Successfully Found!
             </h2>
             <p className="text-base text-muted-foreground mt-3 leading-relaxed">{result.message}</p>
 
@@ -60,12 +60,12 @@ const ScrapeResultModal = ({ result, platform, location, onClose, onViewJobs, on
 
             <div className="flex flex-col sm:flex-row gap-3 mt-8">
               <Button onClick={onViewJobs} variant="portal" size="lg" className="flex-1">
-                View Scraped Jobs
+                View Job Board
                 <ArrowRight className="w-4 h-4" />
               </Button>
               <Button onClick={onScrapeMore} variant="outline" size="lg" className="flex-1">
                 <Plus className="w-4 h-4" />
-                Scrape More Jobs
+                Find More Jobs
               </Button>
             </div>
           </>
@@ -75,13 +75,13 @@ const ScrapeResultModal = ({ result, platform, location, onClose, onViewJobs, on
               <XCircle className="w-10 h-10 text-destructive" />
             </div>
             <h2 className="text-2xl md:text-3xl font-bold text-secondary-900 font-display mt-6">
-              Scraping Failed
+              Search Failed
             </h2>
             <p className="text-base text-muted-foreground mt-3 leading-relaxed">{result.message}</p>
 
             <div className="mt-6 p-4 bg-error-50 border border-destructive/20 rounded-lg text-left">
               <p className="text-sm text-destructive">
-                The scraping service may be temporarily unavailable. Please try again in a few moments.
+                The job search service may be temporarily unavailable. Please try again in a few moments.
               </p>
             </div>
 

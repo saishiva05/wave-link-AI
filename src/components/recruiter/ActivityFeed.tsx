@@ -15,9 +15,9 @@ const activityConfig: Record<ActivityType, { icon: typeof Download; bg: string; 
   cv: { icon: Upload, bg: "bg-info-50", color: "text-info-500" },
 };
 
-const filters = ["All", "Job Scraping", "Applications", "ATS Analysis"];
+const filters = ["All", "Job Search", "Applications", "ATS Analysis"];
 const filterMap: Record<string, ActivityType | null> = {
-  All: null, "Job Scraping": "scrape", Applications: "application", "ATS Analysis": "ats",
+  All: null, "Job Search": "scrape", Applications: "application", "ATS Analysis": "ats",
 };
 
 const badgeVariants = {

@@ -134,7 +134,7 @@ const JobTableView = ({
           <Search className="w-8 h-8 text-muted-foreground/40" />
         </div>
         <h3 className="text-lg font-semibold text-foreground mb-2">No jobs found</h3>
-        <p className="text-sm text-muted-foreground">Try adjusting your filters or scrape new jobs</p>
+        <p className="text-sm text-muted-foreground">Try adjusting your filters or find new jobs</p>
       </div>
     );
   }
@@ -157,7 +157,7 @@ const JobTableView = ({
                 <th className="px-3 py-4 text-left font-bold text-secondary-700 text-[11px] uppercase tracking-widest min-w-[130px]">Location</th>
                 <th className="px-3 py-4 text-left font-bold text-secondary-700 text-[11px] uppercase tracking-widest min-w-[100px]">Salary</th>
                 <th className="px-3 py-4 text-left font-bold text-secondary-700 text-[11px] uppercase tracking-widest cursor-pointer select-none min-w-[110px] group" onClick={() => onSort("scraped_at")}>
-                  <div className="flex items-center gap-1.5">Scraped <SortIcon field="scraped_at" sortField={sortField} sortDir={sortDir} /></div>
+                  <div className="flex items-center gap-1.5">Added <SortIcon field="scraped_at" sortField={sortField} sortDir={sortDir} /></div>
                 </th>
                 <th className="px-3 py-4 text-center font-bold text-secondary-700 text-[11px] uppercase tracking-widest w-20">
                   <span className="flex items-center justify-center gap-1"><Wand2 className="w-3 h-3" /> ATS</span>
