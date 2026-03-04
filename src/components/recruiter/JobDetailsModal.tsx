@@ -105,7 +105,7 @@ const JobDetailsModal = ({ job, onClose, onRunATS }: JobDetailsModalProps) => {
               <MetaItem icon={Award} label="Experience" value={job.experience_level} />
             )}
             <MetaItem icon={Clock} label="Published" value={job.published_date ? timeAgo(job.published_date) : "—"} />
-            <MetaItem icon={Globe} label="Scraped" value={timeAgo(job.scraped_at)} />
+            <MetaItem icon={Globe} label="Added" value={timeAgo(job.scraped_at)} />
             <MetaItem icon={Briefcase} label="Platform" value={platformLabel} />
             {job.applications_count && (
               <MetaItem icon={Briefcase} label="Applicants" value={job.applications_count} className="text-blue-600" />
