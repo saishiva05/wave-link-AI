@@ -7,7 +7,7 @@ import {
   Globe, Sparkles, GraduationCap, Rocket, ShieldCheck,
   TrendingUp, HeartHandshake, Eye, MessageSquare, ChevronDown,
   Menu, X, Briefcase, Code, Award, Shield, Layers,
-  DollarSign, Crown, Gem
+  DollarSign, Crown, Gem, Instagram
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -149,15 +149,15 @@ const FAQAccordion = () => {
           viewport={{ once: true, margin: "-30px" }}
           variants={fadeUp}
           custom={i * 0.5}
-          className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden hover:border-primary/30 transition-all duration-300 group"
+          className="rounded-2xl border border-border bg-card/50 backdrop-blur-sm overflow-hidden hover:border-primary/30 transition-all duration-300 group"
         >
           <button
             onClick={() => setOpenIndex(openIndex === i ? null : i)}
             className="w-full flex items-center justify-between p-5 md:p-6 text-left gap-4"
           >
-            <span className="font-display font-semibold text-white/90 group-hover:text-primary transition-colors">{faq.q}</span>
+            <span className="font-display font-semibold text-foreground group-hover:text-primary transition-colors">{faq.q}</span>
             <motion.div animate={{ rotate: openIndex === i ? 180 : 0 }} transition={{ duration: 0.3 }}>
-              <ChevronDown className="w-5 h-5 text-white/40 shrink-0" />
+              <ChevronDown className="w-5 h-5 text-muted-foreground shrink-0" />
             </motion.div>
           </button>
           <AnimatePresence>
@@ -169,7 +169,7 @@ const FAQAccordion = () => {
                 transition={{ duration: 0.3, ease: easeOut }}
                 className="overflow-hidden"
               >
-                <p className="px-5 md:px-6 pb-5 md:pb-6 text-white/50 leading-relaxed">{faq.a}</p>
+                <p className="px-5 md:px-6 pb-5 md:pb-6 text-muted-foreground leading-relaxed">{faq.a}</p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -182,8 +182,15 @@ const FAQAccordion = () => {
 const LandingPage = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const navLinks = [
     { href: "#how-it-works", label: "How It Works" },
@@ -194,64 +201,80 @@ const LandingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen text-white overflow-x-hidden" style={{ background: "linear-gradient(180deg, hsl(215 60% 8%), hsl(215 50% 12%), hsl(215 60% 8%))" }}>
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* Scroll Progress */}
-      <motion.div className="fixed top-0 left-0 right-0 h-1 z-[60] origin-left" style={{ scaleX, background: "hsl(174 72% 33%)" }} />
+      <motion.div className="fixed top-0 left-0 right-0 h-0.5 z-[60] origin-left bg-primary" style={{ scaleX }} />
 
-      {/* Navigation */}
+      {/* Navigation — fixed, glass effect on scroll */}
       <motion.nav
-        className="sticky top-0 z-50 border-b border-white/10"
-        style={{ background: "hsla(215, 60%, 8%, 0.85)", backdropFilter: "blur(20px)" }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? "bg-background/80 backdrop-blur-xl shadow-lg border-b border-border"
+            : "bg-transparent border-b border-transparent"
+        }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: easeOut }}
       >
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <motion.div className="flex items-center gap-3" whileHover={{ scale: 1.02 }}>
-            <div className="bg-white rounded-xl p-1.5 shadow-md">
-              <img src={wavelynkLogo} alt="WaveLynk" className="h-10 w-auto object-contain" />
-            </div>
-            <div className="hidden sm:block">
-              <span className="font-display text-lg font-bold text-white tracking-tight">Wave Lynk AI</span>
-            </div>
-          </motion.div>
+        <div className="max-w-7xl mx-auto px-6 h-16 md:h-18 flex items-center justify-between">
+          {/* Logo — transparent PNG, no white box */}
+          <motion.a href="/" className="flex items-center gap-2.5 shrink-0" whileHover={{ scale: 1.02 }}>
+            <img src={wavelynkLogo} alt="WaveLynk" className="h-9 md:h-10 w-auto object-contain" />
+            <span className="font-display text-base md:text-lg font-bold text-foreground tracking-tight hidden sm:inline">
+              Wave Lynk <span className="text-primary">AI</span>
+            </span>
+          </motion.a>
 
-          <div className="hidden lg:flex items-center gap-8">
+          {/* Desktop nav links */}
+          <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
-              <a key={link.href} href={link.href} className="text-sm font-medium text-white/60 hover:text-primary transition-colors relative group">
+              <a
+                key={link.href}
+                href={link.href}
+                className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all duration-200 relative group"
+              >
                 {link.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary rounded-full transition-all duration-300 group-hover:w-3/4" />
               </a>
             ))}
           </div>
 
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
+          {/* Right side */}
+          <div className="flex items-center gap-2">
+            <ThemeToggle className="text-foreground" />
             <Button
               size="sm"
               onClick={() => navigate("/login")}
-              className="font-semibold shadow-lg hover:shadow-xl transition-all duration-300 bg-primary text-primary-foreground hover:bg-primary/90"
+              className="font-semibold shadow-md hover:shadow-lg transition-all duration-300 bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg h-9 px-5"
             >
               Sign In
             </Button>
-            <button className="lg:hidden p-2 text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            <button
+              className="lg:hidden p-2 rounded-lg text-foreground hover:bg-accent transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
+        {/* Mobile menu */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="lg:hidden overflow-hidden border-t border-white/10"
-              style={{ background: "hsla(215, 60%, 8%, 0.95)" }}
+              className="lg:hidden overflow-hidden border-t border-border bg-background/95 backdrop-blur-xl"
             >
-              <div className="px-6 py-4 space-y-3">
+              <div className="px-6 py-4 space-y-1">
                 {navLinks.map((link) => (
-                  <a key={link.href} href={link.href} className="block text-sm font-medium text-white/60 hover:text-primary py-2" onClick={() => setMobileMenuOpen(false)}>
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    className="block text-sm font-medium text-muted-foreground hover:text-primary hover:bg-accent rounded-lg px-3 py-2.5 transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
                     {link.label}
                   </a>
                 ))}
@@ -262,24 +285,24 @@ const LandingPage = () => {
       </motion.nav>
 
       {/* ═══════════ HERO SECTION ═══════════ */}
-      <section className="relative overflow-hidden min-h-[92vh] flex items-center">
+      <section className="relative overflow-hidden min-h-[92vh] flex items-center pt-16">
         {/* Background effects */}
         <div className="absolute inset-0 z-0">
           <motion.div
-            className="absolute w-[800px] h-[800px] rounded-full pointer-events-none"
-            style={{ background: "radial-gradient(circle, hsl(174 72% 33% / 0.15) 0%, transparent 65%)", top: "-20%", left: "-10%", filter: "blur(80px)" }}
+            className="absolute w-[800px] h-[800px] rounded-full pointer-events-none opacity-60"
+            style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.12) 0%, transparent 65%)", top: "-20%", left: "-10%", filter: "blur(80px)" }}
             animate={{ x: [0, 80, -40, 0], y: [0, -60, 40, 0], scale: [1, 1.15, 0.95, 1] }}
             transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
           />
           <motion.div
-            className="absolute w-[600px] h-[600px] rounded-full pointer-events-none"
-            style={{ background: "radial-gradient(circle, hsl(174 72% 33% / 0.1) 0%, transparent 65%)", top: "20%", right: "-15%", filter: "blur(60px)" }}
+            className="absolute w-[600px] h-[600px] rounded-full pointer-events-none opacity-40"
+            style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.1) 0%, transparent 65%)", top: "20%", right: "-15%", filter: "blur(60px)" }}
             animate={{ x: [0, -60, 30, 0], y: [0, 50, -30, 0] }}
             transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }}
           />
           {/* Grid pattern */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
-            style={{ backgroundImage: `linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)`, backgroundSize: '80px 80px' }}
+            style={{ backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`, backgroundSize: '80px 80px' }}
           />
         </div>
 
@@ -292,22 +315,21 @@ const LandingPage = () => {
             </motion.div>
 
             {/* Headline */}
-            <motion.h1 variants={fadeUp} custom={1} className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-extrabold leading-[0.95] mb-8 tracking-tight text-white">
+            <motion.h1 variants={fadeUp} custom={1} className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-extrabold leading-[0.95] mb-8 tracking-tight text-foreground">
               The Unfair{" "}
               <br className="hidden md:block" />
               Career{" "}
               <span className="relative inline-block">
                 <motion.span
                   className="text-transparent bg-clip-text italic"
-                  style={{ backgroundImage: "linear-gradient(135deg, hsl(174 72% 33%), hsl(174 65% 50%), hsl(174 72% 33%))", backgroundSize: "300% 100%" }}
+                  style={{ backgroundImage: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.7))", backgroundSize: "300% 100%" }}
                   animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
                   transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                 >
                   Advantage.
                 </motion.span>
                 <motion.span
-                  className="absolute -bottom-2 left-0 h-1 rounded-full"
-                  style={{ background: "linear-gradient(90deg, hsl(174 72% 33%), hsl(174 65% 50%), transparent)" }}
+                  className="absolute -bottom-2 left-0 h-1 rounded-full bg-primary"
                   initial={{ width: 0 }}
                   animate={{ width: "100%" }}
                   transition={{ delay: 1.2, duration: 0.8, ease: easeOut }}
@@ -316,9 +338,9 @@ const LandingPage = () => {
             </motion.h1>
 
             {/* Subtitle */}
-            <motion.p variants={fadeUp} custom={2} className="text-lg md:text-xl text-white/50 max-w-3xl mx-auto mb-12 leading-relaxed">
+            <motion.p variants={fadeUp} custom={2} className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
               AI-powered job matching, ATS-optimized resumes, and dedicated recruiter support.{" "}
-              <span className="text-white/80 font-semibold">One platform. Complete career acceleration.</span>
+              <span className="text-foreground font-semibold">One platform. Complete career acceleration.</span>
             </motion.p>
 
             {/* CTA */}
@@ -326,7 +348,7 @@ const LandingPage = () => {
               <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }} className="relative group">
                 <motion.div
                   className="absolute -inset-1 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                  style={{ background: "hsl(174 72% 33% / 0.3)", filter: "blur(12px)" }}
+                  style={{ background: "hsl(var(--primary) / 0.3)", filter: "blur(12px)" }}
                 />
                 <Button size="lg" onClick={() => navigate("/login")} className="relative text-base px-10 h-14 font-bold shadow-xl rounded-xl bg-primary text-primary-foreground hover:bg-primary/90">
                   Sign In <ArrowRight className="ml-2 w-5 h-5" />
@@ -334,14 +356,14 @@ const LandingPage = () => {
               </motion.div>
               <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }}>
                 <Button variant="outline" size="lg" onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}
-                  className="text-base px-10 h-14 font-bold rounded-xl border-white/20 text-white/80 hover:bg-white/10 hover:border-white/30 bg-transparent">
+                  className="text-base px-10 h-14 font-bold rounded-xl border-border text-foreground hover:bg-accent bg-transparent">
                   See How It Works
                 </Button>
               </motion.div>
             </motion.div>
 
             {/* Trust indicators */}
-            <motion.div variants={fadeUp} custom={4} className="mt-8 flex items-center justify-center gap-6 text-sm text-white/40 flex-wrap">
+            <motion.div variants={fadeUp} custom={4} className="mt-8 flex items-center justify-center gap-6 text-sm text-muted-foreground flex-wrap">
               {[{ icon: CheckCircle2, text: "No credit card" }, { icon: CheckCircle2, text: "100% free for students" }, { icon: CheckCircle2, text: "Instant access" }].map((item, i) => (
                 <motion.span key={item.text} className="flex items-center gap-1.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 + i * 0.15 }}>
                   <item.icon className="w-4 h-4 text-primary" /> {item.text}
@@ -363,13 +385,13 @@ const LandingPage = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.2 + i * 0.15 }}
-                whileHover={{ y: -6, borderColor: "hsl(174 72% 33% / 0.4)" }}
-                className="text-center p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm transition-all duration-300"
+                whileHover={{ y: -6, borderColor: "hsl(var(--primary) / 0.4)" }}
+                className="text-center p-6 rounded-2xl border border-border bg-card/50 backdrop-blur-sm transition-all duration-300"
               >
-                <div className="font-display text-3xl lg:text-4xl font-black text-white">
+                <div className="font-display text-3xl lg:text-4xl font-black text-foreground">
                   <AnimatedCounter target={stat.value} suffix={stat.suffix} />
                 </div>
-                <div className="text-xs text-white/40 mt-2 font-medium">{stat.label}</div>
+                <div className="text-xs text-muted-foreground mt-2 font-medium">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
@@ -384,12 +406,12 @@ const LandingPage = () => {
               <Sparkles className="w-4 h-4 text-primary" />
               <span className="text-sm font-semibold text-primary">WHAT WE DO</span>
             </motion.div>
-            <motion.h2 variants={fadeUp} custom={1} className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+            <motion.h2 variants={fadeUp} custom={1} className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4">
               Everything you need.{" "}
               <br className="hidden md:block" />
-              <span className="text-white/40">Nothing you don't.</span>
+              <span className="text-muted-foreground">Nothing you don't.</span>
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="text-white/40 text-lg max-w-2xl mx-auto">
+            <motion.p variants={fadeUp} custom={2} className="text-muted-foreground text-lg max-w-2xl mx-auto">
               Powerful tools designed to eliminate the grind of job searching. Focus on what matters — your career.
             </motion.p>
           </motion.div>
@@ -403,14 +425,14 @@ const LandingPage = () => {
                 viewport={{ once: true, margin: "-30px" }}
                 variants={fadeUp}
                 custom={i}
-                whileHover={{ y: -6, borderColor: "hsl(174 72% 33% / 0.3)" }}
-                className="group p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm transition-all duration-500 hover:bg-white/8"
+                whileHover={{ y: -6 }}
+                className="group p-6 rounded-2xl border border-border bg-card/50 backdrop-blur-sm transition-all duration-500 hover:border-primary/30 hover:shadow-lg"
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-all">
                   <feature.icon className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="font-display text-lg font-bold text-white mb-2">{feature.title}</h3>
-                <p className="text-white/40 text-sm leading-relaxed">{feature.description}</p>
+                <h3 className="font-display text-lg font-bold text-foreground mb-2">{feature.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -419,21 +441,19 @@ const LandingPage = () => {
 
       {/* ═══════════ HOW IT WORKS ═══════════ */}
       <section id="how-it-works" className="py-28 relative overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent, hsl(215 60% 6% / 0.5), transparent)" }} />
+        <div className="absolute inset-0 bg-accent/30" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="text-center mb-16">
             <motion.div variants={scaleIn} custom={0} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
               <Rocket className="w-4 h-4 text-primary" />
               <span className="text-sm font-semibold text-primary">HOW IT WORKS</span>
             </motion.div>
-            <motion.h2 variants={fadeUp} custom={1} className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+            <motion.h2 variants={fadeUp} custom={1} className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4">
               You Don't Have to Fight in the{" "}
               <br className="hidden md:block" />
-              <span className="italic text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(135deg, hsl(174 72% 33%), hsl(174 65% 50%))" }}>
-                IT Hunger Games.
-              </span>
+              <span className="italic text-primary">IT Hunger Games.</span>
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="text-white/40 text-lg max-w-2xl mx-auto">
+            <motion.p variants={fadeUp} custom={2} className="text-muted-foreground text-lg max-w-2xl mx-auto">
               The platform's smarter competitors already use. Stop applying blindly.
             </motion.p>
           </motion.div>
@@ -449,18 +469,18 @@ const LandingPage = () => {
                 custom={i}
                 className="relative group"
               >
-                <div className="p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm hover:border-primary/30 transition-all duration-300">
+                <div className="p-6 rounded-2xl border border-border bg-card backdrop-blur-sm hover:border-primary/30 hover:shadow-lg transition-all duration-300">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-all">
                       <item.icon className="w-5 h-5 text-primary" />
                     </div>
                     <span className="text-primary font-display font-bold text-sm">{item.step}</span>
                   </div>
-                  <h3 className="font-display text-lg font-bold text-white mb-2">{item.title}</h3>
-                  <p className="text-white/40 text-sm leading-relaxed">{item.description}</p>
+                  <h3 className="font-display text-lg font-bold text-foreground mb-2">{item.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{item.description}</p>
                 </div>
                 {i < howItWorks.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-3 w-6 border-t-2 border-dashed border-white/10" />
+                  <div className="hidden lg:block absolute top-1/2 -right-3 w-6 border-t-2 border-dashed border-border" />
                 )}
               </motion.div>
             ))}
@@ -472,14 +492,12 @@ const LandingPage = () => {
       <section id="why-us" className="py-28 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="text-center mb-16">
-            <motion.h2 variants={fadeUp} custom={0} className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+            <motion.h2 variants={fadeUp} custom={0} className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4">
               If You're Competing Against a{" "}
               <br className="hidden md:block" />
-              <span className="italic text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(135deg, hsl(174 72% 33%), hsl(174 65% 50%))" }}>
-                Dynamic, Tangent Candidate...
-              </span>
+              <span className="italic text-primary">Dynamic, Tangent Candidate...</span>
             </motion.h2>
-            <motion.p variants={fadeUp} custom={1} className="text-white/40 text-lg max-w-2xl mx-auto">
+            <motion.p variants={fadeUp} custom={1} className="text-muted-foreground text-lg max-w-2xl mx-auto">
               ...you'll need AI on your side too.
             </motion.p>
           </motion.div>
@@ -498,20 +516,13 @@ const LandingPage = () => {
                 <div className="font-display text-5xl md:text-6xl font-black text-primary mb-3">
                   {typeof stat.value === "string" && stat.value.includes("/") ? stat.value : <AnimatedCounter target={stat.value} suffix={stat.suffix} />}
                 </div>
-                <p className="text-white/40 text-sm leading-relaxed">{stat.label}</p>
+                <p className="text-muted-foreground text-sm leading-relaxed">{stat.label}</p>
               </motion.div>
             ))}
           </div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-            custom={0}
-            className="text-center"
-          >
-            <p className="text-white/60 text-xl font-display font-semibold mb-6 italic">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center">
+            <p className="text-foreground/60 text-xl font-display font-semibold mb-6 italic">
               The question isn't who's more qualified.
             </p>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
@@ -525,14 +536,12 @@ const LandingPage = () => {
 
       {/* ═══════════ FULLY WEAPONIZED ═══════════ */}
       <section className="py-28 relative overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent, hsl(215 60% 6% / 0.5), transparent)" }} />
+        <div className="absolute inset-0 bg-accent/20" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-16">
-            <motion.h2 variants={fadeUp} custom={0} className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+            <motion.h2 variants={fadeUp} custom={0} className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4">
               Your Career,{" "}
-              <span className="text-transparent bg-clip-text italic" style={{ backgroundImage: "linear-gradient(135deg, hsl(174 72% 33%), hsl(174 65% 50%))" }}>
-                Fully Weaponized.
-              </span>
+              <span className="text-primary italic">Fully Weaponized.</span>
             </motion.h2>
           </motion.div>
 
@@ -545,14 +554,14 @@ const LandingPage = () => {
                 viewport={{ once: true }}
                 variants={fadeUp}
                 custom={i}
-                whileHover={{ y: -6, borderColor: "hsl(174 72% 33% / 0.4)" }}
-                className="p-5 rounded-2xl border border-white/10 bg-white/5 text-center hover:bg-white/8 transition-all duration-300 group"
+                whileHover={{ y: -6 }}
+                className="p-5 rounded-2xl border border-border bg-card/50 text-center hover:border-primary/30 hover:shadow-lg transition-all duration-300 group"
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/20 transition-all">
                   <feature.icon className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="font-display text-sm font-bold text-white mb-1">{feature.title}</h3>
-                <p className="text-white/30 text-xs">{feature.description}</p>
+                <h3 className="font-display text-sm font-bold text-foreground mb-1">{feature.title}</h3>
+                <p className="text-muted-foreground text-xs">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -566,26 +575,25 @@ const LandingPage = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="relative overflow-hidden rounded-3xl p-12 md:p-16 text-center border border-white/10"
-            style={{ background: "linear-gradient(135deg, hsl(215 60% 14%), hsl(215 50% 18%))" }}
+            className="relative overflow-hidden rounded-3xl p-12 md:p-16 text-center border border-primary/20 bg-gradient-to-br from-secondary to-secondary/80"
           >
             <motion.div
               className="absolute top-0 right-0 w-80 h-80 rounded-full pointer-events-none"
-              style={{ background: "radial-gradient(circle, hsl(174 72% 33% / 0.2) 0%, transparent 70%)" }}
+              style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.2) 0%, transparent 70%)" }}
               animate={{ scale: [1, 1.3, 1] }}
               transition={{ duration: 6, repeat: Infinity }}
             />
 
             <motion.div variants={fadeUp} custom={0} className="relative z-10">
-              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-4">
                 The Network That Compounds{" "}
                 <br className="hidden md:block" />
                 Like <span className="text-primary">Capital.</span>
               </h2>
-              <p className="text-white/50 text-lg mb-4 max-w-xl mx-auto">
+              <p className="text-primary-foreground/60 text-lg mb-4 max-w-xl mx-auto">
                 Every application builds momentum. Every connection compounds. Join the career network that works harder the longer you're in it.
               </p>
-              <p className="text-white/30 text-sm mb-8">Free forever for candidates. No hidden costs.</p>
+              <p className="text-primary-foreground/40 text-sm mb-8">Free forever for candidates. No hidden costs.</p>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                 <Button size="lg" onClick={() => navigate("/login")} className="px-10 h-14 font-bold rounded-xl shadow-2xl bg-primary text-primary-foreground hover:bg-primary/90">
                   Sign In & Join Now <ArrowRight className="ml-2 w-5 h-5" />
@@ -598,20 +606,18 @@ const LandingPage = () => {
 
       {/* ═══════════ PRICING SECTION ═══════════ */}
       <section id="pricing" className="py-28 relative overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent, hsl(215 60% 6% / 0.5), transparent)" }} />
+        <div className="absolute inset-0 bg-accent/20" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-16">
             <motion.div variants={scaleIn} custom={0} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
               <DollarSign className="w-4 h-4 text-primary" />
               <span className="text-sm font-semibold text-primary">INVEST IN MOMENTUM</span>
             </motion.div>
-            <motion.h2 variants={fadeUp} custom={1} className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+            <motion.h2 variants={fadeUp} custom={1} className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4">
               Pricing{" "}
-              <span className="text-transparent bg-clip-text italic" style={{ backgroundImage: "linear-gradient(135deg, hsl(174 72% 33%), hsl(174 65% 50%))" }}>
-                Plans
-              </span>
+              <span className="text-primary italic">Plans</span>
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="text-white/40 text-lg max-w-2xl mx-auto">
+            <motion.p variants={fadeUp} custom={2} className="text-muted-foreground text-lg max-w-2xl mx-auto">
               Choose the plan that fits your career timeline. All plans include AI-powered job matching and dedicated recruiter support.
             </motion.p>
           </motion.div>
@@ -628,8 +634,8 @@ const LandingPage = () => {
                 whileHover={{ y: -8 }}
                 className={`relative p-8 rounded-3xl border transition-all duration-500 ${
                   plan.featured
-                    ? "border-primary/50 bg-gradient-to-b from-primary/15 to-primary/5 shadow-[0_0_40px_hsl(174_72%_33%_/_0.15)] scale-105 z-10"
-                    : "border-white/10 bg-white/5"
+                    ? "border-primary/50 bg-card shadow-glow scale-105 z-10 ring-1 ring-primary/20"
+                    : "border-border bg-card/50"
                 }`}
               >
                 {plan.badge && (
@@ -642,21 +648,21 @@ const LandingPage = () => {
                   <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
                     <plan.icon className={`w-7 h-7 ${plan.featured ? "text-primary" : "text-primary/70"}`} />
                   </div>
-                  <h3 className="font-display text-xl font-bold text-white mb-6">{plan.name}</h3>
+                  <h3 className="font-display text-xl font-bold text-foreground mb-6">{plan.name}</h3>
 
                   <div className="mb-6">
-                    <p className="text-white/40 text-xs uppercase tracking-widest mb-2">Upfront Fee</p>
-                    <p className="font-display text-4xl md:text-5xl font-black text-white">{plan.upfront}</p>
+                    <p className="text-muted-foreground text-xs uppercase tracking-widest mb-2">Upfront Fee</p>
+                    <p className="font-display text-4xl md:text-5xl font-black text-foreground">{plan.upfront}</p>
                   </div>
 
-                  <div className="w-full h-px bg-white/10 my-6" />
+                  <div className="w-full h-px bg-border my-6" />
 
                   <div className="mb-8">
-                    <p className="text-white/40 text-xs uppercase tracking-widest mb-2">Post Placement Fee</p>
-                    <p className={`font-display text-3xl md:text-4xl font-black ${plan.featured ? "text-primary" : "text-white"}`}>
+                    <p className="text-muted-foreground text-xs uppercase tracking-widest mb-2">Post Placement Fee</p>
+                    <p className={`font-display text-3xl md:text-4xl font-black ${plan.featured ? "text-primary" : "text-foreground"}`}>
                       {plan.postPlacement}
                     </p>
-                    <p className="text-white/30 text-sm mt-1">{plan.postPlacementLabel}</p>
+                    <p className="text-muted-foreground text-sm mt-1">{plan.postPlacementLabel}</p>
                   </div>
 
                   <Button
@@ -665,7 +671,7 @@ const LandingPage = () => {
                     className={`w-full h-12 font-bold rounded-xl ${
                       plan.featured
                         ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg"
-                        : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
+                        : "bg-accent text-accent-foreground hover:bg-accent/80 border border-border"
                     }`}
                   >
                     Get Started
@@ -681,7 +687,7 @@ const LandingPage = () => {
             viewport={{ once: true }}
             variants={fadeUp}
             custom={0}
-            className="text-center text-white/30 text-sm mt-10"
+            className="text-center text-muted-foreground text-sm mt-10"
           >
             💡 Students can use the platform 100% free. Pricing applies to recruiter & enterprise partnerships.
           </motion.p>
@@ -692,11 +698,9 @@ const LandingPage = () => {
       <section id="faq" className="py-28 relative">
         <div className="max-w-4xl mx-auto px-6">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-16">
-            <motion.h2 variants={fadeUp} custom={0} className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
+            <motion.h2 variants={fadeUp} custom={0} className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
               FAQ —{" "}
-              <span className="italic text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(135deg, hsl(174 72% 33%), hsl(174 65% 50%))" }}>
-                Objections, Destroyed.
-              </span>
+              <span className="italic text-primary">Objections, Destroyed.</span>
             </motion.h2>
           </motion.div>
           <FAQAccordion />
@@ -710,25 +714,22 @@ const LandingPage = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="relative overflow-hidden rounded-3xl p-12 md:p-20 text-center border border-primary/30"
-            style={{ background: "linear-gradient(135deg, hsl(174 72% 33% / 0.15), hsl(215 60% 14%))" }}
+            className="relative overflow-hidden rounded-3xl p-12 md:p-20 text-center border border-primary/30 bg-gradient-to-br from-primary/10 to-secondary/30"
           >
             <motion.div
               className="absolute inset-0 pointer-events-none"
-              style={{ background: "radial-gradient(ellipse at center, hsl(174 72% 33% / 0.1) 0%, transparent 70%)" }}
+              style={{ background: "radial-gradient(ellipse at center, hsl(var(--primary) / 0.1) 0%, transparent 70%)" }}
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 4, repeat: Infinity }}
             />
             <motion.div variants={fadeUp} custom={0} className="relative z-10">
-              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
+              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 leading-tight">
                 Your background is not a limitation.{" "}
                 <br className="hidden md:block" />
                 It's a weapon —{" "}
-                <span className="text-transparent bg-clip-text italic" style={{ backgroundImage: "linear-gradient(135deg, hsl(174 72% 33%), hsl(174 65% 50%))" }}>
-                  if sharpened.
-                </span>
+                <span className="text-primary italic">if sharpened.</span>
               </h2>
-              <p className="text-white/40 text-sm mb-10">Join the platform that sharpens careers, not just resumes.</p>
+              <p className="text-muted-foreground text-sm mb-10">Join the platform that sharpens careers, not just resumes.</p>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                 <Button size="lg" onClick={() => navigate("/login")} className="px-12 h-14 font-bold rounded-xl shadow-2xl bg-primary text-primary-foreground hover:bg-primary/90 text-lg">
                   Sign In <ArrowRight className="ml-2 w-5 h-5" />
@@ -740,31 +741,37 @@ const LandingPage = () => {
       </section>
 
       {/* ═══════════ FOOTER ═══════════ */}
-      <footer className="border-t border-white/10 py-16">
+      <footer className="border-t border-border py-16 bg-card/30">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-6">
-                <div className="bg-white rounded-xl p-1.5 shadow-md">
-                  <img src={wavelynkLogo} alt="WaveLynk" className="h-10 w-auto object-contain" />
-                </div>
+                <img src={wavelynkLogo} alt="WaveLynk" className="h-10 w-auto object-contain" />
                 <div>
-                  <span className="font-display text-lg font-bold text-white">Wave Lynk AI</span>
-                  <p className="text-xs text-white/30">AI-Powered Career Platform</p>
+                  <span className="font-display text-lg font-bold text-foreground">Wave Lynk <span className="text-primary">AI</span></span>
+                  <p className="text-xs text-muted-foreground">AI-Powered Career Platform</p>
                 </div>
               </div>
-              <p className="text-white/30 text-sm max-w-sm leading-relaxed">
+              <p className="text-muted-foreground text-sm max-w-sm leading-relaxed">
                 WaveLynk IT Consulting & Services — helping students and job seekers land their dream careers with AI-powered job matching and dedicated recruiter support.
               </p>
-              <div className="flex items-center gap-4 mt-6 text-white/30 text-sm">
+              <div className="flex items-center gap-4 mt-6 text-muted-foreground text-sm flex-wrap">
                 <span className="flex items-center gap-1.5"><Globe className="w-4 h-4 text-primary" /> wavelynk.org</span>
                 <span className="flex items-center gap-1.5"><MessageSquare className="w-4 h-4 text-primary" /> contact@wavelynk.org</span>
+                <a
+                  href="https://www.instagram.com/Wavelynk_AI"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 hover:text-primary transition-colors"
+                >
+                  <Instagram className="w-4 h-4 text-primary" /> @Wavelynk_AI
+                </a>
               </div>
             </div>
 
             <div>
-              <h4 className="font-bold text-white mb-5">Platform</h4>
-              <ul className="space-y-3 text-sm text-white/40">
+              <h4 className="font-bold text-foreground mb-5">Platform</h4>
+              <ul className="space-y-3 text-sm text-muted-foreground">
                 <li><a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a></li>
                 <li><a href="#features" className="hover:text-primary transition-colors">Features</a></li>
                 <li><a href="#why-us" className="hover:text-primary transition-colors">Why Us</a></li>
@@ -773,8 +780,8 @@ const LandingPage = () => {
             </div>
 
             <div>
-              <h4 className="font-bold text-white mb-5">Get Started</h4>
-              <ul className="space-y-3 text-sm text-white/40">
+              <h4 className="font-bold text-foreground mb-5">Get Started</h4>
+              <ul className="space-y-3 text-sm text-muted-foreground">
                 <li><button onClick={() => navigate("/login")} className="hover:text-primary transition-colors">Sign In</button></li>
                 <li><a href="#faq" className="hover:text-primary transition-colors">FAQ</a></li>
                 <li><a href="mailto:contact@wavelynk.org" className="hover:text-primary transition-colors">Contact Support</a></li>
@@ -782,11 +789,11 @@ const LandingPage = () => {
             </div>
           </div>
 
-          <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-white/30">
+          <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} WaveLynk IT Consulting & Services Pvt Ltd. All rights reserved.
             </p>
-            <p className="text-sm text-white/30 flex items-center gap-2">
+            <p className="text-sm text-muted-foreground flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-primary" />
               Powered by AI • Built for Careers
             </p>
