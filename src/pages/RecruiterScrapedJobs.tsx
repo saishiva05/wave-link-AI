@@ -52,11 +52,8 @@ const workModeOptions = [
 
 const applicantsOptions = [
   { value: "", label: "All Applicants" },
-  { value: "0", label: "No Applicants (0)" },
-  { value: "1-10", label: "1 – 10" },
-  { value: "11-50", label: "11 – 50" },
-  { value: "51-100", label: "51 – 100" },
-  { value: "100+", label: "100+" },
+  { value: "none", label: "No Data" },
+  { value: "has_applicants", label: "Has Applicants" },
 ];
 
 const ITEMS_PER_PAGE = 10;
