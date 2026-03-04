@@ -16,7 +16,7 @@ export interface ScrapedJob {
   salary_range?: string;
   is_active?: boolean;
   scraped_at?: string;
-  applications_count?: number;
+  applications_count?: string | null;
 }
 
 /** Map a database row to the ScrapedJob UI interface */
@@ -36,6 +36,6 @@ export function mapDbJob(row: any): ScrapedJob {
     salary_range: row.salary_range || undefined,
     is_active: row.is_active,
     scraped_at: row.scraped_at,
-    applications_count: row.applications_count ?? 0,
+    applications_count: row.applications_count || null,
   };
 }

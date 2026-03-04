@@ -107,8 +107,8 @@ const JobDetailsModal = ({ job, onClose, onRunATS }: JobDetailsModalProps) => {
             <MetaItem icon={Clock} label="Published" value={job.published_date ? timeAgo(job.published_date) : "—"} />
             <MetaItem icon={Globe} label="Scraped" value={timeAgo(job.scraped_at)} />
             <MetaItem icon={Briefcase} label="Platform" value={platformLabel} />
-            {(job as any).applications_count != null && (job as any).applications_count > 0 && (
-              <MetaItem icon={Briefcase} label="Applicants" value={`${(job as any).applications_count} people applied`} className="text-blue-600" />
+            {job.applications_count && (
+              <MetaItem icon={Briefcase} label="Applicants" value={job.applications_count} className="text-blue-600" />
             )}
           </div>
 

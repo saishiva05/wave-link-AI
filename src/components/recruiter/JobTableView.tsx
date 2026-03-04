@@ -294,9 +294,9 @@ const JobExpandableRow = ({
           )}
         </td>
         <td className="px-3 py-4 text-center">
-          {(job.applications_count ?? 0) > 0 ? (
+          {job.applications_count ? (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
-              {job.applications_count} applied
+              {job.applications_count}
             </span>
           ) : (
             <span className="text-xs text-muted-foreground/30 italic">0</span>

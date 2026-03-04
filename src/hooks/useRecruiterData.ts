@@ -272,16 +272,10 @@ export function useScrapedJobs(recruiterId: string | null, filters: {
       }
 
       if (filters.applicantsRange) {
-        if (filters.applicantsRange === "0") {
-          query = query.eq("applications_count", 0);
-        } else if (filters.applicantsRange === "1-10") {
-          query = query.gte("applications_count", 1).lte("applications_count", 10);
-        } else if (filters.applicantsRange === "11-50") {
-          query = query.gte("applications_count", 11).lte("applications_count", 50);
-        } else if (filters.applicantsRange === "51-100") {
-          query = query.gte("applications_count", 51).lte("applications_count", 100);
-        } else if (filters.applicantsRange === "100+") {
-          query = query.gte("applications_count", 101);
+        if (filters.applicantsRange === "none") {
+          query = query.is("applications_count", null);
+        } else if (filters.applicantsRange === "has_applicants") {
+          query = query.not("applications_count", "is", null);
         }
       }
 
