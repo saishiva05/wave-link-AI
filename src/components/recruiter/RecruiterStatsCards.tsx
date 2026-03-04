@@ -20,9 +20,9 @@ const RecruiterStatsCards = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
       <StatsCard
-        title="Jobs Scraped"
+        title="Jobs Found"
         value={(stats?.totalJobs ?? 0).toLocaleString()}
-        trend="Total scraped"
+        trend="Total collected"
         trendUp
         icon={Briefcase}
         iconBg="bg-primary-50"

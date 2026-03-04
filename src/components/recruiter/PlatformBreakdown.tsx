@@ -35,7 +35,7 @@ const PlatformBreakdown = () => {
               <span className="text-lg font-semibold">LinkedIn</span>
             </div>
             <p className="text-5xl font-bold font-display mb-1">{linkedin.count.toLocaleString()}</p>
-            <p className="text-white/80 text-base mb-6">jobs scraped</p>
+            <p className="text-white/80 text-base mb-6">jobs found</p>
             <span className="inline-block bg-white/20 text-white text-sm font-medium px-4 py-1.5 rounded-full backdrop-blur-sm">{linkedin.percent}% of total</span>
             <div className="mt-6 pt-5 border-t border-white/20 flex items-center gap-2 text-sm text-white/90">
               <TrendingUp className="w-4 h-4" /><span>+{linkedin.recent} jobs in last 7 days</span>
@@ -56,7 +56,7 @@ const PlatformBreakdown = () => {
               <span className="text-lg font-semibold text-white">JSearch</span>
             </div>
             <p className="text-5xl font-bold font-display text-white mb-1">{jsearch.count.toLocaleString()}</p>
-            <p className="text-white/80 text-base mb-6">jobs scraped</p>
+            <p className="text-white/80 text-base mb-6">jobs found</p>
             <span className="inline-block bg-white/20 text-white text-sm font-medium px-4 py-1.5 rounded-full backdrop-blur-sm">{jsearch.percent}% of total</span>
             <div className="mt-6 pt-5 border-t border-white/20 flex items-center gap-2 text-sm text-white/90">
               <TrendingUp className="w-4 h-4" /><span>+{jsearch.recent} jobs in last 7 days</span>

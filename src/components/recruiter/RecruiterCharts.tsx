@@ -19,12 +19,12 @@ const RecruiterCharts = () => {
     <div className="space-y-6">
       <h2 className="text-xl font-bold text-secondary-900 font-display">Analytics & Trends</h2>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Jobs Scraped Trend */}
+        {/* Jobs Found Trend */}
         <div className="lg:col-span-2 bg-card border border-border rounded-xl p-6 shadow-card">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
             <div>
-              <h3 className="text-base font-semibold text-secondary-900">Jobs Scraped Trend</h3>
-              <p className="text-sm text-muted-foreground">Track your daily scraping activity</p>
+              <h3 className="text-base font-semibold text-secondary-900">Jobs Found Trend</h3>
+              <p className="text-sm text-muted-foreground">Track your daily job discovery activity</p>
             </div>
             <div className="flex gap-1 bg-muted rounded-lg p-1">
               {dateRanges.map((range) => (
@@ -45,7 +45,7 @@ const RecruiterCharts = () => {
                   <XAxis dataKey="date" tick={{ fontSize: 12, fill: "hsl(215, 10%, 55%)" }} axisLine={{ stroke: "hsl(214, 20%, 90%)" }} tickLine={false} />
                   <YAxis tick={{ fontSize: 12, fill: "hsl(215, 10%, 55%)" }} axisLine={false} tickLine={false} />
                   <Tooltip contentStyle={{ background: "hsl(215, 60%, 14%)", border: "none", borderRadius: "8px", color: "#fff", fontSize: "13px", boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}
-                    labelStyle={{ color: "hsl(210, 12%, 82%)", fontSize: "12px" }} formatter={(value: number) => [`${value} jobs scraped`, ""]} />
+                    labelStyle={{ color: "hsl(210, 12%, 82%)", fontSize: "12px" }} formatter={(value: number) => [`${value} jobs found`, ""]} />
                   <Area type="monotone" dataKey="jobs" stroke="hsl(174, 72%, 33%)" strokeWidth={2.5} fill="url(#recruiterJobsGradient)" dot={{ r: 0 }} activeDot={{ r: 6, strokeWidth: 2, stroke: "#fff", fill: "hsl(174, 72%, 33%)" }} />
                 </AreaChart>
               </ResponsiveContainer>

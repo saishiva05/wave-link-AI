@@ -27,7 +27,7 @@ const ScrapeLoadingOverlay = ({ isLoading, platform }: ScrapeLoadingOverlayProps
 
       <Loader2 className="w-16 h-16 text-primary animate-spin" />
       <h3 className="text-xl font-bold text-secondary-900 font-display mt-6">
-        Scraping jobs from {platformName}...
+        Searching jobs on {platformName}...
       </h3>
       <p className="text-base text-muted-foreground mt-2">
         This may take 10–30 seconds

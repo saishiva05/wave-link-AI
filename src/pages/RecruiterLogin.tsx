@@ -6,9 +6,9 @@ const RecruiterLogin = () => {
   return (
     <LoginLayout
       heading="Recruiter Portal"
-      description="Access your recruitment dashboard. Scrape jobs, manage candidates, and leverage AI-powered matching."
+      description="Access your recruitment dashboard. Find jobs, manage candidates, and leverage AI-powered matching."
       features={[
-        "Scrape jobs from LinkedIn and JSearch",
+        "Discover jobs from LinkedIn and JSearch",
         "AI-powered ATS resume matching",
         "Manage candidates and track applications",
       ]}

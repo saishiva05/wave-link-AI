@@ -52,7 +52,7 @@ const WelcomeBanner = () => {
           className="bg-white text-primary-700 hover:bg-white/90 font-semibold"
           size="lg"
         >
-          Start Scraping Jobs
+          Start Finding Jobs
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </div>

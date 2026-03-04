@@ -9,8 +9,8 @@ const faqs = [
     category: "Job Scraping",
     icon: Zap,
     items: [
-      { q: "How does job scraping work?", a: "Enter your search criteria (job title, location, platform) and click 'Scrape Jobs'. Our system connects to LinkedIn or JSearch APIs to find matching job postings and saves them to your database automatically." },
-      { q: "How many jobs can I scrape at once?", a: "Each scraping session can return up to 50 jobs depending on the platform and search criteria. You can run multiple sessions with different filters." },
+      { q: "How does job discovery work?", a: "Enter your search criteria (job title, location, platform) and click 'Find Jobs'. Our system connects to LinkedIn or JSearch APIs to find matching job postings and saves them to your database automatically." },
+      { q: "How many jobs can I find at once?", a: "Each search session can return up to 50 jobs depending on the platform and search criteria. You can run multiple sessions with different filters." },
       { q: "Why are some jobs missing salary information?", a: "Not all job postings include salary data. This depends on what the employer has disclosed on the original platform." },
     ],
   },

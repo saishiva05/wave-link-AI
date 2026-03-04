@@ -201,11 +201,11 @@ const RecruiterScrapedJobs = () => {
           <nav className="flex items-center gap-1.5 text-sm mb-4">
             <button onClick={() => navigate("/recruiter/dashboard")} className="text-muted-foreground hover:text-primary transition-colors">Dashboard</button>
             <span className="text-muted-foreground/50">/</span>
-            <span className="text-secondary-900 font-semibold">Scraped Jobs</span>
+            <span className="text-secondary-900 font-semibold">Job Board</span>
           </nav>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-2xl md:text-4xl font-bold text-secondary-900 font-display">Scraped Jobs</h1>
+              <h1 className="text-2xl md:text-4xl font-bold text-secondary-900 font-display">Job Board</h1>
               <p className="text-base text-muted-foreground mt-1">{totalCount.toLocaleString()} jobs in your database</p>
             </div>
             <div className="flex items-center gap-2">
@@ -216,7 +216,7 @@ const RecruiterScrapedJobs = () => {
                 <Plus className="w-4 h-4" /> Add Job Manually
               </Button>
               <Button variant="portal" onClick={() => navigate("/recruiter/scrape-jobs")}>
-                <Plus className="w-4 h-4" /> Scrape New Jobs
+                <Plus className="w-4 h-4" /> Find New Jobs
               </Button>
             </div>
           </div>
