@@ -83,22 +83,6 @@ const RecruiterSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Re
           )}
         />
         {!collapsed && <span className="text-sm font-medium">{item.title}</span>}
-        {!collapsed && item.badgeText && (
-          <span className={cn(
-            "ml-auto text-[10px] px-2 py-0.5 rounded-full font-semibold",
-            badgeStyles[item.badgeType || "neutral"]
-          )}>
-            {item.badgeText}
-          </span>
-        )}
-        {collapsed && item.badgeText && (
-          <span className={cn(
-            "absolute -top-1 -right-1 text-[9px] w-auto min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center font-semibold",
-            badgeStyles[item.badgeType || "neutral"]
-          )}>
-            {item.badgeType === "primary" ? "!" : item.badgeText}
-          </span>
-        )}
       </NavLink>
     );
 
