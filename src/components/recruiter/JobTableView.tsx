@@ -50,8 +50,8 @@ const PlatformIcon = ({ platform }: { platform: string }) => {
     <Tooltip>
       <TooltipTrigger asChild>
         <span className={cn(
-          "inline-flex items-center justify-center rounded-xl border shadow-sm transition-all hover:shadow-md",
-          isMax ? "bg-gradient-to-br from-primary-50 to-primary-100/80 border-primary-200" : "bg-gradient-to-br from-secondary-50 to-secondary-100/80 border-secondary-200"
+          "inline-flex items-center justify-center rounded-xl border shadow-sm transition-all hover:shadow-md p-1",
+          isMax ? "bg-gradient-to-br from-primary-50 to-primary-100/80 border-primary-200 dark:from-primary-50 dark:to-primary-100 dark:border-primary-200" : "bg-gradient-to-br from-secondary-50 to-secondary-100/80 border-secondary-200 dark:from-secondary-50 dark:to-secondary-100 dark:border-secondary-200"
         )}>
           <img src={wavelynkLogo} alt={label} className="w-10 h-10 object-contain" />
         </span>
