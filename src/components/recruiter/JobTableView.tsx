@@ -1,10 +1,12 @@
 import { ScrapedJob } from "@/data/mockScrapedJobs";
 import {
-  MapPin, Eye, Link, Trash, Search,
-  ChevronUp, ChevronDown, ExternalLink, DollarSign,
-  Clock, Building2, Wand2, FileCheck2, FileEdit,
+  MapPin, Eye, Trash, Search,
+  ChevronUp, ChevronDown, ExternalLink,
+  Clock, Building2, FileEdit,
   ChevronRight, Mail, Sparkles, Copy, Check,
-  Send, CheckCircle,
+  Send, CheckCircle, TrendingUp, BarChart3,
+  FileCheck, Zap, ArrowUpRight, CircleDollarSign,
+  Timer, Users, FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useCallback } from "react";
@@ -42,15 +44,19 @@ interface JobTableViewProps {
 
 const PlatformIcon = ({ platform }: { platform: string }) => {
   const label = getPlatformDisplayName(platform);
+  const isMax = platform.toLowerCase() === "linkedin";
 
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
-          <img src={wavelynkIcon} alt={label} className="w-5 h-5 object-contain" />
+        <span className={cn(
+          "inline-flex items-center justify-center w-9 h-9 rounded-xl border shadow-sm transition-all hover:shadow-md",
+          isMax ? "bg-gradient-to-br from-primary-50 to-primary-100/80 border-primary-200" : "bg-gradient-to-br from-secondary-50 to-secondary-100/80 border-secondary-200"
+        )}>
+          <img src={wavelynkIcon} alt={label} className="w-[22px] h-[22px] object-contain" />
         </span>
       </TooltipTrigger>
-      <TooltipContent>{label}</TooltipContent>
+      <TooltipContent side="right" className="font-semibold">{label}</TooltipContent>
     </Tooltip>
   );
 };
@@ -67,46 +73,42 @@ const SortIcon = ({ field, sortField, sortDir }: { field: string; sortField: str
 
 const ATSScoreBadge = ({ score, onClick }: { score: number; onClick: () => void }) => {
   const color = score >= 70
-    ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+    ? "from-emerald-50 to-emerald-100/80 text-emerald-700 border-emerald-200 hover:border-emerald-300"
     : score >= 50
-    ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
-    : "bg-red-50 text-red-600 border-red-200 hover:bg-red-100";
+    ? "from-amber-50 to-amber-100/80 text-amber-700 border-amber-200 hover:border-amber-300"
+    : "from-red-50 to-red-100/80 text-red-600 border-red-200 hover:border-red-300";
   return (
-    <button onClick={onClick} className={cn("inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all hover:scale-105 hover:shadow-md cursor-pointer", color)} title="Click to view full ATS analysis">
-      <Wand2 className="w-3 h-3" />{score}%
+    <button onClick={onClick} className={cn("inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border bg-gradient-to-r transition-all hover:shadow-md cursor-pointer", color)} title="View ATS analysis">
+      <BarChart3 className="w-3.5 h-3.5" />{score}%
     </button>
   );
 };
 
-/**
- * Tracks the time a recruiter spends on the external apply page.
- * Records apply_started_at when clicked, shows elapsed time.
- */
 const ApplyExternallyButton = ({ job }: { job: ScrapedJob }) => {
   const [startedAt, setStartedAt] = useState<Date | null>(null);
-  const [elapsed, setElapsed] = useState<number>(0);
+  const [elapsed, setElapsed] = useState(0);
 
   const handleClick = useCallback(() => {
     const now = new Date();
     setStartedAt(now);
-    window.open(job.job_apply_url, "_blank");
-    // Start timer
+    let url = job.job_apply_url;
+    if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+    window.open(url, "_blank");
     const interval = setInterval(() => {
       setElapsed(Math.round((Date.now() - now.getTime()) / 1000));
     }, 1000);
-    // Store interval for cleanup
-    setTimeout(() => clearInterval(interval), 3600000); // 1hr max
+    setTimeout(() => clearInterval(interval), 3600000);
     return () => clearInterval(interval);
   }, [job.job_apply_url]);
 
   return (
     <div className="inline-flex items-center gap-2">
-      <button onClick={handleClick} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-info-600 hover:text-info-700 hover:bg-info-50 transition-all">
-        <ExternalLink className="w-4 h-4" /> Apply Externally
+      <button onClick={handleClick} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-blue-50 to-info-50 text-blue-700 border border-blue-200 hover:border-blue-300 hover:shadow-md transition-all">
+        <ArrowUpRight className="w-4 h-4" /> Apply to Job
       </button>
       {startedAt && elapsed > 0 && (
-        <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-1 rounded-full">
-          ⏱ {Math.floor(elapsed / 60)}:{(elapsed % 60).toString().padStart(2, '0')}
+        <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2.5 py-1 rounded-full flex items-center gap-1">
+          <Timer className="w-3 h-3" /> {Math.floor(elapsed / 60)}:{(elapsed % 60).toString().padStart(2, '0')}
         </span>
       )}
     </div>
@@ -122,11 +124,11 @@ const JobTableView = ({
 
   if (jobs.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center bg-card rounded-xl border border-border">
-        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-          <Search className="w-8 h-8 text-muted-foreground/40" />
+      <div className="flex flex-col items-center justify-center py-20 text-center bg-card border border-border rounded-xl">
+        <div className="w-16 h-16 rounded-2xl bg-muted/60 flex items-center justify-center mb-4">
+          <Search className="w-8 h-8 text-muted-foreground/30" />
         </div>
-        <h3 className="text-lg font-semibold text-foreground mb-2">No jobs found</h3>
+        <h3 className="text-lg font-bold text-foreground mb-1 font-display">No jobs found</h3>
         <p className="text-sm text-muted-foreground">Try adjusting your filters or find new jobs</p>
       </div>
     );
@@ -138,32 +140,36 @@ const JobTableView = ({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gradient-to-r from-secondary-50/80 to-muted/50 border-b border-border">
+              <tr className="bg-gradient-to-r from-muted/60 to-muted/30 border-b border-border">
                 <th className="w-10 px-3 py-4">
                   <input type="checkbox" checked={allSelected} onChange={onSelectAll} className="w-4 h-4 rounded border-border text-primary focus:ring-primary cursor-pointer" />
                 </th>
                 <th className="w-8 px-2 py-4"></th>
-                <th className="px-3 py-4 text-left font-bold text-secondary-700 text-[11px] uppercase tracking-widest w-12"></th>
-                <th className="px-3 py-4 text-left font-bold text-secondary-700 text-[11px] uppercase tracking-widest cursor-pointer select-none min-w-[260px] group" onClick={() => onSort("job_title")}>
+                <th className="px-3 py-4 text-left font-bold text-muted-foreground text-[11px] uppercase tracking-widest w-12"></th>
+                <th className="px-3 py-4 text-left font-bold text-muted-foreground text-[11px] uppercase tracking-widest cursor-pointer select-none min-w-[260px] group" onClick={() => onSort("job_title")}>
                   <div className="flex items-center gap-1.5">Job Details <SortIcon field="job_title" sortField={sortField} sortDir={sortDir} /></div>
                 </th>
-                <th className="px-3 py-4 text-left font-bold text-secondary-700 text-[11px] uppercase tracking-widest min-w-[130px]">Location</th>
-                <th className="px-3 py-4 text-left font-bold text-secondary-700 text-[11px] uppercase tracking-widest min-w-[100px]">Salary</th>
-                <th className="px-3 py-4 text-left font-bold text-secondary-700 text-[11px] uppercase tracking-widest cursor-pointer select-none min-w-[110px] group" onClick={() => onSort("scraped_at")}>
-                  <div className="flex items-center gap-1.5">Added <SortIcon field="scraped_at" sortField={sortField} sortDir={sortDir} /></div>
+                <th className="px-3 py-4 text-left font-bold text-muted-foreground text-[11px] uppercase tracking-widest min-w-[130px]">
+                  <div className="flex items-center gap-1"><MapPin className="w-3 h-3" /> Location</div>
                 </th>
-                <th className="px-3 py-4 text-center font-bold text-secondary-700 text-[11px] uppercase tracking-widest w-20">
-                  <span className="flex items-center justify-center gap-1"><Wand2 className="w-3 h-3" /> ATS</span>
+                <th className="px-3 py-4 text-left font-bold text-muted-foreground text-[11px] uppercase tracking-widest min-w-[100px]">
+                  <div className="flex items-center gap-1"><CircleDollarSign className="w-3 h-3" /> Salary</div>
                 </th>
-                <th className="px-3 py-4 text-center font-bold text-secondary-700 text-[11px] uppercase tracking-widest w-24">
-                  <span className="flex items-center justify-center gap-1"><FileCheck2 className="w-3 h-3" /> CV</span>
+                <th className="px-3 py-4 text-left font-bold text-muted-foreground text-[11px] uppercase tracking-widest cursor-pointer select-none min-w-[110px] group" onClick={() => onSort("scraped_at")}>
+                  <div className="flex items-center gap-1.5"><Timer className="w-3 h-3" /> Added <SortIcon field="scraped_at" sortField={sortField} sortDir={sortDir} /></div>
                 </th>
-                <th className="px-3 py-4 text-center font-bold text-secondary-700 text-[11px] uppercase tracking-widest w-24">
-                  <span className="flex items-center justify-center gap-1">Applicants</span>
+                <th className="px-3 py-4 text-center font-bold text-muted-foreground text-[11px] uppercase tracking-widest w-20">
+                  <span className="flex items-center justify-center gap-1"><BarChart3 className="w-3 h-3" /> ATS</span>
+                </th>
+                <th className="px-3 py-4 text-center font-bold text-muted-foreground text-[11px] uppercase tracking-widest w-24">
+                  <span className="flex items-center justify-center gap-1"><FileCheck className="w-3 h-3" /> CV</span>
+                </th>
+                <th className="px-3 py-4 text-center font-bold text-muted-foreground text-[11px] uppercase tracking-widest w-24">
+                  <span className="flex items-center justify-center gap-1"><Users className="w-3 h-3" /> Applicants</span>
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border/60">
+            <tbody className="divide-y divide-border/50">
             {jobs.map((job) => {
                 const isExpanded = expandedId === job.id;
                 const atsAnalysesForJob = atsAnalyses[job.id] || [];
@@ -231,7 +237,7 @@ const JobExpandableRow = ({
       <tr
         className={cn(
           "group transition-all duration-150 cursor-pointer",
-          selected ? "bg-primary/5" : "hover:bg-muted/30",
+          selected ? "bg-primary/[0.03]" : "hover:bg-muted/40",
           isExpanded && "bg-muted/20"
         )}
         onClick={onToggle}
@@ -240,59 +246,63 @@ const JobExpandableRow = ({
           <input type="checkbox" checked={selected} onChange={onToggleSelect} className="w-4 h-4 rounded border-border text-primary focus:ring-primary cursor-pointer" />
         </td>
         <td className="px-2 py-4">
-          <ChevronRight className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", isExpanded && "rotate-90")} />
+          <div className={cn("w-6 h-6 rounded-md flex items-center justify-center transition-all", isExpanded ? "bg-primary/10" : "group-hover:bg-muted")}>
+            <ChevronRight className={cn("w-3.5 h-3.5 text-muted-foreground transition-transform duration-200", isExpanded && "rotate-90 text-primary")} />
+          </div>
         </td>
         <td className="px-3 py-4" onClick={(e) => e.stopPropagation()}>
           <PlatformIcon platform={job.platform} />
         </td>
         <td className="px-3 py-4">
           <div className="space-y-1">
-            <p className="text-[13px] font-bold text-secondary-900 group-hover:text-primary transition-colors line-clamp-1">{job.job_title}</p>
-            <div className="flex items-center gap-1.5 text-xs text-primary-600 font-semibold">
-              <Building2 className="w-3 h-3" />{job.company_name}
+            <p className="text-[13px] font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1 font-display">{job.job_title}</p>
+            <div className="flex items-center gap-1.5 text-xs text-primary font-medium">
+              <Building2 className="w-3.5 h-3.5 opacity-60" />{job.company_name}
             </div>
           </div>
         </td>
         <td className="px-3 py-4">
           <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
-            <MapPin className="w-3.5 h-3.5 shrink-0 text-primary/50" />{job.location}
+            <MapPin className="w-3.5 h-3.5 shrink-0 text-primary/40" />{job.location}
           </span>
         </td>
         <td className="px-3 py-4">
           {job.salary_range ? (
-            <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
-              <DollarSign className="w-3 h-3 shrink-0" />{job.salary_range}
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-success-700 bg-gradient-to-r from-success-50 to-emerald-50 px-2.5 py-1.5 rounded-lg border border-success-200 shadow-sm">
+              <CircleDollarSign className="w-3.5 h-3.5" />{job.salary_range}
             </span>
           ) : (
-            <span className="text-xs text-muted-foreground/40">—</span>
+            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground/40 px-2 py-1">
+              <CircleDollarSign className="w-3.5 h-3.5" /> —
+            </span>
           )}
         </td>
         <td className="px-3 py-4">
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Clock className="w-3.5 h-3.5 shrink-0 text-muted-foreground/50" />{timeAgo(job.scraped_at)}
+            <Timer className="w-3.5 h-3.5 shrink-0 text-muted-foreground/40" />{timeAgo(job.scraped_at)}
           </span>
         </td>
         <td className="px-3 py-4 text-center" onClick={(e) => e.stopPropagation()}>
           {hasATS ? (
             <ATSScoreBadge score={latestATS.ats_score} onClick={onViewATSResult} />
           ) : (
-            <span className="text-xs text-muted-foreground/30 italic">Not run</span>
+            <span className="text-[11px] text-muted-foreground/40 italic">Not run</span>
           )}
         </td>
         <td className="px-3 py-4 text-center" onClick={(e) => e.stopPropagation()}>
           {updatedCVs.length > 0 ? (
             <UpdatedCVsBadge updatedCVs={updatedCVs} compact />
           ) : (
-            <span className="text-xs text-muted-foreground/30 italic">None</span>
+            <span className="text-[11px] text-muted-foreground/40 italic">None</span>
           )}
         </td>
         <td className="px-3 py-4 text-center">
           {job.applications_count ? (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
-              {job.applications_count}
+            <span className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-gradient-to-r from-blue-50 to-info-50 text-blue-700 border border-blue-200 shadow-sm">
+              <Users className="w-3 h-3" /> {job.applications_count}
             </span>
           ) : (
-            <span className="text-xs text-muted-foreground/30 italic">0</span>
+            <span className="text-[11px] text-muted-foreground/40">0</span>
           )}
         </td>
       </tr>
@@ -301,31 +311,31 @@ const JobExpandableRow = ({
       {isExpanded && (
         <tr>
           <td colSpan={10} className="px-0 py-0">
-            <div className="bg-gradient-to-r from-muted/40 via-card to-muted/40 border-t border-b border-border/50 px-6 py-5 animate-accordion-down space-y-4">
-              {/* Action Buttons - Flow: Update CV first → then ATS Analysis */}
+            <div className="bg-gradient-to-r from-muted/30 via-card to-muted/30 border-t border-b border-border/50 px-6 py-5 animate-accordion-down space-y-4">
+              {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-3">
-              {/* Step 1: ATS Analysis (always available) */}
+                {/* ATS Analysis */}
                 {hasATS ? (
-                  <button onClick={onViewATSResult} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 hover:shadow-md transition-all hover:scale-[1.02]">
-                    <Eye className="w-4 h-4" /> View ATS Results ({atsAnalysesForJob.length})
+                  <button onClick={onViewATSResult} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border border-purple-200 hover:border-purple-300 hover:shadow-md transition-all">
+                    <BarChart3 className="w-4 h-4" /> View ATS Results ({atsAnalysesForJob.length})
                   </button>
                 ) : (
-                  <button onClick={onRunATS} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 hover:shadow-md transition-all hover:scale-[1.02]">
-                    <Wand2 className="w-4 h-4" /> Run ATS Analysis
+                  <button onClick={onRunATS} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border border-purple-200 hover:border-purple-300 hover:shadow-md transition-all">
+                    <Zap className="w-4 h-4" /> Run ATS Analysis
                   </button>
                 )}
                 {hasATS && (
                   <button onClick={onRunATS} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-purple-600 hover:bg-purple-50 transition-all">
-                    <Wand2 className="w-3.5 h-3.5" /> Run Again
+                    <Zap className="w-3.5 h-3.5" /> Run Again
                   </button>
                 )}
 
-                {/* Step 2: Update CV (always available) */}
+                {/* Update CV */}
                 {hasUpdatedCVs ? (
                   <UpdatedCVsBadge updatedCVs={updatedCVs} />
                 ) : (
-                  <button onClick={onUpdateCV} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-100 hover:shadow-md transition-all hover:scale-[1.02]">
-                    <FileEdit className="w-4 h-4" /> Update CV
+                  <button onClick={onUpdateCV} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-teal-50 to-emerald-50 text-teal-700 border border-teal-200 hover:border-teal-300 hover:shadow-md transition-all">
+                    <FileText className="w-4 h-4" /> Update CV
                   </button>
                 )}
                 {hasUpdatedCVs && (
@@ -336,11 +346,11 @@ const JobExpandableRow = ({
 
                 {/* Generate Email */}
                 {hasEmails ? (
-                  <button onClick={() => setShowEmails(!showEmails)} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 hover:shadow-md transition-all hover:scale-[1.02]">
-                    <Eye className="w-4 h-4" /> View Emails ({generatedEmails.length})
+                  <button onClick={() => setShowEmails(!showEmails)} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border border-orange-200 hover:border-orange-300 hover:shadow-md transition-all">
+                    <Mail className="w-4 h-4" /> View Emails ({generatedEmails.length})
                   </button>
                 ) : (
-                  <button onClick={onGenerateEmail} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 hover:shadow-md transition-all hover:scale-[1.02]">
+                  <button onClick={onGenerateEmail} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border border-orange-200 hover:border-orange-300 hover:shadow-md transition-all">
                     <Mail className="w-4 h-4" /> Generate Email
                   </button>
                 )}
@@ -350,22 +360,16 @@ const JobExpandableRow = ({
                   </button>
                 )}
 
-                {/* Step 4: Apply to Job (redirects to external URL) */}
-                <button onClick={() => {
-                  let url = job.job_apply_url;
-                  if (!/^https?:\/\//i.test(url)) url = "https://" + url;
-                  window.open(url, "_blank");
-                }} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:shadow-md transition-all hover:scale-[1.02]">
-                  <ExternalLink className="w-4 h-4" /> Apply to Job
-                </button>
+                {/* Apply to Job */}
+                <ApplyExternallyButton job={job} />
 
-                {/* Submit Application (records application in system) */}
+                {/* Submit Application */}
                 {jobApplications.length > 0 ? (
-                  <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-success-100 text-success-700 border border-success-200">
+                  <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-success-50 to-emerald-50 text-success-700 border border-success-200">
                     <CheckCircle className="w-4 h-4" /> Submitted ({jobApplications.length})
                   </span>
                 ) : (
-                  <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 hover:shadow-md transition-all hover:scale-[1.02]">
+                  <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border border-emerald-200 hover:border-emerald-300 hover:shadow-md transition-all">
                     <Send className="w-4 h-4" /> Submit Application
                   </button>
                 )}
@@ -388,23 +392,23 @@ const JobExpandableRow = ({
                 </div>
               </div>
 
-              {/* ATS Results Summary (if multiple) */}
+              {/* ATS Results Summary */}
               {hasATS && atsAnalysesForJob.length > 0 && (
                 <div className="bg-card border border-border rounded-xl p-4">
-                  <h4 className="text-xs font-bold text-secondary-700 uppercase tracking-wider mb-3 flex items-center gap-2">
-                    <Wand2 className="w-3.5 h-3.5 text-purple-500" /> ATS Analyses ({atsAnalysesForJob.length} student{atsAnalysesForJob.length > 1 ? "s" : ""})
+                  <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <BarChart3 className="w-3.5 h-3.5 text-purple-500" /> ATS Analyses ({atsAnalysesForJob.length} candidate{atsAnalysesForJob.length > 1 ? "s" : ""})
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                     {atsAnalysesForJob.map((a: any) => (
                       <div key={a.analysis_id} className="flex items-center gap-3 bg-muted/30 rounded-lg px-3 py-2.5 border border-border/50">
                         <div className={cn(
                           "w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold",
-                          a.ats_score >= 70 ? "bg-emerald-100 text-emerald-700" : a.ats_score >= 50 ? "bg-amber-100 text-amber-700" : "bg-red-100 text-red-600"
+                          a.ats_score >= 70 ? "bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-700" : a.ats_score >= 50 ? "bg-gradient-to-br from-amber-100 to-amber-50 text-amber-700" : "bg-gradient-to-br from-red-100 to-red-50 text-red-600"
                         )}>
                           {a.ats_score}%
                         </div>
                         <div className="min-w-0">
-                          <p className="text-xs font-semibold text-secondary-900 truncate">{a.candidate_name}</p>
+                          <p className="text-xs font-semibold text-foreground truncate">{a.candidate_name}</p>
                           <p className="text-[11px] text-muted-foreground truncate">{a.cv_file_name}</p>
                         </div>
                       </div>
@@ -416,13 +420,13 @@ const JobExpandableRow = ({
               {/* Generated Emails */}
               {showEmails && hasEmails && (
                 <div className="bg-card border border-border rounded-xl p-4 space-y-3">
-                  <h4 className="text-xs font-bold text-secondary-700 uppercase tracking-wider flex items-center gap-2">
+                  <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                     <Mail className="w-3.5 h-3.5 text-orange-500" /> Generated Emails ({generatedEmails.length})
                   </h4>
                   {generatedEmails.map((email: any) => (
                     <div key={email.email_id} className="border border-border/50 rounded-lg p-3 bg-muted/20 space-y-2">
                       <div className="flex items-center justify-between">
-                        <p className="text-xs font-bold text-secondary-900">Subject: {email.subject}</p>
+                        <p className="text-xs font-bold text-foreground">Subject: {email.subject}</p>
                         <button
                           onClick={() => handleCopy(`Subject: ${email.subject}\n\n${email.body}`, email.email_id)}
                           className="inline-flex items-center gap-1 text-[11px] font-medium text-orange-600 hover:text-orange-700"
@@ -439,7 +443,7 @@ const JobExpandableRow = ({
               )}
 
               {/* Description preview */}
-              <p className="text-xs text-muted-foreground/80 line-clamp-2 max-w-3xl leading-relaxed">
+              <p className="text-xs text-muted-foreground/70 line-clamp-2 max-w-3xl leading-relaxed italic">
                 {job.job_description}
               </p>
             </div>
