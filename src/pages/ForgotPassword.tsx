@@ -4,7 +4,7 @@ import { Mail, ArrowRight, Loader2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import WavePattern from "@/components/WavePattern";
-import wavelynkLogo from "@/assets/wavelynk-logo.jpeg";
+import wavelynkIcon from "@/assets/wavelynk-icon.png";
 import { useAuth } from "@/hooks/useAuth";
 
 const ForgotPassword = () => {
@@ -45,8 +45,11 @@ const ForgotPassword = () => {
         transition={{ duration: 0.4 }}
         className="form-container relative z-10"
       >
-        <div className="flex justify-center mb-8">
-          <img src={wavelynkLogo} alt="Wave Lynk AI" className="w-36" />
+        <div className="flex items-center justify-center gap-3 mb-8">
+          <img src={wavelynkIcon} alt="WaveLynk" className="w-10 h-10 object-contain" />
+          <span className="font-display text-xl font-bold text-foreground tracking-tight">
+            Wave<span className="text-primary">Lynk</span> AI
+          </span>
         </div>
 
         {!isSubmitted ? (

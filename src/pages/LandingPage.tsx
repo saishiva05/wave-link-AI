@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/ThemeToggle";
 import type { Easing } from "framer-motion";
-import wavelynkLogo from "@/assets/wavelynk-logo.png";
+import wavelynkIcon from "@/assets/wavelynk-icon.png";
 
 const easeOut: Easing = [0, 0, 0.2, 1];
 
@@ -219,7 +219,7 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6 h-16 md:h-18 flex items-center justify-between">
           {/* Logo — transparent PNG, no white box */}
           <motion.a href="/" className="flex items-center gap-2.5 shrink-0" whileHover={{ scale: 1.02 }}>
-            <img src={wavelynkLogo} alt="WaveLynk" className="h-9 md:h-10 w-auto object-contain" />
+            <img src={wavelynkIcon} alt="WaveLynk" className="w-9 h-9 md:w-10 md:h-10 object-contain" />
             <span className="font-display text-base md:text-lg font-bold text-foreground tracking-tight hidden sm:inline">
               Wave Lynk <span className="text-primary">AI</span>
             </span>
@@ -746,7 +746,7 @@ const LandingPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-6">
-                <img src={wavelynkLogo} alt="WaveLynk" className="h-10 w-auto object-contain" />
+                <img src={wavelynkIcon} alt="WaveLynk" className="w-10 h-10 object-contain" />
                 <div>
                   <span className="font-display text-lg font-bold text-foreground">Wave Lynk <span className="text-primary">AI</span></span>
                   <p className="text-xs text-muted-foreground">AI-Powered Career Platform</p>

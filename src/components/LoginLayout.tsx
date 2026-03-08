@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
-import wavelynkLogo from "@/assets/wavelynk-logo.png";
+import wavelynkIcon from "@/assets/wavelynk-icon.png";
 
 interface LoginLayoutProps {
   children: ReactNode;
@@ -30,12 +30,11 @@ const LoginLayout = ({
           transition={{ duration: 0.4 }}
           className="relative z-10"
         >
-          <div className="inline-block bg-white rounded-2xl p-4 shadow-lg mb-8 lg:mb-12">
-            <img
-              src={wavelynkLogo}
-              alt="WaveLynk IT Consulting & Services"
-              className="h-14 lg:h-16 w-auto object-contain"
-            />
+          <div className="flex items-center gap-3 mb-8 lg:mb-12">
+            <img src={wavelynkIcon} alt="WaveLynk" className="w-12 h-12 lg:w-14 lg:h-14 object-contain" />
+            <span className="font-display text-xl lg:text-2xl font-bold text-primary-foreground tracking-tight">
+              Wave<span className="opacity-80">Lynk</span> AI
+            </span>
           </div>
           <h1 className="font-display text-2xl lg:text-4xl font-bold text-primary-foreground mb-4">
             {heading}

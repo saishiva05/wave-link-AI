@@ -17,7 +17,6 @@ import {
   Newspaper,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import wavelynkLogo from "@/assets/wavelynk-logo.png";
 import wavelynkIcon from "@/assets/wavelynk-icon.png";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
@@ -105,18 +104,14 @@ const RecruiterSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Re
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="h-20 flex items-center justify-between px-3 border-b border-border">
-        {!collapsed && (
-          <div className="flex-1 flex justify-center">
-            <div className="flex items-center gap-2.5">
-              <img src={wavelynkLogo} alt="WaveLynk" className="h-10 w-auto object-contain" />
-            </div>
-          </div>
-        )}
-        {collapsed && (
-          <div className="flex-1 flex justify-center">
-            <img src={wavelynkIcon} alt="WaveLynk" className="w-8 h-8 object-contain" />
-          </div>
-        )}
+        <div className="flex-1 flex items-center justify-center gap-2.5">
+          <img src={wavelynkIcon} alt="WaveLynk" className={cn(collapsed ? "w-8 h-8" : "w-10 h-10", "object-contain")} />
+          {!collapsed && (
+            <span className="font-display text-lg font-bold text-foreground tracking-tight">
+              Wave<span className="text-primary">Lynk</span>
+            </span>
+          )}
+        </div>
         <button
           onClick={onToggle}
           className="hidden lg:flex items-center justify-center w-7 h-7 rounded bg-muted hover:bg-neutral-200 text-neutral-500 transition-colors shrink-0"
