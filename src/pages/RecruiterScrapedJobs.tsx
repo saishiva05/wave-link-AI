@@ -236,7 +236,11 @@ const RecruiterScrapedJobs = () => {
               <h1 className="text-2xl md:text-4xl font-bold text-secondary-900 font-display">Job Board</h1>
               <p className="text-base text-muted-foreground mt-1">{totalCount.toLocaleString()} jobs in your database</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Button variant="outline" onClick={handleExportCSV} disabled={isExporting || totalCount === 0}>
+                {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
+                {isExporting ? "Exporting..." : "Export CSV"}
+              </Button>
               <Button variant="outline" onClick={() => setBatchATSOpen(true)}>
                 <Sparkles className="w-4 h-4" /> Batch ATS
               </Button>
