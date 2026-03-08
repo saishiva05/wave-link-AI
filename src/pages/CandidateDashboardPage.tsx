@@ -33,31 +33,31 @@ const CandidateDashboardPage = () => {
   return (
     <>
       <ApplicationDetailsModal application={detailApp} onClose={() => setDetailApp(null)} />
-      <div className="space-y-8 max-w-[1400px] mx-auto">
+      <div className="space-y-5 md:space-y-8 max-w-[1400px] mx-auto">
         {/* Welcome Banner */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
-          className="relative bg-gradient-to-br from-primary to-primary-600 rounded-2xl p-8 md:p-10 overflow-hidden">
+          className="relative bg-gradient-to-br from-primary to-primary-600 rounded-xl md:rounded-2xl p-5 md:p-10 overflow-hidden">
           <div className="absolute inset-0 opacity-10"><WavePattern /></div>
           <div className="relative z-10">
-            <Sparkles className="w-8 h-8 text-white mb-4" />
-            <h1 className="text-2xl md:text-4xl font-bold text-white font-display">Welcome back, {firstName}!</h1>
-            <p className="text-base md:text-lg text-white/90 mt-2 max-w-2xl leading-relaxed">
-              Your recruiter <strong>{recruiter.name}</strong> at {recruiter.company} is actively working on your job search. Here's your latest overview.
+            <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-white mb-3 md:mb-4" />
+            <h1 className="text-xl md:text-4xl font-bold text-white font-display">Welcome back, {firstName}!</h1>
+            <p className="text-sm md:text-lg text-white/90 mt-1.5 md:mt-2 max-w-2xl leading-relaxed">
+              Your recruiter <strong>{recruiter.name}</strong> at {recruiter.company} is actively working on your job search.
             </p>
-            <div className="flex flex-wrap gap-6 mt-6 text-sm text-white font-medium">
-              <span className="flex items-center gap-1.5"><Briefcase className="w-4 h-4" /> {stats.total} Applications</span>
-              <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" /> {stats.pending} Pending</span>
-              <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {stats.interviews} Interviews</span>
-              <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4" /> {stats.offers} Offers</span>
-              <span className="flex items-center gap-1.5"><FileText className="w-4 h-4" /> {cvs.length} CVs</span>
+            <div className="grid grid-cols-3 md:flex md:flex-wrap gap-3 md:gap-6 mt-4 md:mt-6 text-xs md:text-sm text-white font-medium">
+              <span className="flex items-center gap-1"><Briefcase className="w-3.5 h-3.5 shrink-0" /> {stats.total} Apps</span>
+              <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 shrink-0" /> {stats.pending} Pending</span>
+              <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 shrink-0" /> {stats.interviews} Interviews</span>
+              <span className="flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> {stats.offers} Offers</span>
+              <span className="flex items-center gap-1"><FileText className="w-3.5 h-3.5 shrink-0" /> {cvs.length} CVs</span>
             </div>
-            <div className="flex flex-wrap gap-3 mt-6">
-              <Button className="bg-white text-primary-700 hover:bg-white/90 font-semibold" onClick={() => navigate("/candidate/messages")}>
-                <MessageSquare className="w-4 h-4" /> Message {recruiter.name.split(" ")[0]}
+            <div className="flex flex-wrap gap-2 md:gap-3 mt-4 md:mt-6">
+              <Button size="sm" className="bg-white text-primary-700 hover:bg-white/90 font-semibold text-xs md:text-sm h-8 md:h-10" onClick={() => navigate("/candidate/messages")}>
+                <MessageSquare className="w-3.5 h-3.5" /> Message {recruiter.name.split(" ")[0]}
               </Button>
               {recruiter.email && (
-                <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 font-semibold" onClick={() => window.open(`mailto:${recruiter.email}`)}>
-                  <Mail className="w-4 h-4" /> Email
+                <Button variant="outline" size="sm" className="border-white/30 text-white hover:bg-white/10 font-semibold text-xs md:text-sm h-8 md:h-10" onClick={() => window.open(`mailto:${recruiter.email}`)}>
+                  <Mail className="w-3.5 h-3.5" /> Email
                 </Button>
               )}
             </div>
