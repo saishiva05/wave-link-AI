@@ -42,7 +42,7 @@ interface AdminSidebarProps {
 const AdminSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: AdminSidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { fullName, email, signOut } = useAuth();
+  const { fullName, email, profile, signOut } = useAuth();
   const initials = fullName ? fullName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) : "AD";
 
   const isActive = (route: string) => location.pathname === route;
