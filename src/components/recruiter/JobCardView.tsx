@@ -78,7 +78,7 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
             )}
           >
             {/* Color accent bar */}
-            <div className={cn("h-1 w-full", job.platform.toLowerCase() === "linkedin" ? "bg-[#0A66C2]" : "bg-secondary-400")} />
+            <div className="h-1 w-full bg-primary" />
 
             <div className="p-5 flex flex-col flex-1">
               {/* Header */}

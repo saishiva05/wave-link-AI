@@ -47,9 +47,9 @@ const JobDetailsModal = ({ job, onClose, onRunATS }: JobDetailsModalProps) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const platformLabel = job.platform.charAt(0).toUpperCase() + job.platform.slice(1);
+  const platformLabel = getPlatformDisplayName(job.platform);
   const isLinkedIn = job.platform.toLowerCase() === "linkedin";
-  const platformColor = isLinkedIn ? "bg-info-50 text-info-500 border-info-200" : "bg-secondary-100 text-secondary-600 border-secondary-200";
+  const platformColor = "bg-primary-50 text-primary border-primary-200";
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={onClose}>

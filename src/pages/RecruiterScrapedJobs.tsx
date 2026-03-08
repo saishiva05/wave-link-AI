@@ -112,7 +112,7 @@ const RecruiterScrapedJobs = () => {
 
   // Active filters
   const activeFilters: { label: string; onRemove: () => void }[] = [];
-  if (platformFilter) activeFilters.push({ label: `Platform: ${platformFilter === "linkedin" ? "LinkedIn" : "JSearch"}`, onRemove: () => setPlatformFilter("") });
+  if (platformFilter) activeFilters.push({ label: `Platform: ${platformFilter === "linkedin" ? "WaveLynk Max" : "WaveLynk Pro"}`, onRemove: () => setPlatformFilter("") });
   if (dateFilter) activeFilters.push({ label: `Date: ${dateOptions.find((d) => d.value === dateFilter)?.label}`, onRemove: () => setDateFilter("") });
   if (contractFilter.length > 0) activeFilters.push({ label: `Type: ${contractFilter.join(", ")}`, onRemove: () => setContractFilter([]) });
   if (workModeFilter) activeFilters.push({ label: `Mode: ${workModeFilter}`, onRemove: () => setWorkModeFilter("") });
