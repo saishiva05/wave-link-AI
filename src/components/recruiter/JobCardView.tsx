@@ -100,9 +100,9 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                       onClick={() => onViewATSResult(job)}
                       className={cn(
                         "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold border bg-gradient-to-r transition-all hover:scale-105 hover:shadow-md",
-                        latestATS.ats_score >= 70 ? "from-emerald-50 to-emerald-100/80 text-emerald-700 border-emerald-200"
-                          : latestATS.ats_score >= 50 ? "from-amber-50 to-amber-100/80 text-amber-700 border-amber-200"
-                          : "from-red-50 to-red-100/80 text-red-600 border-red-200"
+                        latestATS.ats_score >= 70 ? "from-emerald-50 to-emerald-100/80 text-emerald-700 border-emerald-200 dark:from-emerald-950 dark:to-emerald-900/80 dark:text-emerald-400 dark:border-emerald-800"
+                          : latestATS.ats_score >= 50 ? "from-amber-50 to-amber-100/80 text-amber-700 border-amber-200 dark:from-amber-950 dark:to-amber-900/80 dark:text-amber-400 dark:border-amber-800"
+                          : "from-red-50 to-red-100/80 text-red-600 border-red-200 dark:from-red-950 dark:to-red-900/80 dark:text-red-400 dark:border-red-800"
                       )}
                     >
                       <BarChart3 className="w-3 h-3" /> {latestATS.ats_score}%
