@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/ThemeToggle";
 import type { Easing } from "framer-motion";
-import wavelynkLogo from "@/assets/wavelynk-logo.png";
+import wavelynkIcon from "@/assets/wavelynk-icon.png";
 
 const easeOut: Easing = [0, 0, 0.2, 1];
 
