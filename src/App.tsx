@@ -67,6 +67,7 @@ const App = () => (
             <Route path="/recruiter/login" element={<RecruiterLogin />} />
             <Route path="/candidate/login" element={<CandidateLogin />} />
             <Route path="/:role/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Admin Dashboard Routes */}
             <Route
