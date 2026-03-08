@@ -19,6 +19,7 @@ import PlatformSelector from "@/components/recruiter/PlatformSelector";
 import ScrapeLoadingOverlay from "@/components/recruiter/ScrapeLoadingOverlay";
 import ScrapeResultModal from "@/components/recruiter/ScrapeResultModal";
 import wavelynkIcon from "@/assets/wavelynk-icon.png";
+import wavelynkLogoLight from "@/assets/wavelynk-logo-light.png";
 
 const publishedTimeOptions = [
   { value: "30 Days ago", label: "30 Days ago" },
