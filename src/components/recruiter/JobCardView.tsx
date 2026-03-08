@@ -100,9 +100,9 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                       onClick={() => onViewATSResult(job)}
                       className={cn(
                         "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold border bg-gradient-to-r transition-all hover:scale-105 hover:shadow-md",
-                        latestATS.ats_score >= 70 ? "from-emerald-50 to-emerald-100/80 text-emerald-700 border-emerald-200"
-                          : latestATS.ats_score >= 50 ? "from-amber-50 to-amber-100/80 text-amber-700 border-amber-200"
-                          : "from-red-50 to-red-100/80 text-red-600 border-red-200"
+                        latestATS.ats_score >= 70 ? "from-emerald-50 to-emerald-100/80 text-emerald-700 border-emerald-200 dark:from-emerald-950 dark:to-emerald-900/80 dark:text-emerald-400 dark:border-emerald-800"
+                          : latestATS.ats_score >= 50 ? "from-amber-50 to-amber-100/80 text-amber-700 border-amber-200 dark:from-amber-950 dark:to-amber-900/80 dark:text-amber-400 dark:border-amber-800"
+                          : "from-red-50 to-red-100/80 text-red-600 border-red-200 dark:from-red-950 dark:to-red-900/80 dark:text-red-400 dark:border-red-800"
                       )}
                     >
                       <BarChart3 className="w-3 h-3" /> {latestATS.ats_score}%
@@ -125,7 +125,7 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                   <MapPin className="w-3.5 h-3.5 text-primary/40" />{job.location}
                 </span>
                 {job.salary_range && (
-                  <span className="inline-flex items-center gap-1.5 font-bold text-success-700 bg-gradient-to-r from-success-50 to-emerald-50 px-2 py-1 rounded-md border border-success-200">
+                  <span className="inline-flex items-center gap-1.5 font-bold text-success-700 bg-gradient-to-r from-success-50 to-emerald-50 px-2 py-1 rounded-md border border-success-200 dark:from-emerald-950 dark:to-emerald-900/50 dark:text-emerald-400 dark:border-emerald-800">
                     <CircleDollarSign className="w-3.5 h-3.5" />{job.salary_range}
                   </span>
                 )}
@@ -133,7 +133,7 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                   <Timer className="w-3.5 h-3.5" />Added {timeAgo(job.scraped_at)}
                 </span>
                 {job.applications_count && (
-                  <span className="inline-flex items-center gap-1.5 font-bold text-blue-700 bg-gradient-to-r from-blue-50 to-info-50 px-2 py-1 rounded-md border border-blue-200">
+                  <span className="inline-flex items-center gap-1.5 font-bold text-blue-700 bg-gradient-to-r from-blue-50 to-info-50 px-2 py-1 rounded-md border border-blue-200 dark:from-blue-950 dark:to-blue-900/50 dark:text-blue-400 dark:border-blue-800">
                     <Users className="w-3.5 h-3.5" />{job.applications_count}
                   </span>
                 )}
@@ -160,15 +160,15 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                   {/* ATS Analysis */}
                   {hasATS ? (
                     <>
-                      <button onClick={() => onViewATSResult(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border border-purple-200 hover:border-purple-300 hover:shadow-md transition-all">
+                      <button onClick={() => onViewATSResult(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border border-purple-200 hover:border-purple-300 hover:shadow-md transition-all dark:from-purple-950 dark:to-violet-950 dark:text-purple-400 dark:border-purple-800 dark:hover:border-purple-700">
                         <BarChart3 className="w-4 h-4" /> View ATS Results ({atsAnalysesForJob.length})
                       </button>
-                      <button onClick={() => onRunATS(job)} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-purple-600 hover:bg-purple-50 transition-all">
+                      <button onClick={() => onRunATS(job)} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-purple-600 hover:bg-purple-50 transition-all dark:text-purple-400 dark:hover:bg-purple-950">
                         <Zap className="w-3.5 h-3.5" /> Re-run ATS Analysis
                       </button>
                     </>
                   ) : (
-                    <button onClick={() => onRunATS(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border border-purple-200 hover:border-purple-300 hover:shadow-md transition-all">
+                    <button onClick={() => onRunATS(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border border-purple-200 hover:border-purple-300 hover:shadow-md transition-all dark:from-purple-950 dark:to-violet-950 dark:text-purple-400 dark:border-purple-800 dark:hover:border-purple-700">
                       <Zap className="w-4 h-4" /> Run ATS Analysis
                     </button>
                   )}
@@ -176,22 +176,22 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                   {updatedCVs.length > 0 ? (
                     <>
                       <div className="w-full"><UpdatedCVsBadge updatedCVs={updatedCVs} /></div>
-                      <button onClick={() => onUpdateCV(job)} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-teal-600 hover:bg-teal-50 transition-all">
+                      <button onClick={() => onUpdateCV(job)} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-teal-600 hover:bg-teal-50 transition-all dark:text-teal-400 dark:hover:bg-teal-950">
                         <FileEdit className="w-3.5 h-3.5" /> Update More CVs
                       </button>
                     </>
                   ) : (
-                    <button onClick={() => onUpdateCV(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-teal-50 to-emerald-50 text-teal-700 border border-teal-200 hover:border-teal-300 hover:shadow-md transition-all">
+                    <button onClick={() => onUpdateCV(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-teal-50 to-emerald-50 text-teal-700 border border-teal-200 hover:border-teal-300 hover:shadow-md transition-all dark:from-teal-950 dark:to-emerald-950 dark:text-teal-400 dark:border-teal-800 dark:hover:border-teal-700">
                       <FileText className="w-4 h-4" /> Update CV
                     </button>
                   )}
                   {/* Email */}
                   {hasEmails ? (
-                    <button onClick={() => onGenerateEmail(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border border-orange-200 hover:border-orange-300 hover:shadow-md transition-all">
+                    <button onClick={() => onGenerateEmail(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border border-orange-200 hover:border-orange-300 hover:shadow-md transition-all dark:from-orange-950 dark:to-amber-950 dark:text-orange-400 dark:border-orange-800 dark:hover:border-orange-700">
                       <Mail className="w-4 h-4" /> View Generated Emails
                     </button>
                   ) : (
-                    <button onClick={() => onGenerateEmail(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border border-orange-200 hover:border-orange-300 hover:shadow-md transition-all">
+                    <button onClick={() => onGenerateEmail(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border border-orange-200 hover:border-orange-300 hover:shadow-md transition-all dark:from-orange-950 dark:to-amber-950 dark:text-orange-400 dark:border-orange-800 dark:hover:border-orange-700">
                       <Mail className="w-4 h-4" /> Generate Email
                     </button>
                   )}
@@ -200,16 +200,16 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                     let url = job.job_apply_url;
                     if (!/^https?:\/\//i.test(url)) url = "https://" + url;
                     window.open(url, "_blank");
-                  }} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-blue-50 to-info-50 text-blue-700 border border-blue-200 hover:border-blue-300 hover:shadow-md transition-all">
+                  }} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-blue-50 to-info-50 text-blue-700 border border-blue-200 hover:border-blue-300 hover:shadow-md transition-all dark:from-blue-950 dark:to-blue-900/50 dark:text-blue-400 dark:border-blue-800 dark:hover:border-blue-700">
                     <ArrowUpRight className="w-4 h-4" /> Apply to Job
                   </button>
                   {/* Submit Application */}
                   {jobApplications.length > 0 ? (
-                    <span className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-success-50 to-emerald-50 text-success-700 border border-success-200">
+                    <span className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-success-50 to-emerald-50 text-success-700 border border-success-200 dark:from-emerald-950 dark:to-emerald-900/50 dark:text-emerald-400 dark:border-emerald-800">
                       <CheckCircle className="w-4 h-4" /> Submitted ({jobApplications.length})
                     </span>
                   ) : (
-                    <button onClick={() => onApplyToJob(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border border-emerald-200 hover:border-emerald-300 hover:shadow-md transition-all">
+                    <button onClick={() => onApplyToJob(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border border-emerald-200 hover:border-emerald-300 hover:shadow-md transition-all dark:from-emerald-950 dark:to-green-950 dark:text-emerald-400 dark:border-emerald-800 dark:hover:border-emerald-700">
                       <Send className="w-4 h-4" /> Submit Application
                     </button>
                   )}

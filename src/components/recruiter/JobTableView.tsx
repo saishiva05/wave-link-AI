@@ -50,8 +50,8 @@ const PlatformIcon = ({ platform }: { platform: string }) => {
     <Tooltip>
       <TooltipTrigger asChild>
         <span className={cn(
-          "inline-flex items-center justify-center rounded-xl border shadow-sm transition-all hover:shadow-md",
-          isMax ? "bg-gradient-to-br from-primary-50 to-primary-100/80 border-primary-200" : "bg-gradient-to-br from-secondary-50 to-secondary-100/80 border-secondary-200"
+          "inline-flex items-center justify-center rounded-xl border shadow-sm transition-all hover:shadow-md p-1",
+          isMax ? "bg-gradient-to-br from-primary-50 to-primary-100/80 border-primary-200 dark:from-primary-50 dark:to-primary-100 dark:border-primary-200" : "bg-gradient-to-br from-secondary-50 to-secondary-100/80 border-secondary-200 dark:from-secondary-50 dark:to-secondary-100 dark:border-secondary-200"
         )}>
           <img src={wavelynkLogo} alt={label} className="w-10 h-10 object-contain" />
         </span>
@@ -73,10 +73,10 @@ const SortIcon = ({ field, sortField, sortDir }: { field: string; sortField: str
 
 const ATSScoreBadge = ({ score, onClick }: { score: number; onClick: () => void }) => {
   const color = score >= 70
-    ? "from-emerald-50 to-emerald-100/80 text-emerald-700 border-emerald-200 hover:border-emerald-300"
+    ? "from-emerald-50 to-emerald-100/80 text-emerald-700 border-emerald-200 hover:border-emerald-300 dark:from-emerald-950 dark:to-emerald-900/80 dark:text-emerald-400 dark:border-emerald-800 dark:hover:border-emerald-700"
     : score >= 50
-    ? "from-amber-50 to-amber-100/80 text-amber-700 border-amber-200 hover:border-amber-300"
-    : "from-red-50 to-red-100/80 text-red-600 border-red-200 hover:border-red-300";
+    ? "from-amber-50 to-amber-100/80 text-amber-700 border-amber-200 hover:border-amber-300 dark:from-amber-950 dark:to-amber-900/80 dark:text-amber-400 dark:border-amber-800 dark:hover:border-amber-700"
+    : "from-red-50 to-red-100/80 text-red-600 border-red-200 hover:border-red-300 dark:from-red-950 dark:to-red-900/80 dark:text-red-400 dark:border-red-800 dark:hover:border-red-700";
   return (
     <button onClick={onClick} className={cn("inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border bg-gradient-to-r transition-all hover:shadow-md cursor-pointer", color)} title="View ATS analysis">
       <BarChart3 className="w-3.5 h-3.5" />{score}%
@@ -103,7 +103,7 @@ const ApplyExternallyButton = ({ job }: { job: ScrapedJob }) => {
 
   return (
     <div className="inline-flex items-center gap-2">
-      <button onClick={handleClick} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-blue-50 to-info-50 text-blue-700 border border-blue-200 hover:border-blue-300 hover:shadow-md transition-all">
+      <button onClick={handleClick} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-blue-50 to-info-50 text-blue-700 border border-blue-200 hover:border-blue-300 hover:shadow-md transition-all dark:from-blue-950 dark:to-blue-900/50 dark:text-blue-400 dark:border-blue-800 dark:hover:border-blue-700">
         <ArrowUpRight className="w-4 h-4" /> Apply to Job
       </button>
       {startedAt && elapsed > 0 && (
@@ -268,7 +268,7 @@ const JobExpandableRow = ({
         </td>
         <td className="px-3 py-4">
           {job.salary_range ? (
-            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-success-700 bg-gradient-to-r from-success-50 to-emerald-50 px-2.5 py-1.5 rounded-lg border border-success-200 shadow-sm">
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-success-700 bg-gradient-to-r from-success-50 to-emerald-50 px-2.5 py-1.5 rounded-lg border border-success-200 shadow-sm dark:from-emerald-950 dark:to-emerald-900/50 dark:text-emerald-400 dark:border-emerald-800">
               <CircleDollarSign className="w-3.5 h-3.5" />{job.salary_range}
             </span>
           ) : (
@@ -298,7 +298,7 @@ const JobExpandableRow = ({
         </td>
         <td className="px-3 py-4 text-center">
           {job.applications_count ? (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-gradient-to-r from-blue-50 to-info-50 text-blue-700 border border-blue-200 shadow-sm">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-gradient-to-r from-blue-50 to-info-50 text-blue-700 border border-blue-200 shadow-sm dark:from-blue-950 dark:to-blue-900/50 dark:text-blue-400 dark:border-blue-800">
               <Users className="w-3 h-3" /> {job.applications_count}
             </span>
           ) : (
@@ -316,16 +316,16 @@ const JobExpandableRow = ({
               <div className="flex flex-wrap items-center gap-3">
                 {/* ATS Analysis */}
                 {hasATS ? (
-                  <button onClick={onViewATSResult} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border border-purple-200 hover:border-purple-300 hover:shadow-md transition-all">
+                  <button onClick={onViewATSResult} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border border-purple-200 hover:border-purple-300 hover:shadow-md transition-all dark:from-purple-950 dark:to-violet-950 dark:text-purple-400 dark:border-purple-800 dark:hover:border-purple-700">
                     <BarChart3 className="w-4 h-4" /> View ATS Results ({atsAnalysesForJob.length})
                   </button>
                 ) : (
-                  <button onClick={onRunATS} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border border-purple-200 hover:border-purple-300 hover:shadow-md transition-all">
+                  <button onClick={onRunATS} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border border-purple-200 hover:border-purple-300 hover:shadow-md transition-all dark:from-purple-950 dark:to-violet-950 dark:text-purple-400 dark:border-purple-800 dark:hover:border-purple-700">
                     <Zap className="w-4 h-4" /> Run ATS Analysis
                   </button>
                 )}
                 {hasATS && (
-                  <button onClick={onRunATS} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-purple-600 hover:bg-purple-50 transition-all">
+                  <button onClick={onRunATS} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-purple-600 hover:bg-purple-50 transition-all dark:text-purple-400 dark:hover:bg-purple-950">
                     <Zap className="w-3.5 h-3.5" /> Run Again
                   </button>
                 )}
@@ -334,28 +334,28 @@ const JobExpandableRow = ({
                 {hasUpdatedCVs ? (
                   <UpdatedCVsBadge updatedCVs={updatedCVs} />
                 ) : (
-                  <button onClick={onUpdateCV} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-teal-50 to-emerald-50 text-teal-700 border border-teal-200 hover:border-teal-300 hover:shadow-md transition-all">
+                  <button onClick={onUpdateCV} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-teal-50 to-emerald-50 text-teal-700 border border-teal-200 hover:border-teal-300 hover:shadow-md transition-all dark:from-teal-950 dark:to-emerald-950 dark:text-teal-400 dark:border-teal-800 dark:hover:border-teal-700">
                     <FileText className="w-4 h-4" /> Update CV
                   </button>
                 )}
                 {hasUpdatedCVs && (
-                  <button onClick={onUpdateCV} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-teal-600 hover:bg-teal-50 transition-all">
+                  <button onClick={onUpdateCV} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-teal-600 hover:bg-teal-50 transition-all dark:text-teal-400 dark:hover:bg-teal-950">
                     <FileEdit className="w-3.5 h-3.5" /> Update More
                   </button>
                 )}
 
                 {/* Generate Email */}
                 {hasEmails ? (
-                  <button onClick={() => setShowEmails(!showEmails)} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border border-orange-200 hover:border-orange-300 hover:shadow-md transition-all">
+                  <button onClick={() => setShowEmails(!showEmails)} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border border-orange-200 hover:border-orange-300 hover:shadow-md transition-all dark:from-orange-950 dark:to-amber-950 dark:text-orange-400 dark:border-orange-800 dark:hover:border-orange-700">
                     <Mail className="w-4 h-4" /> View Emails ({generatedEmails.length})
                   </button>
                 ) : (
-                  <button onClick={onGenerateEmail} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border border-orange-200 hover:border-orange-300 hover:shadow-md transition-all">
+                  <button onClick={onGenerateEmail} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border border-orange-200 hover:border-orange-300 hover:shadow-md transition-all dark:from-orange-950 dark:to-amber-950 dark:text-orange-400 dark:border-orange-800 dark:hover:border-orange-700">
                     <Mail className="w-4 h-4" /> Generate Email
                   </button>
                 )}
                 {hasEmails && (
-                  <button onClick={onGenerateEmail} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-orange-600 hover:bg-orange-50 transition-all">
+                  <button onClick={onGenerateEmail} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-orange-600 hover:bg-orange-50 transition-all dark:text-orange-400 dark:hover:bg-orange-950">
                     <Sparkles className="w-3.5 h-3.5" /> Generate New
                   </button>
                 )}
@@ -365,16 +365,16 @@ const JobExpandableRow = ({
 
                 {/* Submit Application */}
                 {jobApplications.length > 0 ? (
-                  <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-success-50 to-emerald-50 text-success-700 border border-success-200">
+                  <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-success-50 to-emerald-50 text-success-700 border border-success-200 dark:from-emerald-950 dark:to-emerald-900/50 dark:text-emerald-400 dark:border-emerald-800">
                     <CheckCircle className="w-4 h-4" /> Submitted ({jobApplications.length})
                   </span>
                 ) : (
-                  <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border border-emerald-200 hover:border-emerald-300 hover:shadow-md transition-all">
+                  <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border border-emerald-200 hover:border-emerald-300 hover:shadow-md transition-all dark:from-emerald-950 dark:to-green-950 dark:text-emerald-400 dark:border-emerald-800 dark:hover:border-emerald-700">
                     <Send className="w-4 h-4" /> Submit Application
                   </button>
                 )}
                 {jobApplications.length > 0 && (
-                  <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-emerald-600 hover:bg-emerald-50 transition-all">
+                  <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-emerald-600 hover:bg-emerald-50 transition-all dark:text-emerald-400 dark:hover:bg-emerald-950">
                     <Send className="w-3.5 h-3.5" /> Submit More
                   </button>
                 )}
