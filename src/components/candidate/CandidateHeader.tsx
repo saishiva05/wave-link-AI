@@ -61,7 +61,7 @@ const CandidateHeader = ({ onMenuClick }: CandidateHeaderProps) => {
             {unreadCount > 0 && <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-error-500 rounded-full animate-pulse" />}
           </button>
           {notifOpen && (
-            <div className="absolute right-0 mt-2 w-[380px] bg-card border border-border rounded-xl shadow-elevated overflow-hidden animate-scale-in z-50">
+            <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-[380px] max-w-[380px] bg-card border border-border rounded-xl shadow-elevated overflow-hidden animate-scale-in z-50">
               <div className="px-4 py-3 border-b border-border flex items-center justify-between">
                 <h3 className="text-base font-semibold text-foreground">Notifications</h3>
                 {unreadCount > 0 && <button onClick={markAllRead} className="text-sm text-primary hover:underline">Mark all as read</button>}
