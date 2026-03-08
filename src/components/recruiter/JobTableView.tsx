@@ -268,7 +268,7 @@ const JobExpandableRow = ({
         </td>
         <td className="px-3 py-4">
           {job.salary_range ? (
-            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-success-700 bg-gradient-to-r from-success-50 to-emerald-50 px-2.5 py-1.5 rounded-lg border border-success-200 shadow-sm">
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-success-700 bg-gradient-to-r from-success-50 to-emerald-50 px-2.5 py-1.5 rounded-lg border border-success-200 shadow-sm dark:from-emerald-950 dark:to-emerald-900/50 dark:text-emerald-400 dark:border-emerald-800">
               <CircleDollarSign className="w-3.5 h-3.5" />{job.salary_range}
             </span>
           ) : (
