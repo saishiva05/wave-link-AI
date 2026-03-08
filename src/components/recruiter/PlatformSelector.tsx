@@ -40,7 +40,8 @@ const PlatformSelector = ({ value, onChange, error }: PlatformSelectorProps) => 
           </div>
 
           <div className="flex items-center gap-3 mb-3">
-            <img src={wavelynkIcon} alt="WaveLynk Max" className="w-9 h-9 object-contain" />
+            <img src={wavelynkLogoLight} alt="WaveLynk Max" className="w-9 h-9 object-contain dark:hidden" />
+            <img src={wavelynkIcon} alt="WaveLynk Max" className="w-9 h-9 object-contain hidden dark:block" />
             <span className="text-lg font-semibold text-foreground">WaveLynk Max</span>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">
