@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Users, User, Briefcase, Activity, UserPlus, Calendar, GraduationCap, Plus, ShieldPlus, Eye, MapPin, Building2, Clock } from "lucide-react";
+import { Users, User, Briefcase, Activity, UserPlus, Calendar, GraduationCap, Plus, ShieldPlus, Eye, MapPin, Building2, Clock, ClipboardCheck, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import StatsCard from "@/components/admin/StatsCard";
@@ -15,7 +15,8 @@ import RecruiterActivityTracker from "@/components/admin/RecruiterActivityTracke
 import { useAdminStats, useAdminRecruiters } from "@/hooks/useAdminData";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format, subDays } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const AdminDashboard = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -38,6 +39,36 @@ const AdminDashboard = () => {
       if (error) throw error;
       return data || [];
     },
+  });
+
+  // Fetch recent applications for dashboard summary
+  const { data: recentApps = [] } = useQuery({
+    queryKey: ["admin", "recent-applications-summary"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("job_applications")
+        .select(`
+          application_id, application_status, applied_at, recruiter_id,
+          scraped_jobs!job_applications_job_id_fkey(job_title, company_name),
+          candidates!job_applications_candidate_id_fkey(users!candidates_user_id_fkey(full_name)),
+          recruiters!job_applications_recruiter_id_fkey(users!recruiters_user_id_fkey(full_name))
+        `)
+        .order("applied_at", { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  // Application stats for today/this week
+  const todayApps = recentApps.filter((a: any) => {
+    const d = new Date(a.applied_at);
+    const today = new Date();
+    return d.toDateString() === today.toDateString();
+  });
+
+  const thisWeekApps = recentApps.filter((a: any) => {
+    return new Date(a.applied_at) >= subDays(new Date(), 7);
   });
 
   const recruiterOptions = (recruitersData?.recruiters || []).map((r: any) => ({
@@ -112,11 +143,13 @@ const AdminDashboard = () => {
         <StatsCard
           title="Total Applications"
           value={isLoading ? "..." : String(stats?.totalApplications ?? 0)}
-          trend="All time"
-          trendUp
-          icon={Activity}
+          trend={`+${todayApps.length} today`}
+          trendUp={todayApps.length > 0}
+          icon={ClipboardCheck}
           iconBg="bg-warning-50"
           iconColor="text-warning-500"
+          footerLink="View all applications"
+          onFooterClick={() => navigate("/admin/applications")}
         />
       </motion.div>
 
@@ -127,6 +160,65 @@ const AdminDashboard = () => {
         transition={{ duration: 0.3, delay: 0.1 }}
       >
         <DashboardCharts />
+      </motion.div>
+
+      {/* Recent Applications Summary */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.105 }}
+        className="space-y-4"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h2 className="text-xl font-bold text-foreground font-display">Recent Applications</h2>
+            <Badge variant="secondary" className="text-xs">{thisWeekApps.length} this week</Badge>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => navigate("/admin/applications")}>
+            View All →
+          </Button>
+        </div>
+        <div className="bg-card border border-border rounded-xl shadow-card overflow-hidden">
+          {recentApps.length === 0 ? (
+            <div className="p-8 text-center">
+              <ClipboardCheck className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+              <p className="text-muted-foreground">No applications submitted yet.</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-border">
+              {recentApps.slice(0, 8).map((app: any) => {
+                const statusStyle: Record<string, string> = {
+                  pending: "bg-warning-50 text-warning-700",
+                  submitted: "bg-info-50 text-info-700",
+                  rejected: "bg-error-50 text-error-700",
+                  interview_scheduled: "bg-primary-50 text-primary",
+                  hired: "bg-success-50 text-success-700",
+                };
+                const statusLabel: Record<string, string> = {
+                  pending: "Pending", submitted: "Submitted", rejected: "Rejected",
+                  interview_scheduled: "Interview", hired: "Hired", interviewed: "Interviewed",
+                  offer_received: "Offer", declined: "Declined",
+                };
+                return (
+                  <div key={app.application_id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-foreground truncate">{(app.scraped_jobs as any)?.job_title || "—"}</p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {(app.scraped_jobs as any)?.company_name} • by {(app.recruiters as any)?.users?.full_name || "Unknown"} → {(app.candidates as any)?.users?.full_name || "Unknown"}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0 ml-3">
+                      <span className={cn("inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium", statusStyle[app.application_status] || "bg-muted text-muted-foreground")}>
+                        {statusLabel[app.application_status] || app.application_status}
+                      </span>
+                      <span className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(app.applied_at), { addSuffix: true })}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </motion.div>
 
       {/* Admin Job Postings Section */}

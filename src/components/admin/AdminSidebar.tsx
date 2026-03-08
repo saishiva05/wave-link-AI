@@ -13,6 +13,7 @@ import {
   ChevronRight,
   X,
   GraduationCap,
+  ClipboardCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import wavelynkLogo from "@/assets/wavelynk-logo.png";
@@ -23,6 +24,7 @@ const mainMenuItems = [
   { title: "Dashboard", icon: LayoutDashboard, route: "/admin/dashboard" },
   { title: "Recruiters", icon: Users, route: "/admin/recruiters" },
   { title: "Candidates", icon: GraduationCap, route: "/admin/candidates" },
+  { title: "Applications", icon: ClipboardCheck, route: "/admin/applications" },
   { title: "Analytics", icon: BarChart3, route: "/admin/analytics" },
   { title: "Activity Logs", icon: FileText, route: "/admin/activity-logs" },
 ];
