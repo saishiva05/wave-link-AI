@@ -157,7 +157,7 @@ const CandidateMessagesPage = () => {
                 const isMe = msg.sender_user_id === user?.id;
                 return (
                   <div key={msg.message_id} className={cn("flex", isMe ? "justify-end" : "justify-start")}>
-                    <div className={cn("max-w-[75%] rounded-2xl px-5 py-3 shadow-xs", isMe ? "bg-primary text-primary-foreground rounded-br-md" : "bg-card border border-border text-secondary-900 rounded-bl-md")}>
+                    <div className={cn("max-w-[75%] rounded-2xl px-5 py-3 shadow-xs", isMe ? "bg-primary text-primary-foreground rounded-br-md" : "bg-card border border-border text-foreground rounded-bl-md")}>
                       {msg.subject && (
                         <p className={cn("text-xs font-semibold mb-1", isMe ? "text-primary-foreground/80" : "text-primary-600")}>{msg.subject}</p>
                       )}
