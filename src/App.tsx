@@ -12,6 +12,7 @@ import AdminLogin from "./pages/AdminLogin";
 import RecruiterLogin from "./pages/RecruiterLogin";
 import CandidateLogin from "./pages/CandidateLogin";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/AdminDashboard";
