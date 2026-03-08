@@ -162,7 +162,7 @@ const CandidateMessagesPage = () => {
                         <p className={cn("text-xs font-semibold mb-1", isMe ? "text-primary-foreground/80" : "text-primary-600")}>{msg.subject}</p>
                       )}
                       <p className="text-sm whitespace-pre-wrap">{msg.body}</p>
-                      <p className={cn("text-[10px] mt-1.5 flex items-center gap-1", isMe ? "text-primary-foreground/60 justify-end" : "text-neutral-500")}>
+                      <p className={cn("text-[10px] mt-1.5 flex items-center gap-1", isMe ? "text-primary-foreground/60 justify-end" : "text-muted-foreground")}>
                         <Clock className="w-2.5 h-2.5" />
                         {formatDistanceToNow(new Date(msg.created_at), { addSuffix: true })}
                       </p>
