@@ -149,8 +149,8 @@ const CandidateMessagesPage = () => {
             ) : messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <MessageSquare className="w-12 h-12 text-neutral-300 mb-3" />
-                <h4 className="text-lg font-semibold text-neutral-700">No messages yet</h4>
-                <p className="text-sm text-neutral-600 mt-1">Send your first message to your recruiter below.</p>
+                <h4 className="text-lg font-semibold text-foreground">No messages yet</h4>
+                <p className="text-sm text-muted-foreground mt-1">Send your first message to your recruiter below.</p>
               </div>
             ) : (
               messages.map((msg: any) => {
