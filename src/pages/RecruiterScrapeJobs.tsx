@@ -106,7 +106,7 @@ const RecruiterScrapeJobs = () => {
         const jobCount = data?.count || data?.jobCount || 0;
         setResultModal({
           type: "success",
-          message: `Jobs have been scraped from ${platform === "linkedin" ? "LinkedIn" : "JSearch"} and saved to your database. Auto-ATS analysis will start shortly.`,
+          message: `Jobs have been found via ${platform === "linkedin" ? "WaveLynk Max" : "WaveLynk Pro"} and saved to your database. Auto-ATS analysis will start shortly.`,
           jobCount,
         });
 
