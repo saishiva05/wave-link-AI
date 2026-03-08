@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { getPlatformDisplayName } from "@/lib/platformBranding";
 
 interface JobDetailsModalProps {
   job: ScrapedJob | null;
