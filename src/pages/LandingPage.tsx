@@ -363,10 +363,10 @@ const LandingPage = () => {
             </motion.div>
 
             {/* Trust indicators */}
-            <motion.div variants={fadeUp} custom={4} className="mt-8 flex items-center justify-center gap-6 text-sm text-muted-foreground flex-wrap">
-              {[{ icon: CheckCircle2, text: "No credit card" }, { icon: CheckCircle2, text: "100% free for students" }, { icon: CheckCircle2, text: "Instant access" }].map((item, i) => (
-                <motion.span key={item.text} className="flex items-center gap-1.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 + i * 0.15 }}>
-                  <item.icon className="w-4 h-4 text-primary" /> {item.text}
+            <motion.div variants={fadeUp} custom={4} className="mt-6 md:mt-8 flex items-center justify-center gap-3 md:gap-6 text-xs md:text-sm text-muted-foreground flex-wrap">
+              {[{ icon: CheckCircle2, text: "No credit card" }, { icon: CheckCircle2, text: "Free for students" }, { icon: CheckCircle2, text: "Instant access" }].map((item, i) => (
+                <motion.span key={item.text} className="flex items-center gap-1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 + i * 0.15 }}>
+                  <item.icon className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary" /> {item.text}
                 </motion.span>
               ))}
             </motion.div>
