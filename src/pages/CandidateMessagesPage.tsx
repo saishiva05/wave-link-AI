@@ -175,20 +175,20 @@ const CandidateMessagesPage = () => {
           </div>
 
           {/* Compose */}
-          <div className="p-4 border-t border-border bg-card">
-            <div className="flex gap-3">
-              <div className="flex-1 space-y-2">
+          <div className="p-3 md:p-4 border-t border-border bg-card">
+            <div className="flex gap-2 md:gap-3">
+              <div className="flex-1 space-y-1.5 md:space-y-2">
                 <Input
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   placeholder="Subject (optional)"
-                  className="h-9 text-sm"
+                  className="h-8 md:h-9 text-xs md:text-sm"
                 />
                 <Textarea
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
                   placeholder="Type your message..."
-                  className="min-h-[80px] text-sm resize-none"
+                  className="min-h-[60px] md:min-h-[80px] text-xs md:text-sm resize-none"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
                       e.preventDefault();
@@ -200,13 +200,14 @@ const CandidateMessagesPage = () => {
               <Button
                 onClick={() => sendMessage.mutate()}
                 disabled={!body.trim() || sendMessage.isPending}
-                className="self-end h-10 px-5"
+                size="sm"
+                className="self-end h-8 md:h-10 px-3 md:px-5"
               >
                 {sendMessage.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                Send
+                <span className="hidden md:inline ml-1">Send</span>
               </Button>
             </div>
-            <p className="text-[10px] text-muted-foreground mt-2">Press Ctrl+Enter to send quickly</p>
+            <p className="text-[10px] text-muted-foreground mt-1.5 hidden md:block">Press Ctrl+Enter to send quickly</p>
           </div>
         </div>
       </motion.div>
