@@ -4,7 +4,7 @@ import { Mail, ArrowRight, Loader2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import WavePattern from "@/components/WavePattern";
-import wavelynkIcon from "@/assets/wavelynk-icon.png";
+import WaveLynkLogo from "@/components/WaveLynkLogo";
 import { useAuth } from "@/hooks/useAuth";
 
 const ForgotPassword = () => {
