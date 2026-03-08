@@ -339,7 +339,7 @@ const JobExpandableRow = ({
                   </button>
                 )}
                 {hasUpdatedCVs && (
-                  <button onClick={onUpdateCV} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-teal-600 hover:bg-teal-50 transition-all">
+                  <button onClick={onUpdateCV} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-teal-600 hover:bg-teal-50 transition-all dark:text-teal-400 dark:hover:bg-teal-950">
                     <FileEdit className="w-3.5 h-3.5" /> Update More
                   </button>
                 )}
