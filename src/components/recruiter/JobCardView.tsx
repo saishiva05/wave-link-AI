@@ -176,7 +176,7 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                   {updatedCVs.length > 0 ? (
                     <>
                       <div className="w-full"><UpdatedCVsBadge updatedCVs={updatedCVs} /></div>
-                      <button onClick={() => onUpdateCV(job)} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-teal-600 hover:bg-teal-50 transition-all">
+                      <button onClick={() => onUpdateCV(job)} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-teal-600 hover:bg-teal-50 transition-all dark:text-teal-400 dark:hover:bg-teal-950">
                         <FileEdit className="w-3.5 h-3.5" /> Update More CVs
                       </button>
                     </>
