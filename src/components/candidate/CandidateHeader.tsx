@@ -89,7 +89,7 @@ const CandidateHeader = ({ onMenuClick }: CandidateHeaderProps) => {
 
         {/* Profile */}
         <div ref={profileRef} className="relative">
-          <button onClick={() => setProfileOpen(!profileOpen)} className="rounded-full border-2 border-primary-400 hover:ring-2 hover:ring-primary/30 transition-all">
+          <button onClick={() => setProfileOpen(!profileOpen)} className="rounded-full border-2 border-primary-400 hover:ring-2 hover:ring-primary/30 transition-all shrink-0">
             <Avatar className="w-10 h-10">
               <AvatarImage src={profile?.avatar_url || undefined} alt={fullName || "Candidate"} />
               <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">{initials}</AvatarFallback>
