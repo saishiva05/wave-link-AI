@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
-import wavelynkLogo from "@/assets/wavelynk-logo.png";
+import wavelynkIcon from "@/assets/wavelynk-icon.png";
 
 interface LoginLayoutProps {
   children: ReactNode;
