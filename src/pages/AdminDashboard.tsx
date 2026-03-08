@@ -24,6 +24,7 @@ const AdminDashboard = () => {
   const [jobModalOpen, setJobModalOpen] = useState(false);
   const [adminModalOpen, setAdminModalOpen] = useState(false);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: stats, isLoading } = useAdminStats();
   const { data: recruitersData } = useAdminRecruiters(1, 100);
 
