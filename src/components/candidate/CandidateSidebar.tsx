@@ -63,7 +63,7 @@ const CandidateSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Ca
     <div className="flex flex-col h-full">
       <div className="h-20 flex items-center justify-between px-3 border-b border-border">
         <div className="flex-1 flex items-center justify-center gap-2.5">
-          <img src={wavelynkIcon} alt="WaveLynk" className={cn(collapsed ? "w-8 h-8" : "w-10 h-10", "object-contain")} />
+          <WaveLynkLogo size={collapsed ? "md" : "lg"} />
           {!collapsed && (
             <span className="font-display text-lg font-bold text-foreground tracking-tight">
               Wave<span className="text-primary">Lynk</span>
