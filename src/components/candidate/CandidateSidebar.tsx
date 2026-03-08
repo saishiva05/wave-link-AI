@@ -85,7 +85,10 @@ const CandidateSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Ca
         {!collapsed ? (
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-semibold shrink-0 border-2 border-card">{initials}</div>
+              <Avatar className="w-10 h-10 border-2 border-card shrink-0">
+                <AvatarImage src={profile?.avatar_url || undefined} alt={fullName || "Candidate"} />
+                <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">{initials}</AvatarFallback>
+              </Avatar>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-foreground truncate">{fullName || "Candidate"}</p>
               </div>
@@ -95,7 +98,12 @@ const CandidateSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Ca
         ) : (
           <Tooltip delayDuration={200}>
             <TooltipTrigger asChild>
-              <button onClick={() => signOut()} className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-semibold mx-auto hover:ring-2 hover:ring-primary-400 transition-all">{initials}</button>
+              <button onClick={() => signOut()} className="mx-auto hover:ring-2 hover:ring-primary-400 transition-all rounded-full">
+                <Avatar className="w-10 h-10">
+                  <AvatarImage src={profile?.avatar_url || undefined} alt={fullName || "Candidate"} />
+                  <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">{initials}</AvatarFallback>
+                </Avatar>
+              </button>
             </TooltipTrigger>
             <TooltipContent side="right" className="bg-secondary-900 text-white border-secondary-800">{fullName || "Candidate"}</TooltipContent>
           </Tooltip>
