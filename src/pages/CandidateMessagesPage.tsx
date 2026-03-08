@@ -113,15 +113,15 @@ const CandidateMessagesPage = () => {
   });
 
   return (
-    <div className="space-y-6 max-w-[900px] mx-auto">
+    <div className="space-y-4 md:space-y-6 max-w-[900px] mx-auto">
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-        <nav className="flex items-center gap-1.5 text-sm mb-4">
+        <nav className="flex items-center gap-1.5 text-xs md:text-sm mb-3 md:mb-4">
           <button onClick={() => navigate("/candidate/dashboard")} className="text-neutral-500 hover:text-primary transition-colors">Dashboard</button>
           <span className="text-neutral-300">/</span>
           <span className="text-foreground font-semibold">Messages</span>
         </nav>
-        <h1 className="text-2xl md:text-4xl font-bold text-foreground font-display">Messages</h1>
-        <p className="text-base text-muted-foreground mt-1">
+        <h1 className="text-xl md:text-4xl font-bold text-foreground font-display">Messages</h1>
+        <p className="text-sm md:text-base text-muted-foreground mt-1">
           Communicate with your recruiter {recruiter.name !== "Unknown" ? `— ${recruiter.name}` : ""}
         </p>
       </motion.div>
