@@ -196,7 +196,7 @@ const RecruiterScrapeJobs = () => {
           </nav>
           <h1 className="text-2xl md:text-4xl font-bold text-secondary-900 font-display">Find Jobs</h1>
           <p className="text-base md:text-lg text-muted-foreground mt-2 max-w-3xl leading-relaxed">
-            Discover job postings from LinkedIn and JSearch. After collecting, ATS analysis will automatically run on the first 20 jobs.
+            Discover job postings using WaveLynk Max and WaveLynk Pro. After collecting, ATS analysis will automatically run on the first 20 jobs.
           </p>
         </motion.div>
 
