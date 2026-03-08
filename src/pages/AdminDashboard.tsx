@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Users, User, Briefcase, Activity, UserPlus, Calendar, GraduationCap, Plus, ShieldPlus, Eye, MapPin, Building2, Clock, ClipboardCheck, TrendingUp } from "lucide-react";
+import { Users, User, Briefcase, Activity, UserPlus, Calendar, GraduationCap, Plus, ShieldPlus, Eye, MapPin, Building2, Clock, ClipboardCheck, TrendingUp, Power } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import StatsCard from "@/components/admin/StatsCard";
@@ -13,7 +13,7 @@ import CreateAdminModal from "@/components/admin/CreateAdminModal";
 import CreateJobModal from "@/components/recruiter/CreateJobModal";
 import RecruiterActivityTracker from "@/components/admin/RecruiterActivityTracker";
 import { useAdminStats, useAdminRecruiters } from "@/hooks/useAdminData";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow, format, subDays } from "date-fns";
 import { cn } from "@/lib/utils";
