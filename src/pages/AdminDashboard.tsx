@@ -366,6 +366,16 @@ const AdminDashboard = () => {
         recruiterId=""
         adminMode
       />
+      {editingJob && (
+        <EditJobModal
+          open={editJobModalOpen}
+          onOpenChange={(v) => {
+            setEditJobModalOpen(v);
+            if (!v) setEditingJob(null);
+          }}
+          job={editingJob}
+        />
+      )}
     </div>
   );
 };
