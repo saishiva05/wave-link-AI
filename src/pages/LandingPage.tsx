@@ -219,7 +219,7 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6 h-16 md:h-18 flex items-center justify-between">
           {/* Logo — transparent PNG, no white box */}
           <motion.a href="/" className="flex items-center gap-2.5 shrink-0" whileHover={{ scale: 1.02 }}>
-            <img src={wavelynkLogo} alt="WaveLynk" className="h-9 md:h-10 w-auto object-contain" />
+            <img src={wavelynkIcon} alt="WaveLynk" className="w-9 h-9 md:w-10 md:h-10 object-contain" />
             <span className="font-display text-base md:text-lg font-bold text-foreground tracking-tight hidden sm:inline">
               Wave Lynk <span className="text-primary">AI</span>
             </span>
