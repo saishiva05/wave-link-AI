@@ -37,7 +37,7 @@ const AdminDashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("scraped_jobs")
-        .select("job_id, job_title, company_name, location, contract_type, work_type, salary_range, job_apply_url, scraped_at, is_active")
+        .select("job_id, job_title, company_name, location, contract_type, work_type, salary_range, job_apply_url, scraped_at, is_active, job_description, experience_level")
         .eq("is_admin_posting", true)
         .order("scraped_at", { ascending: false });
       if (error) throw error;
