@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Users, User, Briefcase, Activity, UserPlus, Calendar, GraduationCap, Plus, ShieldPlus, Eye, MapPin, Building2, Clock, ClipboardCheck, TrendingUp, Power } from "lucide-react";
+import { Users, User, Briefcase, Activity, UserPlus, Calendar, GraduationCap, Plus, ShieldPlus, Eye, MapPin, Building2, Clock, ClipboardCheck, TrendingUp, Power, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import StatsCard from "@/components/admin/StatsCard";
@@ -12,6 +12,7 @@ import CreateCandidateModal from "@/components/admin/CreateCandidateModal";
 import CreateAdminModal from "@/components/admin/CreateAdminModal";
 import CreateJobModal from "@/components/recruiter/CreateJobModal";
 import RecruiterActivityTracker from "@/components/admin/RecruiterActivityTracker";
+import EditJobModal from "@/components/admin/EditJobModal";
 import { useAdminStats, useAdminRecruiters } from "@/hooks/useAdminData";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,6 +24,8 @@ const AdminDashboard = () => {
   const [candidateModalOpen, setCandidateModalOpen] = useState(false);
   const [jobModalOpen, setJobModalOpen] = useState(false);
   const [adminModalOpen, setAdminModalOpen] = useState(false);
+  const [editJobModalOpen, setEditJobModalOpen] = useState(false);
+  const [editingJob, setEditingJob] = useState<any>(null);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: stats, isLoading } = useAdminStats();
@@ -34,7 +37,7 @@ const AdminDashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("scraped_jobs")
-        .select("job_id, job_title, company_name, location, contract_type, work_type, salary_range, job_apply_url, scraped_at, is_active")
+        .select("job_id, job_title, company_name, location, contract_type, work_type, salary_range, job_apply_url, scraped_at, is_active, job_description, experience_level")
         .eq("is_admin_posting", true)
         .order("scraped_at", { ascending: false });
       if (error) throw error;
@@ -280,6 +283,17 @@ const AdminDashboard = () => {
                   <p className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> {formatDistanceToNow(new Date(job.scraped_at), { addSuffix: true })}</p>
                 </div>
                 <div className="flex gap-2 mt-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs"
+                    onClick={() => {
+                      setEditingJob(job);
+                      setEditJobModalOpen(true);
+                    }}
+                  >
+                    <Pencil className="w-3 h-3" /> Edit
+                  </Button>
                   {job.job_apply_url && job.job_apply_url !== "#" && (
                     <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={() => window.open(job.job_apply_url, "_blank")}>
                       <Eye className="w-3 h-3" /> View Listing
@@ -352,6 +366,16 @@ const AdminDashboard = () => {
         recruiterId=""
         adminMode
       />
+      {editingJob && (
+        <EditJobModal
+          open={editJobModalOpen}
+          onOpenChange={(v) => {
+            setEditJobModalOpen(v);
+            if (!v) setEditingJob(null);
+          }}
+          job={editingJob}
+        />
+      )}
     </div>
   );
 };
