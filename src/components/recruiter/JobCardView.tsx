@@ -205,7 +205,7 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                   </button>
                   {/* Submit Application */}
                   {jobApplications.length > 0 ? (
-                    <span className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-success-50 to-emerald-50 text-success-700 border border-success-200">
+                    <span className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-success-50 to-emerald-50 text-success-700 border border-success-200 dark:from-emerald-950 dark:to-emerald-900/50 dark:text-emerald-400 dark:border-emerald-800">
                       <CheckCircle className="w-4 h-4" /> Submitted ({jobApplications.length})
                     </span>
                   ) : (
