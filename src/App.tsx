@@ -21,6 +21,7 @@ import AdminActivityLogs from "./pages/AdminActivityLogs";
 import AdminSettings from "./pages/AdminSettings";
 import AdminSupport from "./pages/AdminSupport";
 import AdminCandidates from "./pages/AdminCandidates";
+import AdminApplications from "./pages/AdminApplications";
 import RecruiterLayout from "./components/recruiter/RecruiterLayout";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
 import RecruiterScrapeJobs from "./pages/RecruiterScrapeJobs";
@@ -78,6 +79,7 @@ const App = () => (
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="recruiters" element={<AdminRecruiters />} />
               <Route path="candidates" element={<AdminCandidates />} />
+              <Route path="applications" element={<AdminApplications />} />
               <Route path="analytics" element={<AdminAnalytics />} />
               <Route path="activity-logs" element={<AdminActivityLogs />} />
               <Route path="settings" element={<AdminSettings />} />

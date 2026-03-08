@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Users, User, Briefcase, Activity, UserPlus, Calendar, GraduationCap, Plus, ShieldPlus, Eye, MapPin, Building2, Clock } from "lucide-react";
+import { Users, User, Briefcase, Activity, UserPlus, Calendar, GraduationCap, Plus, ShieldPlus, Eye, MapPin, Building2, Clock, ClipboardCheck, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import StatsCard from "@/components/admin/StatsCard";
@@ -15,7 +15,8 @@ import RecruiterActivityTracker from "@/components/admin/RecruiterActivityTracke
 import { useAdminStats, useAdminRecruiters } from "@/hooks/useAdminData";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format, subDays } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const AdminDashboard = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -38,6 +39,36 @@ const AdminDashboard = () => {
       if (error) throw error;
       return data || [];
     },
+  });
+
+  // Fetch recent applications for dashboard summary
+  const { data: recentApps = [] } = useQuery({
+    queryKey: ["admin", "recent-applications-summary"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("job_applications")
+        .select(`
+          application_id, application_status, applied_at, recruiter_id,
+          scraped_jobs!job_applications_job_id_fkey(job_title, company_name),
+          candidates!job_applications_candidate_id_fkey(users!candidates_user_id_fkey(full_name)),
+          recruiters!job_applications_recruiter_id_fkey(users!recruiters_user_id_fkey(full_name))
+        `)
+        .order("applied_at", { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  // Application stats for today/this week
+  const todayApps = recentApps.filter((a: any) => {
+    const d = new Date(a.applied_at);
+    const today = new Date();
+    return d.toDateString() === today.toDateString();
+  });
+
+  const thisWeekApps = recentApps.filter((a: any) => {
+    return new Date(a.applied_at) >= subDays(new Date(), 7);
   });
 
   const recruiterOptions = (recruitersData?.recruiters || []).map((r: any) => ({
