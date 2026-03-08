@@ -72,9 +72,9 @@ const CandidateDashboardPage = () => {
 
         {/* Application Pipeline */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.08 }}>
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs">
-            <h3 className="text-lg font-semibold text-secondary-900 font-display mb-5">Application Pipeline</h3>
-            <div className="flex items-center gap-1 overflow-x-auto pb-2">
+           <div className="bg-card border border-border rounded-xl p-4 md:p-6 shadow-xs">
+            <h3 className="text-base md:text-lg font-semibold text-secondary-900 font-display mb-4 md:mb-5">Application Pipeline</h3>
+            <div className="flex items-center gap-1 overflow-x-auto pb-2 -mx-1">
               {[
                 { label: "Pending", color: "bg-warning-500", count: stats.pending },
                 { label: "In Review", color: "bg-info-500", count: stats.inReview },
