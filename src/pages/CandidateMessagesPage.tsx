@@ -118,9 +118,9 @@ const CandidateMessagesPage = () => {
         <nav className="flex items-center gap-1.5 text-sm mb-4">
           <button onClick={() => navigate("/candidate/dashboard")} className="text-neutral-500 hover:text-primary transition-colors">Dashboard</button>
           <span className="text-neutral-300">/</span>
-          <span className="text-secondary-900 font-semibold">Messages</span>
+          <span className="text-foreground font-semibold">Messages</span>
         </nav>
-        <h1 className="text-2xl md:text-4xl font-bold text-secondary-900 font-display">Messages</h1>
+        <h1 className="text-2xl md:text-4xl font-bold text-foreground font-display">Messages</h1>
         <p className="text-base text-muted-foreground mt-1">
           Communicate with your recruiter {recruiter.name !== "Unknown" ? `— ${recruiter.name}` : ""}
         </p>
