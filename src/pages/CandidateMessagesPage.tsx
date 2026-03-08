@@ -206,7 +206,7 @@ const CandidateMessagesPage = () => {
                 Send
               </Button>
             </div>
-            <p className="text-[10px] text-neutral-500 mt-2">Press Ctrl+Enter to send quickly</p>
+            <p className="text-[10px] text-muted-foreground mt-2">Press Ctrl+Enter to send quickly</p>
           </div>
         </div>
       </motion.div>
