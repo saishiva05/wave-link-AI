@@ -136,6 +136,12 @@ const RecruiterJobPostingsPage = () => {
         onClose={() => setApplyJob(null)}
       />
 
+      <JobDetailsModal
+        job={detailsJob}
+        onClose={() => setDetailsJob(null)}
+        onRunATS={() => {}}
+      />
+
       <div className="space-y-6 max-w-[1200px] mx-auto">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="text-2xl md:text-4xl font-bold text-foreground font-display">Admin Job Postings</h1>
@@ -186,13 +192,26 @@ const RecruiterJobPostingsPage = () => {
                   )}
 
                   <div className="flex flex-wrap gap-2 pt-1">
-                    <Button variant="portal" onClick={() => setApplyJob(job)}>
-                      <Briefcase className="w-4 h-4" /> Apply for Candidate
+                    <Button variant="outline" size="sm" onClick={() => setDetailsJob(job)}>
+                      <Eye className="w-4 h-4" /> View Details
+                    </Button>
+
+                    <Button variant="portal" size="sm" onClick={() => {
+                      let url = job.job_apply_url;
+                      if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+                      window.open(url, "_blank");
+                    }}>
+                      <ExternalLink className="w-4 h-4" /> Apply to Job
+                    </Button>
+
+                    <Button variant="outline" size="sm" onClick={() => setApplyJob(job)}>
+                      <Send className="w-4 h-4" /> Submit Application
                     </Button>
 
                     {firstOpenApplication && (
                       <Button
                         variant="outline"
+                        size="sm"
                         onClick={() => markCompletedMutation.mutate(firstOpenApplication.application_id)}
                         disabled={markCompletedMutation.isPending}
                       >
