@@ -1,7 +1,8 @@
 import { ScrapedJob } from "@/data/mockScrapedJobs";
 import {
-  MapPin, Eye, ExternalLink, DollarSign, Clock, Building2,
-  Wand2, FileEdit, Search, Mail, ChevronDown, Send, CheckCircle,
+  MapPin, Eye, ExternalLink, Clock, Building2,
+  FileEdit, Search, Mail, ChevronDown, Send, CheckCircle,
+  BarChart3, Zap, ArrowUpRight, CircleDollarSign, Timer, Users, FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -33,9 +34,13 @@ const timeAgo = (dateStr: string | undefined) => {
 
 const PlatformBadge = ({ platform }: { platform: string }) => {
   const label = getPlatformDisplayName(platform);
+  const isMax = platform.toLowerCase() === "linkedin";
 
   return (
-    <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-md bg-primary/10 text-primary">
+    <span className={cn(
+      "inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-lg border shadow-sm",
+      isMax ? "bg-gradient-to-r from-primary-50 to-primary-100/60 text-primary border-primary-200" : "bg-gradient-to-r from-secondary-50 to-secondary-100/60 text-secondary-700 border-secondary-200"
+    )}>
       <img src={wavelynkIcon} alt={label} className="w-4 h-4 object-contain" />
       {label}
     </span>
@@ -48,11 +53,11 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
   if (jobs.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
-        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-          <Search className="w-8 h-8 text-muted-foreground/40" />
+        <div className="w-16 h-16 rounded-2xl bg-muted/60 flex items-center justify-center mb-4">
+          <Search className="w-8 h-8 text-muted-foreground/30" />
         </div>
-        <h3 className="text-lg font-semibold text-foreground mb-2">No jobs found</h3>
-        <p className="text-sm text-muted-foreground">Try adjusting your filters or scrape new jobs</p>
+        <h3 className="text-lg font-bold text-foreground mb-1 font-display">No jobs found</h3>
+        <p className="text-sm text-muted-foreground">Try adjusting your filters or find new jobs</p>
       </div>
     );
   }
@@ -72,13 +77,13 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
           <div
             key={job.id}
             className={cn(
-              "bg-card border rounded-xl shadow-card transition-all duration-200 flex flex-col overflow-hidden",
-              selectedIds.has(job.id) ? "border-primary ring-2 ring-primary/15" : "border-border hover:border-primary/30",
+              "bg-card border rounded-xl shadow-card transition-all duration-200 flex flex-col overflow-hidden group/card",
+              selectedIds.has(job.id) ? "border-primary ring-2 ring-primary/15" : "border-border hover:border-primary/30 hover:shadow-lg",
               isExpanded && "shadow-lg"
             )}
           >
             {/* Color accent bar */}
-            <div className="h-1 w-full bg-primary" />
+            <div className="h-1 w-full bg-gradient-to-r from-primary to-primary-600" />
 
             <div className="p-5 flex flex-col flex-1">
               {/* Header */}
@@ -94,42 +99,42 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                     <button
                       onClick={() => onViewATSResult(job)}
                       className={cn(
-                        "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border transition-all hover:scale-105",
-                        latestATS.ats_score >= 70 ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                          : latestATS.ats_score >= 50 ? "bg-amber-50 text-amber-700 border-amber-200"
-                          : "bg-red-50 text-red-600 border-red-200"
+                        "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold border bg-gradient-to-r transition-all hover:scale-105 hover:shadow-md",
+                        latestATS.ats_score >= 70 ? "from-emerald-50 to-emerald-100/80 text-emerald-700 border-emerald-200"
+                          : latestATS.ats_score >= 50 ? "from-amber-50 to-amber-100/80 text-amber-700 border-amber-200"
+                          : "from-red-50 to-red-100/80 text-red-600 border-red-200"
                       )}
                     >
-                      <Wand2 className="w-3 h-3" /> {latestATS.ats_score}%
+                      <BarChart3 className="w-3 h-3" /> {latestATS.ats_score}%
                     </button>
                   )}
                 </div>
               </div>
 
               {/* Title & Company */}
-              <h3 className="text-sm font-bold text-secondary-900 leading-snug line-clamp-2 mb-1.5 cursor-pointer hover:text-primary transition-colors" onClick={() => onViewDetails(job)}>
+              <h3 className="text-sm font-bold text-foreground leading-snug line-clamp-2 mb-1.5 cursor-pointer hover:text-primary transition-colors font-display" onClick={() => onViewDetails(job)}>
                 {job.job_title}
               </h3>
-              <div className="flex items-center gap-1.5 text-xs font-medium text-primary-600 mb-3">
-                <Building2 className="w-3 h-3" />{job.company_name}
+              <div className="flex items-center gap-1.5 text-xs font-medium text-primary mb-3">
+                <Building2 className="w-3.5 h-3.5 opacity-60" />{job.company_name}
               </div>
 
               {/* Meta */}
-              <div className="space-y-1.5 mb-3 text-xs">
+              <div className="space-y-2 mb-3 text-xs">
                 <span className="flex items-center gap-1.5 text-muted-foreground">
-                  <MapPin className="w-3 h-3 text-primary/40" />{job.location}
+                  <MapPin className="w-3.5 h-3.5 text-primary/40" />{job.location}
                 </span>
                 {job.salary_range && (
-                  <span className="flex items-center gap-1.5 text-emerald-600 font-semibold">
-                    <DollarSign className="w-3 h-3" />{job.salary_range}
+                  <span className="inline-flex items-center gap-1.5 font-bold text-success-700 bg-gradient-to-r from-success-50 to-emerald-50 px-2 py-1 rounded-md border border-success-200">
+                    <CircleDollarSign className="w-3.5 h-3.5" />{job.salary_range}
                   </span>
                 )}
                 <span className="flex items-center gap-1.5 text-muted-foreground/70">
-                  <Clock className="w-3 h-3" />Scraped {timeAgo(job.scraped_at)}
+                  <Timer className="w-3.5 h-3.5" />Added {timeAgo(job.scraped_at)}
                 </span>
                 {job.applications_count && (
-                  <span className="flex items-center gap-1.5 text-blue-600 font-semibold">
-                    <Send className="w-3 h-3" />{job.applications_count}
+                  <span className="inline-flex items-center gap-1.5 font-bold text-blue-700 bg-gradient-to-r from-blue-50 to-info-50 px-2 py-1 rounded-md border border-blue-200">
+                    <Users className="w-3.5 h-3.5" />{job.applications_count}
                   </span>
                 )}
               </div>
@@ -143,7 +148,7 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
               {/* Expand toggle */}
               <button
                 onClick={() => setExpandedId(isExpanded ? null : job.id)}
-                className="w-full flex items-center justify-center gap-1.5 py-2 border-t border-border text-xs font-medium text-muted-foreground hover:text-primary transition-colors mt-auto"
+                className="w-full flex items-center justify-center gap-1.5 py-2.5 border-t border-border text-xs font-semibold text-muted-foreground hover:text-primary transition-colors mt-auto"
               >
                 <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", isExpanded && "rotate-180")} />
                 {isExpanded ? "Collapse" : "Actions"}
@@ -152,22 +157,22 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
               {/* Expanded actions */}
               {isExpanded && (
                 <div className="pt-3 space-y-2 animate-accordion-down">
-                  {/* Step 1: ATS Analysis (always available) */}
+                  {/* ATS Analysis */}
                   {hasATS ? (
                     <>
-                      <button onClick={() => onViewATSResult(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-all">
-                        <Eye className="w-4 h-4" /> View ATS Results ({atsAnalysesForJob.length})
+                      <button onClick={() => onViewATSResult(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border border-purple-200 hover:border-purple-300 hover:shadow-md transition-all">
+                        <BarChart3 className="w-4 h-4" /> View ATS Results ({atsAnalysesForJob.length})
                       </button>
                       <button onClick={() => onRunATS(job)} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-purple-600 hover:bg-purple-50 transition-all">
-                        <Wand2 className="w-3.5 h-3.5" /> Re-run ATS Analysis
+                        <Zap className="w-3.5 h-3.5" /> Re-run ATS Analysis
                       </button>
                     </>
                   ) : (
-                    <button onClick={() => onRunATS(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-all">
-                      <Wand2 className="w-4 h-4" /> Run ATS Analysis
+                    <button onClick={() => onRunATS(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border border-purple-200 hover:border-purple-300 hover:shadow-md transition-all">
+                      <Zap className="w-4 h-4" /> Run ATS Analysis
                     </button>
                   )}
-                  {/* Step 2: Update CV (always available) */}
+                  {/* Update CV */}
                   {updatedCVs.length > 0 ? (
                     <>
                       <div className="w-full"><UpdatedCVsBadge updatedCVs={updatedCVs} /></div>
@@ -176,39 +181,40 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                       </button>
                     </>
                   ) : (
-                    <button onClick={() => onUpdateCV(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-100 transition-all">
-                      <FileEdit className="w-4 h-4" /> Update CV
+                    <button onClick={() => onUpdateCV(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-teal-50 to-emerald-50 text-teal-700 border border-teal-200 hover:border-teal-300 hover:shadow-md transition-all">
+                      <FileText className="w-4 h-4" /> Update CV
                     </button>
                   )}
+                  {/* Email */}
                   {hasEmails ? (
-                    <button onClick={() => onGenerateEmail(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 transition-all">
-                      <Eye className="w-4 h-4" /> View Generated Emails
+                    <button onClick={() => onGenerateEmail(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border border-orange-200 hover:border-orange-300 hover:shadow-md transition-all">
+                      <Mail className="w-4 h-4" /> View Generated Emails
                     </button>
                   ) : (
-                    <button onClick={() => onGenerateEmail(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 transition-all">
+                    <button onClick={() => onGenerateEmail(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border border-orange-200 hover:border-orange-300 hover:shadow-md transition-all">
                       <Mail className="w-4 h-4" /> Generate Email
                     </button>
                   )}
-                  {/* Apply to Job (redirects to external URL) */}
+                  {/* Apply to Job */}
                   <button onClick={() => {
                     let url = job.job_apply_url;
                     if (!/^https?:\/\//i.test(url)) url = "https://" + url;
                     window.open(url, "_blank");
-                  }} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-all">
-                    <ExternalLink className="w-4 h-4" /> Apply to Job
+                  }} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-blue-50 to-info-50 text-blue-700 border border-blue-200 hover:border-blue-300 hover:shadow-md transition-all">
+                    <ArrowUpRight className="w-4 h-4" /> Apply to Job
                   </button>
-                  {/* Submit Application (records in system) */}
+                  {/* Submit Application */}
                   {jobApplications.length > 0 ? (
-                    <span className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-success-100 text-success-700 border border-success-200">
+                    <span className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-success-50 to-emerald-50 text-success-700 border border-success-200">
                       <CheckCircle className="w-4 h-4" /> Submitted ({jobApplications.length})
                     </span>
                   ) : (
-                    <button onClick={() => onApplyToJob(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-all">
+                    <button onClick={() => onApplyToJob(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border border-emerald-200 hover:border-emerald-300 hover:shadow-md transition-all">
                       <Send className="w-4 h-4" /> Submit Application
                     </button>
                   )}
                   <div className="flex items-center gap-2 pt-1">
-                    <button onClick={() => onViewDetails(job)} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
+                    <button onClick={() => onViewDetails(job)} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
                       <Eye className="w-3.5 h-3.5" /> Details
                     </button>
                   </div>
