@@ -104,7 +104,7 @@ const AdminHeader = ({ onMenuClick }: AdminHeaderProps) => {
       </div>
 
       {/* Right side */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 md:gap-2 shrink-0">
         <ThemeToggle />
         {/* Search */}
         <div className="hidden lg:flex items-center bg-muted rounded-lg px-3 py-2 w-[260px] border border-transparent focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
