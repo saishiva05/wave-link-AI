@@ -357,19 +357,28 @@ const JobExpandableRow = ({
                   </button>
                 )}
 
-                {/* Step 4: Apply to Job */}
+                {/* Step 4: Apply to Job (redirects to external URL) */}
+                <button onClick={() => {
+                  let url = job.job_apply_url;
+                  if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+                  window.open(url, "_blank");
+                }} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:shadow-md transition-all hover:scale-[1.02]">
+                  <ExternalLink className="w-4 h-4" /> Apply to Job
+                </button>
+
+                {/* Submit Application (records application in system) */}
                 {jobApplications.length > 0 ? (
                   <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-success-100 text-success-700 border border-success-200">
-                    <CheckCircle className="w-4 h-4" /> Applied ({jobApplications.length})
+                    <CheckCircle className="w-4 h-4" /> Submitted ({jobApplications.length})
                   </span>
                 ) : (
-                  <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:shadow-md transition-all hover:scale-[1.02]">
-                    <Send className="w-4 h-4" /> Apply to Job
+                  <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 hover:shadow-md transition-all hover:scale-[1.02]">
+                    <Send className="w-4 h-4" /> Submit Application
                   </button>
                 )}
                 {jobApplications.length > 0 && (
-                  <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-blue-600 hover:bg-blue-50 transition-all">
-                    <Send className="w-3.5 h-3.5" /> Apply More
+                  <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-emerald-600 hover:bg-emerald-50 transition-all">
+                    <Send className="w-3.5 h-3.5" /> Submit More
                   </button>
                 )}
 
@@ -378,8 +387,6 @@ const JobExpandableRow = ({
                 <button onClick={onViewDetails} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
                   <Eye className="w-4 h-4" /> View Details
                 </button>
-
-                <ApplyExternallyButton job={job} />
 
                 <div className="ml-auto">
                   <button className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/5 transition-all">
