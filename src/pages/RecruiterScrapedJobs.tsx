@@ -23,8 +23,8 @@ import ApplyToJobModal from "@/components/recruiter/ApplyToJobModal";
 import BatchATSModal from "@/components/recruiter/BatchATSModal";
 const platformOptions = [
   { value: "", label: "All Platforms" },
-  { value: "linkedin", label: "LinkedIn" },
-  { value: "jsearch", label: "JSearch" },
+  { value: "linkedin", label: "WaveLynk Max" },
+  { value: "jsearch", label: "WaveLynk Pro" },
 ];
 
 const dateOptions = [
