@@ -187,7 +187,7 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                   )}
                   {/* Email */}
                   {hasEmails ? (
-                    <button onClick={() => onGenerateEmail(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border border-orange-200 hover:border-orange-300 hover:shadow-md transition-all">
+                    <button onClick={() => onGenerateEmail(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border border-orange-200 hover:border-orange-300 hover:shadow-md transition-all dark:from-orange-950 dark:to-amber-950 dark:text-orange-400 dark:border-orange-800 dark:hover:border-orange-700">
                       <Mail className="w-4 h-4" /> View Generated Emails
                     </button>
                   ) : (
