@@ -30,16 +30,16 @@ const LoginLayout = ({
           transition={{ duration: 0.4 }}
           className="relative z-10"
         >
-          <div className="flex items-center gap-3 mb-8 lg:mb-12">
-            <WaveLynkLogo size="xl" />
-            <span className="font-display text-xl lg:text-2xl font-bold text-primary-foreground tracking-tight">
+          <div className="flex items-center gap-2.5 md:gap-3 mb-5 lg:mb-12">
+            <WaveLynkLogo size="lg" />
+            <span className="font-display text-lg lg:text-2xl font-bold text-primary-foreground tracking-tight">
               Wave<span className="opacity-80">Lynk</span> AI
             </span>
           </div>
-          <h1 className="font-display text-2xl lg:text-4xl font-bold text-primary-foreground mb-4">
+          <h1 className="font-display text-xl lg:text-4xl font-bold text-primary-foreground mb-2 lg:mb-4">
             {heading}
           </h1>
-          <p className="text-primary-foreground/70 text-base lg:text-lg leading-relaxed mb-8 lg:mb-12 max-w-md">
+          <p className="text-primary-foreground/70 text-sm lg:text-lg leading-relaxed mb-5 lg:mb-12 max-w-md">
             {description}
           </p>
 
