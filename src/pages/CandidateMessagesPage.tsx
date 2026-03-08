@@ -118,9 +118,9 @@ const CandidateMessagesPage = () => {
         <nav className="flex items-center gap-1.5 text-sm mb-4">
           <button onClick={() => navigate("/candidate/dashboard")} className="text-neutral-500 hover:text-primary transition-colors">Dashboard</button>
           <span className="text-neutral-300">/</span>
-          <span className="text-secondary-900 font-semibold">Messages</span>
+          <span className="text-foreground font-semibold">Messages</span>
         </nav>
-        <h1 className="text-2xl md:text-4xl font-bold text-secondary-900 font-display">Messages</h1>
+        <h1 className="text-2xl md:text-4xl font-bold text-foreground font-display">Messages</h1>
         <p className="text-base text-muted-foreground mt-1">
           Communicate with your recruiter {recruiter.name !== "Unknown" ? `— ${recruiter.name}` : ""}
         </p>
@@ -130,18 +130,18 @@ const CandidateMessagesPage = () => {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
         <div className="bg-card border border-border rounded-xl shadow-xs overflow-hidden">
           {/* Recruiter header */}
-          <div className="px-6 py-4 border-b border-border bg-neutral-50 flex items-center gap-3">
+          <div className="px-6 py-4 border-b border-border bg-muted/50 flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-semibold shrink-0">
               {recruiter.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)}
             </div>
             <div>
-              <p className="text-sm font-semibold text-secondary-900">{recruiter.name}</p>
-              <p className="text-xs text-neutral-600">{recruiter.company} • {recruiter.email}</p>
+              <p className="text-sm font-semibold text-foreground">{recruiter.name}</p>
+              <p className="text-xs text-muted-foreground">{recruiter.company} • {recruiter.email}</p>
             </div>
           </div>
 
           {/* Messages list */}
-          <div className="h-[400px] overflow-y-auto p-6 space-y-4 bg-neutral-50/50">
+          <div className="h-[400px] overflow-y-auto p-6 space-y-4 bg-muted/20">
             {isLoading ? (
               <div className="flex items-center justify-center py-16">
                 <Loader2 className="w-6 h-6 text-primary animate-spin" />
@@ -149,20 +149,20 @@ const CandidateMessagesPage = () => {
             ) : messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <MessageSquare className="w-12 h-12 text-neutral-300 mb-3" />
-                <h4 className="text-lg font-semibold text-neutral-700">No messages yet</h4>
-                <p className="text-sm text-neutral-600 mt-1">Send your first message to your recruiter below.</p>
+                <h4 className="text-lg font-semibold text-foreground">No messages yet</h4>
+                <p className="text-sm text-muted-foreground mt-1">Send your first message to your recruiter below.</p>
               </div>
             ) : (
               messages.map((msg: any) => {
                 const isMe = msg.sender_user_id === user?.id;
                 return (
                   <div key={msg.message_id} className={cn("flex", isMe ? "justify-end" : "justify-start")}>
-                    <div className={cn("max-w-[75%] rounded-2xl px-5 py-3 shadow-xs", isMe ? "bg-primary text-primary-foreground rounded-br-md" : "bg-card border border-border text-secondary-900 rounded-bl-md")}>
+                    <div className={cn("max-w-[75%] rounded-2xl px-5 py-3 shadow-xs", isMe ? "bg-primary text-primary-foreground rounded-br-md" : "bg-card border border-border text-foreground rounded-bl-md")}>
                       {msg.subject && (
                         <p className={cn("text-xs font-semibold mb-1", isMe ? "text-primary-foreground/80" : "text-primary-600")}>{msg.subject}</p>
                       )}
                       <p className="text-sm whitespace-pre-wrap">{msg.body}</p>
-                      <p className={cn("text-[10px] mt-1.5 flex items-center gap-1", isMe ? "text-primary-foreground/60 justify-end" : "text-neutral-500")}>
+                      <p className={cn("text-[10px] mt-1.5 flex items-center gap-1", isMe ? "text-primary-foreground/60 justify-end" : "text-muted-foreground")}>
                         <Clock className="w-2.5 h-2.5" />
                         {formatDistanceToNow(new Date(msg.created_at), { addSuffix: true })}
                       </p>
@@ -206,7 +206,7 @@ const CandidateMessagesPage = () => {
                 Send
               </Button>
             </div>
-            <p className="text-[10px] text-neutral-500 mt-2">Press Ctrl+Enter to send quickly</p>
+            <p className="text-[10px] text-muted-foreground mt-2">Press Ctrl+Enter to send quickly</p>
           </div>
         </div>
       </motion.div>
