@@ -125,7 +125,7 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                   <MapPin className="w-3.5 h-3.5 text-primary/40" />{job.location}
                 </span>
                 {job.salary_range && (
-                  <span className="inline-flex items-center gap-1.5 font-bold text-success-700 bg-gradient-to-r from-success-50 to-emerald-50 px-2 py-1 rounded-md border border-success-200">
+                  <span className="inline-flex items-center gap-1.5 font-bold text-success-700 bg-gradient-to-r from-success-50 to-emerald-50 px-2 py-1 rounded-md border border-success-200 dark:from-emerald-950 dark:to-emerald-900/50 dark:text-emerald-400 dark:border-emerald-800">
                     <CircleDollarSign className="w-3.5 h-3.5" />{job.salary_range}
                   </span>
                 )}
