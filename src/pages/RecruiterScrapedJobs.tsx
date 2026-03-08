@@ -90,6 +90,8 @@ const RecruiterScrapedJobs = () => {
   const [createJobOpen, setCreateJobOpen] = useState(false);
   const [applyJob, setApplyJob] = useState<ScrapedJob | null>(null);
   const [batchATSOpen, setBatchATSOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const { toast } = useToast();
   const { data, isLoading } = useScrapedJobs(recruiterId, {
     search, platform: platformFilter, contractType: contractFilter,
     workMode: workModeFilter, dateRange: dateFilter,
