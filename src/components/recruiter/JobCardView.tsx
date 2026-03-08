@@ -10,6 +10,7 @@ import { formatDistanceToNow } from "date-fns";
 import UpdatedCVsBadge from "@/components/recruiter/UpdatedCVsBadge";
 import { getPlatformDisplayName } from "@/lib/platformBranding";
 import wavelynkIcon from "@/assets/wavelynk-icon.png";
+import wavelynkLogoLight from "@/assets/wavelynk-logo-light.png";
 
 interface JobCardViewProps {
   jobs: ScrapedJob[];
