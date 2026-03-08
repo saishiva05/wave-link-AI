@@ -2,7 +2,7 @@ import { Shield, Briefcase, User } from "lucide-react";
 import { motion } from "framer-motion";
 import PortalCard from "@/components/PortalCard";
 import WavePattern from "@/components/WavePattern";
-import wavelynkIcon from "@/assets/wavelynk-icon.png";
+import WaveLynkLogo from "@/components/WaveLynkLogo";
 
 const Index = () => {
   return (
