@@ -8,7 +8,7 @@ import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import UpdatedCVsBadge from "@/components/recruiter/UpdatedCVsBadge";
 import { getPlatformDisplayName } from "@/lib/platformBranding";
-import wavelynkLogo from "@/assets/wavelynk-logo.png";
+import wavelynkIcon from "@/assets/wavelynk-icon.png";
 
 interface JobCardViewProps {
   jobs: ScrapedJob[];
