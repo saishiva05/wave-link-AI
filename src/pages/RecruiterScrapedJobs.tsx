@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Search, Plus, Globe, Calendar, Briefcase, Building, LayoutGrid, List,
-  Sparkles, Download, Trash, X, ChevronLeft, ChevronRight, Loader2,
+  Sparkles, Download, Trash, X, ChevronLeft, ChevronRight, Loader2, FileDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { exportJobsToCSV } from "@/lib/exportJobsCSV";
 import { ScrapedJob, mapDbJob } from "@/data/mockScrapedJobs";
 import { useScrapedJobs, useRecruiterCandidates, useRecruiterCVs, useJobATSAnalyses, useJobUpdatedCVs, useJobGeneratedEmails, useJobApplicationsMap } from "@/hooks/useRecruiterData";
 import ATSResultsView, { type ATSAnalysisResult } from "@/components/recruiter/ATSResultsView";
@@ -88,6 +90,8 @@ const RecruiterScrapedJobs = () => {
   const [createJobOpen, setCreateJobOpen] = useState(false);
   const [applyJob, setApplyJob] = useState<ScrapedJob | null>(null);
   const [batchATSOpen, setBatchATSOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const { toast } = useToast();
   const { data, isLoading } = useScrapedJobs(recruiterId, {
     search, platform: platformFilter, contractType: contractFilter,
     workMode: workModeFilter, dateRange: dateFilter,
@@ -139,13 +143,37 @@ const RecruiterScrapedJobs = () => {
   const handleViewATSResult = (job: ScrapedJob) => {
     const analyses = atsAnalyses[job.id];
     if (analyses && analyses.length > 0) {
-      // Show the latest one
       const analysis = analyses[0];
       let result = analysis.analysis_result;
       if (Array.isArray(result) && result[0]?.text) {
         result = result[0].text;
       }
       setViewATSResult({ result: result as ATSAnalysisResult, job });
+    }
+  };
+
+  const handleExportCSV = async () => {
+    if (!recruiterId) return;
+    setIsExporting(true);
+    try {
+      const { success, count } = await exportJobsToCSV({
+        recruiterId,
+        search,
+        platform: platformFilter,
+        contractType: contractFilter,
+        workMode: workModeFilter,
+        dateRange: dateFilter,
+        applicantsRange: applicantsFilter,
+      });
+      if (success) {
+        toast({ title: "Export Complete", description: `${count} jobs exported to CSV` });
+      } else {
+        toast({ title: "No Data", description: "No jobs match the current filters to export", variant: "destructive" });
+      }
+    } catch (err: any) {
+      toast({ title: "Export Failed", description: err.message, variant: "destructive" });
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -208,7 +236,11 @@ const RecruiterScrapedJobs = () => {
               <h1 className="text-2xl md:text-4xl font-bold text-secondary-900 font-display">Job Board</h1>
               <p className="text-base text-muted-foreground mt-1">{totalCount.toLocaleString()} jobs in your database</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Button variant="outline" onClick={handleExportCSV} disabled={isExporting || totalCount === 0}>
+                {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
+                {isExporting ? "Exporting..." : "Export CSV"}
+              </Button>
               <Button variant="outline" onClick={() => setBatchATSOpen(true)}>
                 <Sparkles className="w-4 h-4" /> Batch ATS
               </Button>
