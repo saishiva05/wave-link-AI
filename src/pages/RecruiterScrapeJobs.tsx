@@ -150,7 +150,7 @@ const RecruiterScrapeJobs = () => {
       } else {
         setResultModal({
           type: "error",
-          message: `Failed to scrape jobs from ${platform === "linkedin" ? "LinkedIn" : "JSearch"}. Please try again.`,
+          message: `Failed to find jobs via ${platform === "linkedin" ? "WaveLynk Max" : "WaveLynk Pro"}. Please try again.`,
         });
       }
     } catch {
