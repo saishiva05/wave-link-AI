@@ -82,13 +82,13 @@ const CandidateDashboardPage = () => {
                 { label: "Offers", color: "bg-success-500", count: stats.offers },
                 { label: "Rejected", color: "bg-error-500", count: stats.rejected },
               ].map((stage, i, arr) => (
-                <div key={stage.label} className="flex items-center flex-1 min-w-[120px]">
-                  <div className="flex-1 text-center">
-                    <div className={`${stage.color} text-white rounded-lg py-3 px-4 mx-1`}>
-                      <p className="text-2xl font-bold">{stage.count}</p>
-                      <p className="text-xs font-medium mt-0.5 opacity-90">{stage.label}</p>
-                    </div>
-                  </div>
+                 <div key={stage.label} className="flex items-center flex-1 min-w-[80px] md:min-w-[120px]">
+                   <div className="flex-1 text-center">
+                    <div className={`${stage.color} text-white rounded-lg py-2 md:py-3 px-2 md:px-4 mx-0.5 md:mx-1`}>
+                       <p className="text-lg md:text-2xl font-bold">{stage.count}</p>
+                       <p className="text-[10px] md:text-xs font-medium mt-0.5 opacity-90">{stage.label}</p>
+                     </div>
+                   </div>
                   {i < arr.length - 1 && (
                     <svg className="w-6 h-6 text-neutral-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>
                   )}
