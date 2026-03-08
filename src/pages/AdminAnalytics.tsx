@@ -22,7 +22,7 @@ const AdminAnalytics = () => {
             <div className="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center">
               <BarChart3 className="w-5 h-5 text-primary" />
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold text-secondary-900 font-display">Analytics</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground font-display">Analytics</h1>
           </div>
           <p className="text-base text-muted-foreground ml-[52px]">Comprehensive platform analytics and insights</p>
         </div>
@@ -37,7 +37,7 @@ const AdminAnalytics = () => {
               <TrendingUp className={`w-5 h-5 ${s.color.split(" ")[1]}`} />
             </div>
             <div>
-              <p className="text-2xl font-bold text-secondary-900 font-display">{s.value}</p>
+              <p className="text-2xl font-bold text-foreground font-display">{s.value}</p>
               <p className="text-xs text-muted-foreground">{s.label}</p>
             </div>
           </div>
