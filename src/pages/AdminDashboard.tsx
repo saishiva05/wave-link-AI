@@ -247,12 +247,29 @@ const AdminDashboard = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {adminJobs.map((job: any) => (
-              <div key={job.job_id} className="bg-card border border-border rounded-xl p-5 hover:shadow-card transition-all duration-200">
+              <div key={job.job_id} className="bg-card border border-border rounded-xl p-5 hover:shadow-card transition-all duration-200 group">
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="text-sm font-semibold text-foreground line-clamp-2">{job.job_title}</h3>
-                  <Badge variant={job.is_active ? "default" : "secondary"} className="text-[10px] shrink-0 ml-2">
-                    {job.is_active ? "Active" : "Inactive"}
-                  </Badge>
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      const { error } = await supabase.from("scraped_jobs").update({ is_active: !job.is_active }).eq("job_id", job.job_id);
+                      if (!error) {
+                        queryClient.invalidateQueries({ queryKey: ["admin", "admin-job-postings"] });
+                      }
+                    }}
+                    className="shrink-0 ml-2"
+                  >
+                    <Badge
+                      variant={job.is_active ? "default" : "secondary"}
+                      className={cn(
+                        "text-[10px] cursor-pointer hover:opacity-80 transition-opacity",
+                        job.is_active ? "bg-success-500 hover:bg-success-600 text-white" : ""
+                      )}
+                    >
+                      {job.is_active ? "Active" : "Inactive"}
+                    </Badge>
+                  </button>
                 </div>
                 <div className="space-y-1.5 text-xs text-muted-foreground">
                   <p className="flex items-center gap-1.5"><Building2 className="w-3 h-3" /> {job.company_name}</p>
@@ -261,11 +278,27 @@ const AdminDashboard = () => {
                   {job.salary_range && <p className="flex items-center gap-1.5">💰 {job.salary_range}</p>}
                   <p className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> {formatDistanceToNow(new Date(job.scraped_at), { addSuffix: true })}</p>
                 </div>
-                {job.job_apply_url && job.job_apply_url !== "#" && (
-                  <Button variant="outline" size="sm" className="mt-3 w-full text-xs" onClick={() => window.open(job.job_apply_url, "_blank")}>
-                    <Eye className="w-3 h-3" /> View Listing
+                <div className="flex gap-2 mt-3">
+                  {job.job_apply_url && job.job_apply_url !== "#" && (
+                    <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={() => window.open(job.job_apply_url, "_blank")}>
+                      <Eye className="w-3 h-3" /> View Listing
+                    </Button>
+                  )}
+                  <Button
+                    variant={job.is_active ? "destructive" : "portal"}
+                    size="sm"
+                    className="text-xs"
+                    onClick={async () => {
+                      const { error } = await supabase.from("scraped_jobs").update({ is_active: !job.is_active }).eq("job_id", job.job_id);
+                      if (!error) {
+                        queryClient.invalidateQueries({ queryKey: ["admin", "admin-job-postings"] });
+                      }
+                    }}
+                  >
+                    <Power className="w-3 h-3" />
+                    {job.is_active ? "Deactivate" : "Activate"}
                   </Button>
-                )}
+                </div>
               </div>
             ))}
           </div>
