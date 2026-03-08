@@ -8,7 +8,7 @@ const RecruiterLogin = () => {
       heading="Recruiter Portal"
       description="Access your recruitment dashboard. Find jobs, manage candidates, and leverage AI-powered matching."
       features={[
-        "Discover jobs from LinkedIn and JSearch",
+        "Discover jobs via WaveLynk Max and WaveLynk Pro",
         "AI-powered ATS resume matching",
         "Manage candidates and track applications",
       ]}
