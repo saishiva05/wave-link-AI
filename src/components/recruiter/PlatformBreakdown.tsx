@@ -1,8 +1,7 @@
 import { TrendingUp } from "lucide-react";
 import { useRecruiterPlatformBreakdown } from "@/hooks/useRecruiterData";
 import { Skeleton } from "@/components/ui/skeleton";
-import wavelynkIcon from "@/assets/wavelynk-icon.png";
-import wavelynkLogoLight from "@/assets/wavelynk-logo-light.png";
+import wavelynkLogo from "@/assets/wavelynk-logo-unified.png";
 
 const PlatformBreakdown = () => {
   const { data, isLoading } = useRecruiterPlatformBreakdown();
@@ -33,7 +32,7 @@ const PlatformBreakdown = () => {
           </div>
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-4">
-              <img src={wavelynkIcon} alt="WaveLynk Max" className="w-8 h-8 object-contain brightness-0 invert" />
+              <img src={wavelynkLogo} alt="WaveLynk Max" className="w-10 h-10 object-contain brightness-0 invert" />
               <span className="text-lg font-semibold">WaveLynk Max</span>
             </div>
             <p className="text-5xl font-bold font-display mb-1">{linkedin.count.toLocaleString()}</p>
@@ -52,7 +51,7 @@ const PlatformBreakdown = () => {
           </div>
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-4">
-              <img src={wavelynkIcon} alt="WaveLynk Pro" className="w-8 h-8 object-contain brightness-0 invert" />
+              <img src={wavelynkLogo} alt="WaveLynk Pro" className="w-10 h-10 object-contain brightness-0 invert" />
               <span className="text-lg font-semibold text-white">WaveLynk Pro</span>
             </div>
             <p className="text-5xl font-bold font-display text-white mb-1">{jsearch.count.toLocaleString()}</p>

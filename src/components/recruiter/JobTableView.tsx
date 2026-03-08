@@ -19,8 +19,7 @@ import {
 } from "@/components/ui/tooltip";
 import UpdatedCVsBadge from "@/components/recruiter/UpdatedCVsBadge";
 import { getPlatformDisplayName } from "@/lib/platformBranding";
-import wavelynkIcon from "@/assets/wavelynk-icon.png";
-import wavelynkLogoLight from "@/assets/wavelynk-logo-light.png";
+import wavelynkLogo from "@/assets/wavelynk-logo-unified.png";
 
 interface JobTableViewProps {
   jobs: ScrapedJob[];
@@ -51,11 +50,10 @@ const PlatformIcon = ({ platform }: { platform: string }) => {
     <Tooltip>
       <TooltipTrigger asChild>
         <span className={cn(
-          "inline-flex items-center justify-center w-9 h-9 rounded-xl border shadow-sm transition-all hover:shadow-md",
+          "inline-flex items-center justify-center rounded-xl border shadow-sm transition-all hover:shadow-md",
           isMax ? "bg-gradient-to-br from-primary-50 to-primary-100/80 border-primary-200" : "bg-gradient-to-br from-secondary-50 to-secondary-100/80 border-secondary-200"
         )}>
-          <img src={wavelynkLogoLight} alt={label} className="w-[22px] h-[22px] object-contain dark:hidden" />
-          <img src={wavelynkIcon} alt={label} className="w-[22px] h-[22px] object-contain hidden dark:block" />
+          <img src={wavelynkLogo} alt={label} className="w-10 h-10 object-contain" />
         </span>
       </TooltipTrigger>
       <TooltipContent side="right" className="font-semibold">{label}</TooltipContent>

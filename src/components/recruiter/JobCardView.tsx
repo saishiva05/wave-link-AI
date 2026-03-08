@@ -9,8 +9,7 @@ import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import UpdatedCVsBadge from "@/components/recruiter/UpdatedCVsBadge";
 import { getPlatformDisplayName } from "@/lib/platformBranding";
-import wavelynkIcon from "@/assets/wavelynk-icon.png";
-import wavelynkLogoLight from "@/assets/wavelynk-logo-light.png";
+import wavelynkLogo from "@/assets/wavelynk-logo-unified.png";
 
 interface JobCardViewProps {
   jobs: ScrapedJob[];
@@ -42,8 +41,7 @@ const PlatformBadge = ({ platform }: { platform: string }) => {
       "inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-lg border shadow-sm",
       isMax ? "bg-gradient-to-r from-primary-50 to-primary-100/60 text-primary border-primary-200" : "bg-gradient-to-r from-secondary-50 to-secondary-100/60 text-secondary-700 border-secondary-200"
     )}>
-      <img src={wavelynkLogoLight} alt={label} className="w-4 h-4 object-contain dark:hidden" />
-      <img src={wavelynkIcon} alt={label} className="w-4 h-4 object-contain hidden dark:block" />
+      <img src={wavelynkLogo} alt={label} className="w-5 h-5 object-contain" />
       {label}
     </span>
   );

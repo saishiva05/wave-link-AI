@@ -18,8 +18,7 @@ import ScrapeFormSelect from "@/components/recruiter/ScrapeFormSelect";
 import PlatformSelector from "@/components/recruiter/PlatformSelector";
 import ScrapeLoadingOverlay from "@/components/recruiter/ScrapeLoadingOverlay";
 import ScrapeResultModal from "@/components/recruiter/ScrapeResultModal";
-import wavelynkIcon from "@/assets/wavelynk-icon.png";
-import wavelynkLogoLight from "@/assets/wavelynk-logo-light.png";
+import wavelynkLogo from "@/assets/wavelynk-logo-unified.png";
 
 const publishedTimeOptions = [
   { value: "30 Days ago", label: "30 Days ago" },
@@ -303,8 +302,7 @@ const RecruiterScrapeJobs = () => {
               (scrapeHistory || []).map((item: any, i: number) => (
                 <div key={i} className={cn("flex items-center gap-4 p-5 hover:bg-muted/50 transition-colors", i < (scrapeHistory || []).length - 1 && "border-b border-border")}>
                   <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-primary/10">
-                    <img src={wavelynkLogoLight} alt="WaveLynk" className="w-6 h-6 object-contain dark:hidden" />
-                    <img src={wavelynkIcon} alt="WaveLynk" className="w-6 h-6 object-contain hidden dark:block" />
+                    <img src={wavelynkLogo} alt="WaveLynk" className="w-7 h-7 object-contain" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-secondary-900">Found {item.jobCount} jobs via {item.platform === "linkedin" ? "WaveLynk Max" : "WaveLynk Pro"}</p>
