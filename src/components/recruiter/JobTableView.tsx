@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import UpdatedCVsBadge from "@/components/recruiter/UpdatedCVsBadge";
 import { getPlatformDisplayName } from "@/lib/platformBranding";
-import wavelynkLogo from "@/assets/wavelynk-logo.png";
+import wavelynkIcon from "@/assets/wavelynk-icon.png";
 
 interface JobTableViewProps {
   jobs: ScrapedJob[];
