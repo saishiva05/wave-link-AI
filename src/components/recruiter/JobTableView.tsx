@@ -369,7 +369,7 @@ const JobExpandableRow = ({
                     <CheckCircle className="w-4 h-4" /> Submitted ({jobApplications.length})
                   </span>
                 ) : (
-                  <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border border-emerald-200 hover:border-emerald-300 hover:shadow-md transition-all">
+                  <button onClick={onApplyToJob} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border border-emerald-200 hover:border-emerald-300 hover:shadow-md transition-all dark:from-emerald-950 dark:to-green-950 dark:text-emerald-400 dark:border-emerald-800 dark:hover:border-emerald-700">
                     <Send className="w-4 h-4" /> Submit Application
                   </button>
                 )}
