@@ -17,7 +17,7 @@ import {
   Newspaper,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import wavelynkIcon from "@/assets/wavelynk-icon.png";
+import WaveLynkLogo from "@/components/WaveLynkLogo";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 
