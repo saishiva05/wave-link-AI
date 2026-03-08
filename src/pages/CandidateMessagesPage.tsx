@@ -130,13 +130,13 @@ const CandidateMessagesPage = () => {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
         <div className="bg-card border border-border rounded-xl shadow-xs overflow-hidden">
           {/* Recruiter header */}
-          <div className="px-6 py-4 border-b border-border bg-neutral-50 flex items-center gap-3">
+          <div className="px-6 py-4 border-b border-border bg-muted/50 flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-semibold shrink-0">
               {recruiter.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)}
             </div>
             <div>
-              <p className="text-sm font-semibold text-secondary-900">{recruiter.name}</p>
-              <p className="text-xs text-neutral-600">{recruiter.company} • {recruiter.email}</p>
+              <p className="text-sm font-semibold text-foreground">{recruiter.name}</p>
+              <p className="text-xs text-muted-foreground">{recruiter.company} • {recruiter.email}</p>
             </div>
           </div>
 
