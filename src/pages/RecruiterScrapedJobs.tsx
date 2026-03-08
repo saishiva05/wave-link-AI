@@ -143,7 +143,6 @@ const RecruiterScrapedJobs = () => {
   const handleViewATSResult = (job: ScrapedJob) => {
     const analyses = atsAnalyses[job.id];
     if (analyses && analyses.length > 0) {
-      // Show the latest one
       const analysis = analyses[0];
       let result = analysis.analysis_result;
       if (Array.isArray(result) && result[0]?.text) {
@@ -153,8 +152,30 @@ const RecruiterScrapedJobs = () => {
     }
   };
 
-  return (
-    <>
+  const handleExportCSV = async () => {
+    if (!recruiterId) return;
+    setIsExporting(true);
+    try {
+      const { success, count } = await exportJobsToCSV({
+        recruiterId,
+        search,
+        platform: platformFilter,
+        contractType: contractFilter,
+        workMode: workModeFilter,
+        dateRange: dateFilter,
+        applicantsRange: applicantsFilter,
+      });
+      if (success) {
+        toast({ title: "Export Complete", description: `${count} jobs exported to CSV` });
+      } else {
+        toast({ title: "No Data", description: "No jobs match the current filters to export", variant: "destructive" });
+      }
+    } catch (err: any) {
+      toast({ title: "Export Failed", description: err.message, variant: "destructive" });
+    } finally {
+      setIsExporting(false);
+    }
+  };
       <JobDetailsModal job={detailJob} onClose={() => setDetailJob(null)} onRunATS={(j) => { setDetailJob(null); setAtsJob(j); }} />
       <ATSMatcherModal job={atsJob} candidates={candidatesData} cvs={cvsData} onClose={() => setAtsJob(null)} />
       <UpdateCVModal job={updateCVJob} candidates={candidatesData} cvs={cvsData} onClose={() => setUpdateCVJob(null)} />
