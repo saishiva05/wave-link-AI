@@ -66,7 +66,7 @@ const CandidateDashboardPage = () => {
 
         {/* Stats Cards - all stages */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.05 }}>
-          <h3 className="text-xl font-semibold text-secondary-900 font-display mb-5">Application Status Overview</h3>
+           <h3 className="text-lg md:text-xl font-semibold text-secondary-900 font-display mb-4 md:mb-5">Application Status Overview</h3>
           <CandidateStatsCards stats={stats} onFilter={(status) => navigate(`/candidate/applications${status ? `?status=${status}` : ""}`)} />
         </motion.div>
 
