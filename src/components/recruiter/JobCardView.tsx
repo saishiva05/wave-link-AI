@@ -133,7 +133,7 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                   <Timer className="w-3.5 h-3.5" />Added {timeAgo(job.scraped_at)}
                 </span>
                 {job.applications_count && (
-                  <span className="inline-flex items-center gap-1.5 font-bold text-blue-700 bg-gradient-to-r from-blue-50 to-info-50 px-2 py-1 rounded-md border border-blue-200">
+                  <span className="inline-flex items-center gap-1.5 font-bold text-blue-700 bg-gradient-to-r from-blue-50 to-info-50 px-2 py-1 rounded-md border border-blue-200 dark:from-blue-950 dark:to-blue-900/50 dark:text-blue-400 dark:border-blue-800">
                     <Users className="w-3.5 h-3.5" />{job.applications_count}
                   </span>
                 )}
