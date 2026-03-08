@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Briefcase, FileText, User, HelpCircle, LogOut, ChevronLeft, ChevronRight, X, MessageSquare, Newspaper,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import wavelynkLogo from "@/assets/wavelynk-logo.png";
+import wavelynkIcon from "@/assets/wavelynk-icon.png";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 
