@@ -1,7 +1,7 @@
 import { TrendingUp } from "lucide-react";
 import { useRecruiterPlatformBreakdown } from "@/hooks/useRecruiterData";
 import { Skeleton } from "@/components/ui/skeleton";
-import wavelynkLogo from "@/assets/wavelynk-logo.png";
+import wavelynkIcon from "@/assets/wavelynk-icon.png";
 
 const PlatformBreakdown = () => {
   const { data, isLoading } = useRecruiterPlatformBreakdown();

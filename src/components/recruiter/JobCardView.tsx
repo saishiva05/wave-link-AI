@@ -36,7 +36,7 @@ const PlatformBadge = ({ platform }: { platform: string }) => {
 
   return (
     <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-md bg-primary/10 text-primary">
-      <img src={wavelynkLogo} alt={label} className="w-3.5 h-3.5 object-contain" />
+      <img src={wavelynkIcon} alt={label} className="w-4 h-4 object-contain" />
       {label}
     </span>
   );
