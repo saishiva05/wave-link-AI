@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import UpdatedCVsBadge from "@/components/recruiter/UpdatedCVsBadge";
 import { getPlatformDisplayName } from "@/lib/platformBranding";
-import wavelynkLogo from "@/assets/wavelynk-logo.png";
+import wavelynkIcon from "@/assets/wavelynk-icon.png";
 
 interface JobTableViewProps {
   jobs: ScrapedJob[];
@@ -47,7 +47,7 @@ const PlatformIcon = ({ platform }: { platform: string }) => {
     <Tooltip>
       <TooltipTrigger asChild>
         <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
-          <img src={wavelynkLogo} alt={label} className="w-5 h-5 object-contain" />
+          <img src={wavelynkIcon} alt={label} className="w-5 h-5 object-contain" />
         </span>
       </TooltipTrigger>
       <TooltipContent>{label}</TooltipContent>
