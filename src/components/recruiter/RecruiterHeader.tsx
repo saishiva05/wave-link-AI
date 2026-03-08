@@ -93,7 +93,7 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
       </div>
 
       {/* Right side */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 md:gap-2 shrink-0">
         <ThemeToggle />
         {/* Quick Actions */}
         <div className="relative" ref={quickRef}>
