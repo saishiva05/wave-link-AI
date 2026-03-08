@@ -141,7 +141,7 @@ const CandidateMessagesPage = () => {
           </div>
 
           {/* Messages list */}
-          <div className="h-[400px] overflow-y-auto p-6 space-y-4 bg-muted/20">
+          <div className="h-[300px] md:h-[400px] overflow-y-auto p-3 md:p-6 space-y-3 md:space-y-4 bg-muted/20">
             {isLoading ? (
               <div className="flex items-center justify-center py-16">
                 <Loader2 className="w-6 h-6 text-primary animate-spin" />
