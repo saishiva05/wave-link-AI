@@ -115,7 +115,7 @@ const CreateCandidateModal = ({ open, onOpenChange }: CreateCandidateModalProps)
             <div className="w-16 h-16 rounded-full bg-success-50 flex items-center justify-center mb-4">
               <CheckCircle className="w-8 h-8 text-success-500" />
             </div>
-            <h2 className="text-xl font-bold text-secondary-900 mb-2 font-display">Candidate Account Created!</h2>
+            <h2 className="text-xl font-bold text-foreground mb-2 font-display">Candidate Account Created!</h2>
             <p className="text-sm text-muted-foreground mb-6 max-w-sm">
               {formData.fullName}'s account has been created and assigned to a recruiter.
             </p>
@@ -134,16 +134,16 @@ const CreateCandidateModal = ({ open, onOpenChange }: CreateCandidateModalProps)
                   <GraduationCap className="w-5 h-5 text-info-500" />
                 </div>
                 <div>
-                  <DialogTitle className="text-xl font-bold text-secondary-900 font-display">Create Candidate Account</DialogTitle>
+                  <DialogTitle className="text-xl font-bold text-foreground font-display">Create Candidate Account</DialogTitle>
                   <p className="text-sm text-muted-foreground mt-0.5">Assign this candidate to a recruiter</p>
                 </div>
               </div>
             </DialogHeader>
             <div className="px-6 py-5 space-y-4 max-h-[60vh] overflow-y-auto">
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium text-neutral-700">Full Name <span className="text-destructive">*</span></Label>
+                <Label className="text-sm font-medium text-foreground">Full Name <span className="text-destructive">*</span></Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input placeholder="Jane Doe" value={formData.fullName} onChange={(e) => updateField("fullName", e.target.value)}
                     className={cn("pl-10", errors.fullName && "border-destructive focus-visible:ring-destructive")} disabled={loading} />
                 </div>
@@ -151,9 +151,9 @@ const CreateCandidateModal = ({ open, onOpenChange }: CreateCandidateModalProps)
               </div>
 
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium text-neutral-700">Email Address <span className="text-destructive">*</span></Label>
+                <Label className="text-sm font-medium text-foreground">Email Address <span className="text-destructive">*</span></Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input type="email" placeholder="jane.doe@email.com" value={formData.email} onChange={(e) => updateField("email", e.target.value)}
                     className={cn("pl-10", errors.email && "border-destructive focus-visible:ring-destructive")} disabled={loading} />
                 </div>
@@ -161,7 +161,7 @@ const CreateCandidateModal = ({ open, onOpenChange }: CreateCandidateModalProps)
               </div>
 
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium text-neutral-700">Assign to Recruiter <span className="text-destructive">*</span></Label>
+                <Label className="text-sm font-medium text-foreground">Assign to Recruiter <span className="text-destructive">*</span></Label>
                 <Select value={formData.recruiterId} onValueChange={(val) => updateField("recruiterId", val)} disabled={loading}>
                   <SelectTrigger className={cn(errors.recruiterId && "border-destructive focus:ring-destructive")}>
                     <SelectValue placeholder="Select a recruiter..." />
@@ -177,35 +177,35 @@ const CreateCandidateModal = ({ open, onOpenChange }: CreateCandidateModalProps)
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-medium text-neutral-700">Phone</Label>
+                  <Label className="text-sm font-medium text-foreground">Phone</Label>
                   <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input type="tel" placeholder="+1 (555) 123-4567" value={formData.phone} onChange={(e) => updateField("phone", e.target.value)} className="pl-10" disabled={loading} />
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-medium text-neutral-700">Job Title</Label>
+                  <Label className="text-sm font-medium text-foreground">Job Title</Label>
                   <div className="relative">
-                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input placeholder="Software Engineer" value={formData.jobTitle} onChange={(e) => updateField("jobTitle", e.target.value)} className="pl-10" disabled={loading} />
                   </div>
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium text-neutral-700">Location</Label>
+                <Label className="text-sm font-medium text-foreground">Location</Label>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input placeholder="New York, NY" value={formData.location} onChange={(e) => updateField("location", e.target.value)} className="pl-10" disabled={loading} />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium text-neutral-700">Temporary Password</Label>
+                <Label className="text-sm font-medium text-foreground">Temporary Password</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input value={tempPassword} readOnly className="pl-10 pr-10 bg-muted font-mono text-sm" />
-                  <button type="button" onClick={handleCopy} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-primary transition-colors">
+                  <button type="button" onClick={handleCopy} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
                     {copied ? <CheckCircle className="w-4 h-4 text-success-500" /> : <Copy className="w-4 h-4" />}
                   </button>
                 </div>
