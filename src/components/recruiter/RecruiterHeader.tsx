@@ -82,14 +82,14 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
           <Menu className="w-5 h-5 text-muted-foreground" />
         </button>
 
-        <div>
-          <h1 className="text-lg md:text-xl font-bold text-foreground font-display">
-            {getGreeting()}, {fullName?.split(" ")[0] || "there"}
-          </h1>
-          <p className="text-xs md:text-sm text-muted-foreground">
-            Manage your recruitment pipeline
-          </p>
-        </div>
+         <div className="min-w-0">
+           <h1 className="text-sm md:text-xl font-bold text-foreground font-display truncate">
+             {getGreeting()}, {fullName?.split(" ")[0] || "there"}
+           </h1>
+           <p className="text-[10px] md:text-sm text-muted-foreground truncate">
+             Manage your recruitment pipeline
+           </p>
+         </div>
       </div>
 
       {/* Right side */}
