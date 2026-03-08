@@ -295,7 +295,11 @@ const AdminDashboard = () => {
                     <Pencil className="w-3 h-3" /> Edit
                   </Button>
                   {job.job_apply_url && job.job_apply_url !== "#" && (
-                    <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={() => window.open(job.job_apply_url, "_blank")}>
+                    <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={() => {
+                      let url = job.job_apply_url;
+                      if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+                      window.open(url, "_blank");
+                    }}>
                       <Eye className="w-3 h-3" /> View Listing
                     </Button>
                   )}
