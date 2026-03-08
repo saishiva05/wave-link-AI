@@ -62,7 +62,7 @@ const LoginLayout = ({
       </div>
 
       {/* Right Form Section */}
-      <div className="flex-1 lg:ml-[40%] min-h-screen flex items-center justify-center px-6 py-12 lg:px-16 bg-background wave-pattern-bg">
+      <div className="flex-1 lg:ml-[40%] min-h-screen flex items-center justify-center px-4 py-8 md:px-6 md:py-12 lg:px-16 bg-background wave-pattern-bg">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
