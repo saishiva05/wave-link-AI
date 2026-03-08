@@ -51,7 +51,7 @@ const PlatformBreakdown = () => {
           </div>
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-4">
-              <img src={wavelynkLogo} alt="WaveLynk Pro" className="w-8 h-8 object-contain brightness-0 invert" />
+              <img src={wavelynkIcon} alt="WaveLynk Pro" className="w-8 h-8 object-contain brightness-0 invert" />
               <span className="text-lg font-semibold text-white">WaveLynk Pro</span>
             </div>
             <p className="text-5xl font-bold font-display text-white mb-1">{jsearch.count.toLocaleString()}</p>
