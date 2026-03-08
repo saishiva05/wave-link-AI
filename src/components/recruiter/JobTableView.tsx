@@ -355,7 +355,7 @@ const JobExpandableRow = ({
                   </button>
                 )}
                 {hasEmails && (
-                  <button onClick={onGenerateEmail} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-orange-600 hover:bg-orange-50 transition-all">
+                  <button onClick={onGenerateEmail} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-orange-600 hover:bg-orange-50 transition-all dark:text-orange-400 dark:hover:bg-orange-950">
                     <Sparkles className="w-3.5 h-3.5" /> Generate New
                   </button>
                 )}
