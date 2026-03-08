@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import WaveLynkLogo from "@/components/WaveLynkLogo";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const mainMenuItems = [
   { title: "Dashboard", icon: LayoutDashboard, route: "/candidate/dashboard" },
