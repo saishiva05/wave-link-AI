@@ -181,7 +181,7 @@ export function useRecruiterActivity() {
           id: `scrape-${j.job_id}`,
           type: "scrape",
           title: `Job scraped: ${j.job_title}`,
-          meta: [new Date(j.scraped_at).toLocaleDateString(), j.platform_type === "linkedin" ? "LinkedIn" : "JSearch"],
+          meta: [new Date(j.scraped_at).toLocaleDateString(), j.platform_type === "linkedin" ? "WaveLynk Max" : "WaveLynk Pro"],
           time: j.scraped_at,
           timestamp: new Date(j.scraped_at).getTime(),
         });
