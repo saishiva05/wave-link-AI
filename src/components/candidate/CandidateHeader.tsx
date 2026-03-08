@@ -52,7 +52,7 @@ const CandidateHeader = ({ onMenuClick }: CandidateHeaderProps) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 md:gap-2 shrink-0">
         <ThemeToggle />
         {/* Notifications */}
         <div ref={notifRef} className="relative">
