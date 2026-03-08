@@ -746,7 +746,7 @@ const LandingPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-6">
-                <img src={wavelynkLogo} alt="WaveLynk" className="h-10 w-auto object-contain" />
+                <img src={wavelynkIcon} alt="WaveLynk" className="w-10 h-10 object-contain" />
                 <div>
                   <span className="font-display text-lg font-bold text-foreground">Wave Lynk <span className="text-primary">AI</span></span>
                   <p className="text-xs text-muted-foreground">AI-Powered Career Platform</p>
