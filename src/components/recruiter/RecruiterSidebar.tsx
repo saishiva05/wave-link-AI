@@ -106,9 +106,14 @@ const RecruiterSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: Re
       <div className="h-20 flex items-center justify-between px-3 border-b border-border">
         {!collapsed && (
           <div className="flex-1 flex justify-center">
-            <div className="bg-white dark:bg-white rounded-xl p-2.5 shadow-md">
+            <div className="flex items-center gap-2.5">
               <img src={wavelynkLogo} alt="WaveLynk" className="h-10 w-auto object-contain" />
             </div>
+          </div>
+        )}
+        {collapsed && (
+          <div className="flex-1 flex justify-center">
+            <img src={wavelynkIcon} alt="WaveLynk" className="w-8 h-8 object-contain" />
           </div>
         )}
         <button
