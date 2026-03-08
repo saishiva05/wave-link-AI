@@ -37,7 +37,7 @@ const badgeStyles = {
 
 const CandidateSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: CandidateSidebarProps) => {
   const location = useLocation();
-  const { fullName, signOut } = useAuth();
+  const { fullName, signOut, profile } = useAuth();
   const isActive = (route: string) => location.pathname === route;
   const initials = fullName ? fullName.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) : "C";
 
