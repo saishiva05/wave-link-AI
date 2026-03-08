@@ -34,7 +34,7 @@ const getGreeting = () => {
 };
 
 const mockNotifications = [
-  { id: 1, text: "Job scraping completed: 45 jobs added from LinkedIn", time: "2 hours ago", read: false, icon: Download, iconBg: "bg-primary-100", iconColor: "text-primary" },
+  { id: 1, text: "Job search completed: 45 jobs added via WaveLynk Max", time: "2 hours ago", read: false, icon: Download, iconBg: "bg-primary-100", iconColor: "text-primary" },
   { id: 2, text: "ATS analysis ready for Frontend Developer at TechCorp", time: "4 hours ago", read: false, icon: Sparkles, iconBg: "bg-warning-50", iconColor: "text-warning-500" },
   { id: 3, text: "Application submitted for John Doe", time: "1 day ago", read: true, icon: CheckCircle, iconBg: "bg-success-50", iconColor: "text-success-500" },
 ];
