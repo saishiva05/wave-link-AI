@@ -334,7 +334,7 @@ const JobExpandableRow = ({
                 {hasUpdatedCVs ? (
                   <UpdatedCVsBadge updatedCVs={updatedCVs} />
                 ) : (
-                  <button onClick={onUpdateCV} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-teal-50 to-emerald-50 text-teal-700 border border-teal-200 hover:border-teal-300 hover:shadow-md transition-all">
+                  <button onClick={onUpdateCV} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-teal-50 to-emerald-50 text-teal-700 border border-teal-200 hover:border-teal-300 hover:shadow-md transition-all dark:from-teal-950 dark:to-emerald-950 dark:text-teal-400 dark:border-teal-800 dark:hover:border-teal-700">
                     <FileText className="w-4 h-4" /> Update CV
                   </button>
                 )}
