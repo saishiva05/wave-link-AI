@@ -150,7 +150,7 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 top-12 w-[340px] bg-card rounded-xl border border-border shadow-elevated overflow-hidden animate-scale-in z-50">
+            <div className="absolute right-0 top-12 w-[calc(100vw-2rem)] sm:w-[340px] max-w-[340px] bg-card rounded-xl border border-border shadow-elevated overflow-hidden animate-scale-in z-50">
               <div className="flex items-center justify-between px-4 py-3 border-b border-border">
                 <h3 className="font-semibold text-sm text-foreground">Notifications</h3>
                 {unreadCount > 0 && (
