@@ -386,12 +386,12 @@ const LandingPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.2 + i * 0.15 }}
                 whileHover={{ y: -6, borderColor: "hsl(var(--primary) / 0.4)" }}
-                className="text-center p-6 rounded-2xl border border-border bg-card/50 backdrop-blur-sm transition-all duration-300"
+                className="text-center p-4 md:p-6 rounded-xl md:rounded-2xl border border-border bg-card/50 backdrop-blur-sm transition-all duration-300"
               >
-                <div className="font-display text-3xl lg:text-4xl font-black text-foreground">
+                <div className="font-display text-2xl md:text-3xl lg:text-4xl font-black text-foreground">
                   <AnimatedCounter target={stat.value} suffix={stat.suffix} />
                 </div>
-                <div className="text-xs text-muted-foreground mt-2 font-medium">{stat.label}</div>
+                <div className="text-[10px] md:text-xs text-muted-foreground mt-1.5 md:mt-2 font-medium">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
