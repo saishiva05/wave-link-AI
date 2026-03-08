@@ -283,6 +283,17 @@ const AdminDashboard = () => {
                   <p className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> {formatDistanceToNow(new Date(job.scraped_at), { addSuffix: true })}</p>
                 </div>
                 <div className="flex gap-2 mt-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs"
+                    onClick={() => {
+                      setEditingJob(job);
+                      setEditJobModalOpen(true);
+                    }}
+                  >
+                    <Pencil className="w-3 h-3" /> Edit
+                  </Button>
                   {job.job_apply_url && job.job_apply_url !== "#" && (
                     <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={() => window.open(job.job_apply_url, "_blank")}>
                       <Eye className="w-3 h-3" /> View Listing
