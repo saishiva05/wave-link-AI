@@ -32,7 +32,7 @@ const PlatformBreakdown = () => {
           </div>
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-4">
-              <img src={wavelynkIcon} alt="WaveLynk Max" className="w-8 h-8 object-contain brightness-0 invert" />
+              <img src={wavelynkLogo} alt="WaveLynk Max" className="w-10 h-10 object-contain brightness-0 invert" />
               <span className="text-lg font-semibold">WaveLynk Max</span>
             </div>
             <p className="text-5xl font-bold font-display mb-1">{linkedin.count.toLocaleString()}</p>
