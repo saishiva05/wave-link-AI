@@ -16,7 +16,7 @@ import {
   ClipboardCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import wavelynkIcon from "@/assets/wavelynk-icon.png";
+import WaveLynkLogo from "@/components/WaveLynkLogo";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -91,7 +91,7 @@ const AdminSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: AdminS
       {/* Header */}
       <div className="h-20 flex items-center justify-between px-3 border-b border-white/10">
         <div className="flex-1 flex items-center justify-center gap-2.5">
-          <img src={wavelynkIcon} alt="WaveLynk" className={cn(collapsed ? "w-8 h-8" : "w-10 h-10", "object-contain")} />
+          <WaveLynkLogo size={collapsed ? "md" : "lg"} />
           {!collapsed && (
             <span className="font-display text-lg font-bold text-white tracking-tight">
               Wave<span className="text-primary-400">Lynk</span>
