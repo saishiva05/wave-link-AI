@@ -176,6 +176,9 @@ const RecruiterScrapedJobs = () => {
       setIsExporting(false);
     }
   };
+
+  return (
+    <>
       <JobDetailsModal job={detailJob} onClose={() => setDetailJob(null)} onRunATS={(j) => { setDetailJob(null); setAtsJob(j); }} />
       <ATSMatcherModal job={atsJob} candidates={candidatesData} cvs={cvsData} onClose={() => setAtsJob(null)} />
       <UpdateCVModal job={updateCVJob} candidates={candidatesData} cvs={cvsData} onClose={() => setUpdateCVJob(null)} />
