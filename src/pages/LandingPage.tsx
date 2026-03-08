@@ -315,7 +315,7 @@ const LandingPage = () => {
             </motion.div>
 
             {/* Headline */}
-            <motion.h1 variants={fadeUp} custom={1} className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-extrabold leading-[0.95] mb-8 tracking-tight text-foreground">
+            <motion.h1 variants={fadeUp} custom={1} className="font-display text-3xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-extrabold leading-[0.95] mb-5 md:mb-8 tracking-tight text-foreground">
               The Unfair{" "}
               <br className="hidden md:block" />
               Career{" "}
