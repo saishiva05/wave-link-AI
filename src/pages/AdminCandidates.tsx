@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { GraduationCap, ChevronLeft, ChevronRight, Search, MoreVertical, Eye, Power } from "lucide-react";
+import { GraduationCap, ChevronLeft, ChevronRight, Search, MoreVertical, Eye, Power, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -10,11 +10,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import CreateCandidateModal from "@/components/admin/CreateCandidateModal";
+import CandidateDetailModal from "@/components/admin/CandidateDetailModal";
 
 const AdminCandidates = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
   const perPage = 10;
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -52,6 +55,11 @@ const AdminCandidates = () => {
     queryClient.invalidateQueries({ queryKey: ["admin"] });
   };
 
+  const openDetail = (candidate: any) => {
+    setSelectedCandidate(candidate);
+    setDetailOpen(true);
+  };
+
   const getInitials = (name: string) => name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
 
   return (
@@ -59,7 +67,7 @@ const AdminCandidates = () => {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
         className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-secondary-900 font-display">Manage Candidates</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground font-display">Manage Candidates</h1>
           <p className="text-base text-muted-foreground mt-1">Create and manage candidate accounts across all recruiters</p>
         </div>
         <Button variant="portal" size="lg" onClick={() => setCreateModalOpen(true)}>
@@ -75,7 +83,7 @@ const AdminCandidates = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input type="text" value={search} onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
               placeholder="Search by name or email..."
-              className="w-full h-10 pl-10 pr-3 text-sm rounded-lg border border-border bg-card outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground" />
+              className="w-full h-10 pl-10 pr-3 text-sm rounded-lg border border-border bg-background text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground" />
           </div>
           <span className="text-sm text-muted-foreground hidden sm:inline">{total} total candidates</span>
         </div>
@@ -84,8 +92,8 @@ const AdminCandidates = () => {
           <div className="p-6 space-y-4">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-14 w-full" />)}</div>
         ) : candidates.length === 0 && !search ? (
           <div className="flex flex-col items-center justify-center py-16 px-8">
-            <GraduationCap className="w-12 h-12 text-neutral-300 mb-4" />
-            <h3 className="text-lg font-semibold text-neutral-700 mb-2">No candidates yet</h3>
+            <GraduationCap className="w-12 h-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold text-foreground mb-2">No candidates yet</h3>
             <p className="text-sm text-muted-foreground mb-6">Create your first candidate account to get started.</p>
             <Button variant="portal" size="lg" onClick={() => setCreateModalOpen(true)}>
               <GraduationCap className="w-4 h-4" /> Create New Candidate
@@ -115,32 +123,33 @@ const AdminCandidates = () => {
                     const isActive = user?.is_active ?? true;
                     const recruiterName = (c.recruiters as any)?.users?.full_name || "Unassigned";
                     return (
-                      <tr key={c.candidate_id} className="border-b border-border hover:bg-muted/50 transition-colors">
+                      <tr key={c.candidate_id} className="border-b border-border hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => openDetail(c)}>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-full bg-info-500 flex items-center justify-center text-white text-xs font-semibold shrink-0">{getInitials(name)}</div>
+                            <div className="w-9 h-9 rounded-full bg-accent flex items-center justify-center text-accent-foreground text-xs font-semibold shrink-0">{getInitials(name)}</div>
                             <div className="min-w-0">
-                              <p className="text-sm font-medium text-secondary-900 truncate">{name}</p>
+                              <p className="text-sm font-medium text-foreground truncate">{name}</p>
                               <p className="text-xs text-muted-foreground truncate">{email}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-sm text-neutral-600">{c.current_job_title || "—"}</td>
-                        <td className="px-4 py-3 text-sm text-neutral-600">{c.current_location || "—"}</td>
-                        <td className="px-4 py-3 text-sm text-primary-600 font-medium">{recruiterName}</td>
-                        <td className="px-4 py-3 text-sm text-neutral-600">{format(new Date(c.created_at), "MMM d, yyyy")}</td>
+                        <td className="px-4 py-3 text-sm text-muted-foreground">{c.current_job_title || "—"}</td>
+                        <td className="px-4 py-3 text-sm text-muted-foreground">{c.current_location || "—"}</td>
+                        <td className="px-4 py-3 text-sm text-primary font-medium">{recruiterName}</td>
+                        <td className="px-4 py-3 text-sm text-muted-foreground">{format(new Date(c.created_at), "MMM d, yyyy")}</td>
                         <td className="px-4 py-3">
                           <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
-                            isActive ? "bg-success-50 text-success-700" : "bg-muted text-muted-foreground"
+                            isActive ? "bg-success-50 text-success-700 dark:bg-success-500/20 dark:text-success-400" : "bg-muted text-muted-foreground"
                           )}>{isActive ? "Active" : "Inactive"}</span>
                         </td>
-                        <td className="px-4 py-3 text-right">
+                        <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <button className="p-1.5 rounded-md hover:bg-muted text-neutral-500 hover:text-primary transition-colors"><MoreVertical className="w-4 h-4" /></button>
+                              <button className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-primary transition-colors"><MoreVertical className="w-4 h-4" /></button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-44">
-                              <DropdownMenuItem><Eye className="w-4 h-4 mr-2" /> View Details</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => openDetail(c)}><Eye className="w-4 h-4 mr-2" /> View Details</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => openDetail(c)}><Edit className="w-4 h-4 mr-2" /> Edit Candidate</DropdownMenuItem>
                               <DropdownMenuItem onClick={() => toggleActive(c.user_id, isActive)}>
                                 <Power className="w-4 h-4 mr-2" />{isActive ? "Deactivate" : "Activate"}
                               </DropdownMenuItem>
@@ -162,20 +171,20 @@ const AdminCandidates = () => {
                 const isActive = user?.is_active ?? true;
                 const recruiterName = (c.recruiters as any)?.users?.full_name || "Unassigned";
                 return (
-                  <div key={c.candidate_id} className="p-4 space-y-2">
+                  <div key={c.candidate_id} className="p-4 space-y-2 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => openDetail(c)}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-info-500 flex items-center justify-center text-white text-xs font-semibold">{getInitials(name)}</div>
+                        <div className="w-9 h-9 rounded-full bg-accent flex items-center justify-center text-accent-foreground text-xs font-semibold">{getInitials(name)}</div>
                         <div>
-                          <p className="text-sm font-medium text-secondary-900">{name}</p>
+                          <p className="text-sm font-medium text-foreground">{name}</p>
                           <p className="text-xs text-muted-foreground">{user?.email}</p>
                         </div>
                       </div>
-                      <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium", isActive ? "bg-success-50 text-success-700" : "bg-muted text-muted-foreground")}>{isActive ? "Active" : "Inactive"}</span>
+                      <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium", isActive ? "bg-success-50 text-success-700 dark:bg-success-500/20 dark:text-success-400" : "bg-muted text-muted-foreground")}>{isActive ? "Active" : "Inactive"}</span>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div><span className="text-muted-foreground">Recruiter:</span> <span className="text-primary-600 font-medium">{recruiterName}</span></div>
-                      <div><span className="text-muted-foreground">Title:</span> {c.current_job_title || "—"}</div>
+                      <div><span className="text-muted-foreground">Recruiter:</span> <span className="text-primary font-medium">{recruiterName}</span></div>
+                      <div><span className="text-muted-foreground">Title:</span> <span className="text-foreground">{c.current_job_title || "—"}</span></div>
                     </div>
                   </div>
                 );
@@ -187,13 +196,13 @@ const AdminCandidates = () => {
               <p className="text-sm text-muted-foreground">Showing {(currentPage - 1) * perPage + 1}–{Math.min(currentPage * perPage, total)} of {total}</p>
               <div className="flex items-center gap-1">
                 <button onClick={() => setCurrentPage(Math.max(1, currentPage - 1))} disabled={currentPage === 1}
-                  className="p-1.5 rounded border border-border hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"><ChevronLeft className="w-4 h-4" /></button>
+                  className="p-1.5 rounded border border-border hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-foreground"><ChevronLeft className="w-4 h-4" /></button>
                 {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((p) => (
                   <button key={p} onClick={() => setCurrentPage(p)}
-                    className={cn("w-8 h-8 rounded text-sm font-medium transition-colors", currentPage === p ? "bg-primary text-primary-foreground" : "border border-border hover:bg-muted")}>{p}</button>
+                    className={cn("w-8 h-8 rounded text-sm font-medium transition-colors", currentPage === p ? "bg-primary text-primary-foreground" : "border border-border hover:bg-muted text-foreground")}>{p}</button>
                 ))}
                 <button onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages}
-                  className="p-1.5 rounded border border-border hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"><ChevronRight className="w-4 h-4" /></button>
+                  className="p-1.5 rounded border border-border hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-foreground"><ChevronRight className="w-4 h-4" /></button>
               </div>
             </div>
           </>
@@ -201,6 +210,7 @@ const AdminCandidates = () => {
       </motion.div>
 
       <CreateCandidateModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
+      <CandidateDetailModal open={detailOpen} onOpenChange={setDetailOpen} candidate={selectedCandidate} />
     </div>
   );
 };

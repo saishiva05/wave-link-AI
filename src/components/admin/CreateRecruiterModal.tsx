@@ -153,7 +153,7 @@ const CreateRecruiterModal = ({ open, onOpenChange }: CreateRecruiterModalProps)
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input value={tempPassword} readOnly className="pl-10 pr-10 bg-muted font-mono text-sm" />
-                  <button type="button" onClick={handleCopy} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-primary transition-colors" title="Copy password">
+                  <button type="button" onClick={handleCopy} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors" title="Copy password">
                     {copied ? <CheckCircle className="w-4 h-4 text-success-500" /> : <Copy className="w-4 h-4" />}
                   </button>
                 </div>

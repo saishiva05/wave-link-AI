@@ -30,7 +30,7 @@ const AdminSupport = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <h1 className="text-2xl md:text-3xl font-bold text-secondary-900 font-display">Help & Support</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground font-display">Help & Support</h1>
         <p className="text-base text-muted-foreground mt-1">Get help with the platform</p>
       </motion.div>
 
@@ -48,7 +48,7 @@ const AdminSupport = () => {
             <div className="w-12 h-12 rounded-full bg-primary-50 flex items-center justify-center mx-auto mb-4">
               <item.icon className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="text-base font-semibold text-secondary-900 mb-2">{item.title}</h3>
+            <h3 className="text-base font-semibold text-foreground mb-2">{item.title}</h3>
             <p className="text-sm text-muted-foreground mb-4">{item.description}</p>
             <button className="text-sm text-primary font-medium hover:underline">
               {item.action} →
@@ -63,7 +63,7 @@ const AdminSupport = () => {
         transition={{ duration: 0.3, delay: 0.1 }}
         className="bg-card border border-border rounded-xl p-6 shadow-card"
       >
-        <h2 className="text-lg font-semibold text-secondary-900 mb-4">Frequently Asked Questions</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-4">Frequently Asked Questions</h2>
         <div className="space-y-4">
           {[
             { q: "How do I create a new recruiter account?", a: "Navigate to Recruiters page and click 'Create New Recruiter' button." },
@@ -71,7 +71,7 @@ const AdminSupport = () => {
             { q: "How do I view platform-wide analytics?", a: "Go to the Analytics section from the sidebar for detailed reports." },
           ].map((faq) => (
             <div key={faq.q} className="border-b border-border pb-3 last:border-0">
-              <p className="text-sm font-medium text-secondary-900 mb-1">{faq.q}</p>
+              <p className="text-sm font-medium text-foreground mb-1">{faq.q}</p>
               <p className="text-sm text-muted-foreground">{faq.a}</p>
             </div>
           ))}

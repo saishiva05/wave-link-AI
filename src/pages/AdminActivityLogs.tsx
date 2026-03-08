@@ -26,7 +26,7 @@ const AdminActivityLogs = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <h1 className="text-2xl md:text-3xl font-bold text-secondary-900 font-display">
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground font-display">
           Activity Logs
         </h1>
         <p className="text-base text-muted-foreground mt-1">
@@ -47,9 +47,9 @@ const AdminActivityLogs = () => {
                 <log.icon className="w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-secondary-900">{log.action}</p>
+                <p className="text-sm font-medium text-foreground">{log.action}</p>
                 <p className="text-sm text-muted-foreground">
-                  by <span className="font-medium text-neutral-700">{log.user}</span> — {log.target}
+                  by <span className="font-medium text-foreground">{log.user}</span> — {log.target}
                 </p>
               </div>
               <span className="text-xs text-muted-foreground whitespace-nowrap">{log.time}</span>

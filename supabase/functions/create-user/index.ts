@@ -4,23 +4,25 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 interface CreateUserRequest {
-  email: string;
-  full_name: string;
-  password: string;
-  role: "admin" | "recruiter" | "candidate";
+  action?: "create" | "update-password";
+  email?: string;
+  full_name?: string;
+  password?: string;
+  role?: "admin" | "recruiter" | "candidate";
   phone?: string;
   company_name?: string;
   company_website?: string;
-  // For candidates
   assigned_recruiter_id?: string;
   current_job_title?: string;
   current_location?: string;
   experience_years?: number;
   skills?: string[];
+  // For password update
+  userId?: string;
 }
 
 serve(async (req: Request) => {
@@ -29,7 +31,6 @@ serve(async (req: Request) => {
   }
 
   try {
-    // Verify the calling user is an admin or recruiter
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Missing authorization" }), {
@@ -41,7 +42,6 @@ serve(async (req: Request) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    // Client with the caller's token to check their role
     const callerClient = createClient(supabaseUrl, serviceRoleKey, {
       global: { headers: { Authorization: authHeader } },
     });
@@ -57,10 +57,8 @@ serve(async (req: Request) => {
       });
     }
 
-    // Admin client with service role for privileged operations
     const adminClient = createClient(supabaseUrl, serviceRoleKey);
 
-    // Check caller role
     const { data: callerRoles } = await adminClient
       .from("user_roles")
       .select("role")
@@ -72,7 +70,43 @@ serve(async (req: Request) => {
 
     const body: CreateUserRequest = await req.json();
 
-    // Only admins can create admins or recruiters
+    // Handle password update action
+    if (body.action === "update-password") {
+      if (!isAdmin) {
+        return new Response(
+          JSON.stringify({ error: "Only admins can change user passwords" }),
+          { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+      if (!body.userId || !body.password) {
+        return new Response(
+          JSON.stringify({ error: "userId and password are required" }),
+          { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+      const { error: updateError } = await adminClient.auth.admin.updateUserById(body.userId, {
+        password: body.password,
+      });
+      if (updateError) {
+        return new Response(JSON.stringify({ error: updateError.message }), {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+      return new Response(
+        JSON.stringify({ success: true, message: "Password updated successfully" }),
+        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Default: create user flow
+    if (!body.email || !body.full_name || !body.password || !body.role) {
+      return new Response(
+        JSON.stringify({ error: "email, full_name, password, and role are required" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
     if ((body.role === "recruiter" || body.role === "admin") && !isAdmin) {
       return new Response(
         JSON.stringify({ error: `Only admins can create ${body.role} accounts` }),
@@ -80,7 +114,6 @@ serve(async (req: Request) => {
       );
     }
 
-    // Only admins and recruiters can create candidates
     if (body.role === "candidate" && !isAdmin && !isRecruiter) {
       return new Response(
         JSON.stringify({ error: "Only admins or recruiters can create candidate accounts" }),
@@ -88,7 +121,6 @@ serve(async (req: Request) => {
       );
     }
 
-    // 1. Create auth user
     const { data: authData, error: authError } = await adminClient.auth.admin.createUser({
       email: body.email,
       password: body.password,
@@ -105,7 +137,6 @@ serve(async (req: Request) => {
 
     const newUserId = authData.user.id;
 
-    // 2. Insert into users table
     const { error: userError } = await adminClient.from("users").insert({
       user_id: newUserId,
       email: body.email,
@@ -114,7 +145,6 @@ serve(async (req: Request) => {
     });
 
     if (userError) {
-      // Cleanup: delete auth user
       await adminClient.auth.admin.deleteUser(newUserId);
       return new Response(JSON.stringify({ error: `Failed to create user profile: ${userError.message}` }), {
         status: 400,
@@ -122,7 +152,6 @@ serve(async (req: Request) => {
       });
     }
 
-    // 3. Insert role
     const { error: roleError } = await adminClient.from("user_roles").insert({
       user_id: newUserId,
       role: body.role,
@@ -136,7 +165,6 @@ serve(async (req: Request) => {
       });
     }
 
-    // 4. Create role-specific record
     if (body.role === "recruiter") {
       const { error: recruiterError } = await adminClient.from("recruiters").insert({
         user_id: newUserId,
@@ -154,7 +182,6 @@ serve(async (req: Request) => {
         );
       }
     } else if (body.role === "candidate") {
-      // Get the recruiter_id for the current user if they're a recruiter
       let assignedRecruiterId = body.assigned_recruiter_id;
       if (!assignedRecruiterId && isRecruiter) {
         const { data: recruiterData } = await adminClient
@@ -173,7 +200,6 @@ serve(async (req: Request) => {
         );
       }
 
-      // Get created_by_recruiter_id
       let createdByRecruiterId = assignedRecruiterId;
       if (isRecruiter) {
         const { data: rd } = await adminClient
