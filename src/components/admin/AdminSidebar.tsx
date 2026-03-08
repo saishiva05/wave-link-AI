@@ -128,8 +128,12 @@ const AdminSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: AdminS
         {!collapsed ? (
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white text-sm font-semibold shrink-0">
-                {initials}
+              <div className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white text-sm font-semibold shrink-0 overflow-hidden">
+                {profile?.avatar_url ? (
+                  <img src={profile.avatar_url} alt={fullName || "Admin"} className="w-full h-full object-cover" />
+                ) : (
+                  initials
+                )}
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-medium text-white truncate">{fullName || "Admin"}</p>
@@ -149,9 +153,13 @@ const AdminSidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }: AdminS
             <TooltipTrigger asChild>
               <button
                 onClick={() => signOut()}
-                className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white text-sm font-semibold mx-auto hover:ring-2 hover:ring-primary-400 transition-all"
+                className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white text-sm font-semibold mx-auto hover:ring-2 hover:ring-primary-400 transition-all overflow-hidden"
               >
-                {initials}
+                {profile?.avatar_url ? (
+                  <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  initials
+                )}
               </button>
             </TooltipTrigger>
             <TooltipContent side="right" className="bg-secondary-800 text-white border-secondary-700">
