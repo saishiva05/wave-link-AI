@@ -81,7 +81,7 @@ const AdminHeader = ({ onMenuClick }: AdminHeaderProps) => {
   return (
     <header className="h-14 md:h-16 bg-card border-b border-border sticky top-0 z-30 flex items-center justify-between px-3 md:px-8">
       {/* Left side */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 md:gap-4 min-w-0">
         <button
           onClick={onMenuClick}
           className="lg:hidden flex items-center justify-center w-9 h-9 rounded-md hover:bg-muted transition-colors"
