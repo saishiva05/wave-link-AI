@@ -43,12 +43,12 @@ const CandidateHeader = ({ onMenuClick }: CandidateHeaderProps) => {
   };
 
   return (
-    <header className="h-16 bg-card border-b border-border sticky top-0 z-40 px-4 md:px-8 flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <button onClick={onMenuClick} className="lg:hidden w-10 h-10 rounded-lg flex items-center justify-center hover:bg-muted text-muted-foreground transition-colors"><Menu className="w-5 h-5" /></button>
-        <div>
-          <h2 className="text-lg font-semibold text-foreground font-display">{greeting}, {firstName}</h2>
-          <p className="text-xs text-muted-foreground flex items-center gap-1"><Briefcase className="w-3 h-3 text-muted-foreground" /> You have {stats.total} application{stats.total !== 1 ? "s" : ""}</p>
+    <header className="h-14 md:h-16 bg-card border-b border-border sticky top-0 z-40 px-3 md:px-8 flex items-center justify-between">
+      <div className="flex items-center gap-2 md:gap-4 min-w-0">
+        <button onClick={onMenuClick} className="lg:hidden w-9 h-9 rounded-lg flex items-center justify-center hover:bg-muted text-muted-foreground transition-colors shrink-0"><Menu className="w-5 h-5" /></button>
+        <div className="min-w-0">
+          <h2 className="text-sm md:text-lg font-semibold text-foreground font-display truncate">{greeting}, {firstName}</h2>
+          <p className="text-[10px] md:text-xs text-muted-foreground flex items-center gap-1 truncate"><Briefcase className="w-3 h-3 text-muted-foreground shrink-0" /> {stats.total} application{stats.total !== 1 ? "s" : ""}</p>
         </div>
       </div>
 
