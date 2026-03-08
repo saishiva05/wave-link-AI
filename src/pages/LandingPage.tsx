@@ -350,8 +350,8 @@ const LandingPage = () => {
                   className="absolute -inset-1 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                   style={{ background: "hsl(var(--primary) / 0.3)", filter: "blur(12px)" }}
                 />
-                <Button size="lg" onClick={() => navigate("/login")} className="relative text-base px-10 h-14 font-bold shadow-xl rounded-xl bg-primary text-primary-foreground hover:bg-primary/90">
-                  Sign In <ArrowRight className="ml-2 w-5 h-5" />
+                <Button size="lg" onClick={() => navigate("/login")} className="relative text-sm md:text-base px-8 md:px-10 h-12 md:h-14 font-bold shadow-xl rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto">
+                  Sign In <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }}>
