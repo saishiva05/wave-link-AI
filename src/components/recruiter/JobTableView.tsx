@@ -325,7 +325,7 @@ const JobExpandableRow = ({
                   </button>
                 )}
                 {hasATS && (
-                  <button onClick={onRunATS} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-purple-600 hover:bg-purple-50 transition-all">
+                  <button onClick={onRunATS} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-purple-600 hover:bg-purple-50 transition-all dark:text-purple-400 dark:hover:bg-purple-950">
                     <Zap className="w-3.5 h-3.5" /> Run Again
                   </button>
                 )}
