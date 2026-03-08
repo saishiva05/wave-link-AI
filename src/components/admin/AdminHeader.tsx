@@ -79,9 +79,9 @@ const AdminHeader = ({ onMenuClick }: AdminHeaderProps) => {
   };
 
   return (
-    <header className="h-16 bg-card border-b border-border sticky top-0 z-30 flex items-center justify-between px-4 md:px-8">
+    <header className="h-14 md:h-16 bg-card border-b border-border sticky top-0 z-30 flex items-center justify-between px-3 md:px-8">
       {/* Left side */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 md:gap-4 min-w-0">
         <button
           onClick={onMenuClick}
           className="lg:hidden flex items-center justify-center w-9 h-9 rounded-md hover:bg-muted transition-colors"
@@ -104,7 +104,7 @@ const AdminHeader = ({ onMenuClick }: AdminHeaderProps) => {
       </div>
 
       {/* Right side */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 md:gap-2 shrink-0">
         <ThemeToggle />
         {/* Search */}
         <div className="hidden lg:flex items-center bg-muted rounded-lg px-3 py-2 w-[260px] border border-transparent focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
@@ -130,7 +130,7 @@ const AdminHeader = ({ onMenuClick }: AdminHeaderProps) => {
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 top-12 w-80 bg-card rounded-xl border border-border shadow-elevated overflow-hidden animate-scale-in">
+            <div className="absolute right-0 top-12 w-[calc(100vw-2rem)] sm:w-80 max-w-80 bg-card rounded-xl border border-border shadow-elevated overflow-hidden animate-scale-in">
               <div className="flex items-center justify-between px-4 py-3 border-b border-border">
                 <h3 className="font-semibold text-sm text-foreground">Notifications</h3>
                 {unreadCount > 0 && (

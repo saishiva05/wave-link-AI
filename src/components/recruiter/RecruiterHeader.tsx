@@ -71,9 +71,9 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
   };
 
   return (
-    <header className="h-16 bg-card border-b border-border sticky top-0 z-30 flex items-center justify-between px-4 md:px-8">
+    <header className="h-14 md:h-16 bg-card border-b border-border sticky top-0 z-30 flex items-center justify-between px-3 md:px-8">
       {/* Left side */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 md:gap-4 min-w-0">
         <button
           onClick={onMenuClick}
           className="lg:hidden flex items-center justify-center w-9 h-9 rounded-md hover:bg-muted transition-colors"
@@ -82,18 +82,18 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
           <Menu className="w-5 h-5 text-muted-foreground" />
         </button>
 
-        <div>
-          <h1 className="text-lg md:text-xl font-bold text-foreground font-display">
-            {getGreeting()}, {fullName?.split(" ")[0] || "there"}
-          </h1>
-          <p className="text-xs md:text-sm text-muted-foreground">
-            Manage your recruitment pipeline
-          </p>
-        </div>
+         <div className="min-w-0">
+           <h1 className="text-sm md:text-xl font-bold text-foreground font-display truncate">
+             {getGreeting()}, {fullName?.split(" ")[0] || "there"}
+           </h1>
+           <p className="text-[10px] md:text-sm text-muted-foreground truncate">
+             Manage your recruitment pipeline
+           </p>
+         </div>
       </div>
 
       {/* Right side */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 md:gap-2 shrink-0">
         <ThemeToggle />
         {/* Quick Actions */}
         <div className="relative" ref={quickRef}>
@@ -150,7 +150,7 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 top-12 w-[340px] bg-card rounded-xl border border-border shadow-elevated overflow-hidden animate-scale-in z-50">
+            <div className="absolute right-0 top-12 w-[calc(100vw-2rem)] sm:w-[340px] max-w-[340px] bg-card rounded-xl border border-border shadow-elevated overflow-hidden animate-scale-in z-50">
               <div className="flex items-center justify-between px-4 py-3 border-b border-border">
                 <h3 className="font-semibold text-sm text-foreground">Notifications</h3>
                 {unreadCount > 0 && (

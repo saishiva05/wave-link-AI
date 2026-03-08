@@ -23,23 +23,23 @@ const LoginLayout = ({
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Left Branding Section */}
-      <div className={`${gradient} lg:w-[40%] lg:fixed lg:inset-y-0 lg:left-0 flex flex-col justify-between p-8 lg:p-16`}>
+      <div className={`${gradient} lg:w-[40%] lg:fixed lg:inset-y-0 lg:left-0 flex flex-col justify-between p-6 md:p-8 lg:p-16`}>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4 }}
           className="relative z-10"
         >
-          <div className="flex items-center gap-3 mb-8 lg:mb-12">
-            <WaveLynkLogo size="xl" />
-            <span className="font-display text-xl lg:text-2xl font-bold text-primary-foreground tracking-tight">
+          <div className="flex items-center gap-2.5 md:gap-3 mb-5 lg:mb-12">
+            <WaveLynkLogo size="lg" />
+            <span className="font-display text-lg lg:text-2xl font-bold text-primary-foreground tracking-tight">
               Wave<span className="opacity-80">Lynk</span> AI
             </span>
           </div>
-          <h1 className="font-display text-2xl lg:text-4xl font-bold text-primary-foreground mb-4">
+          <h1 className="font-display text-xl lg:text-4xl font-bold text-primary-foreground mb-2 lg:mb-4">
             {heading}
           </h1>
-          <p className="text-primary-foreground/70 text-base lg:text-lg leading-relaxed mb-8 lg:mb-12 max-w-md">
+          <p className="text-primary-foreground/70 text-sm lg:text-lg leading-relaxed mb-5 lg:mb-12 max-w-md">
             {description}
           </p>
 
@@ -62,7 +62,7 @@ const LoginLayout = ({
       </div>
 
       {/* Right Form Section */}
-      <div className="flex-1 lg:ml-[40%] min-h-screen flex items-center justify-center px-6 py-12 lg:px-16 bg-background wave-pattern-bg">
+      <div className="flex-1 lg:ml-[40%] min-h-screen flex items-center justify-center px-4 py-8 md:px-6 md:py-12 lg:px-16 bg-background wave-pattern-bg">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}

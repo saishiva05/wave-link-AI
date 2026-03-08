@@ -113,15 +113,15 @@ const CandidateMessagesPage = () => {
   });
 
   return (
-    <div className="space-y-6 max-w-[900px] mx-auto">
+    <div className="space-y-4 md:space-y-6 max-w-[900px] mx-auto">
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-        <nav className="flex items-center gap-1.5 text-sm mb-4">
+        <nav className="flex items-center gap-1.5 text-xs md:text-sm mb-3 md:mb-4">
           <button onClick={() => navigate("/candidate/dashboard")} className="text-neutral-500 hover:text-primary transition-colors">Dashboard</button>
           <span className="text-neutral-300">/</span>
           <span className="text-foreground font-semibold">Messages</span>
         </nav>
-        <h1 className="text-2xl md:text-4xl font-bold text-foreground font-display">Messages</h1>
-        <p className="text-base text-muted-foreground mt-1">
+        <h1 className="text-xl md:text-4xl font-bold text-foreground font-display">Messages</h1>
+        <p className="text-sm md:text-base text-muted-foreground mt-1">
           Communicate with your recruiter {recruiter.name !== "Unknown" ? `— ${recruiter.name}` : ""}
         </p>
       </motion.div>
@@ -130,18 +130,18 @@ const CandidateMessagesPage = () => {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
         <div className="bg-card border border-border rounded-xl shadow-xs overflow-hidden">
           {/* Recruiter header */}
-          <div className="px-6 py-4 border-b border-border bg-muted/50 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-semibold shrink-0">
+          <div className="px-4 md:px-6 py-3 md:py-4 border-b border-border bg-muted/50 flex items-center gap-3">
+            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs md:text-sm font-semibold shrink-0">
               {recruiter.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)}
             </div>
-            <div>
-              <p className="text-sm font-semibold text-foreground">{recruiter.name}</p>
-              <p className="text-xs text-muted-foreground">{recruiter.company} • {recruiter.email}</p>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-foreground truncate">{recruiter.name}</p>
+              <p className="text-xs text-muted-foreground truncate">{recruiter.company} • {recruiter.email}</p>
             </div>
           </div>
 
           {/* Messages list */}
-          <div className="h-[400px] overflow-y-auto p-6 space-y-4 bg-muted/20">
+          <div className="h-[300px] md:h-[400px] overflow-y-auto p-3 md:p-6 space-y-3 md:space-y-4 bg-muted/20">
             {isLoading ? (
               <div className="flex items-center justify-center py-16">
                 <Loader2 className="w-6 h-6 text-primary animate-spin" />
@@ -157,7 +157,7 @@ const CandidateMessagesPage = () => {
                 const isMe = msg.sender_user_id === user?.id;
                 return (
                   <div key={msg.message_id} className={cn("flex", isMe ? "justify-end" : "justify-start")}>
-                    <div className={cn("max-w-[75%] rounded-2xl px-5 py-3 shadow-xs", isMe ? "bg-primary text-primary-foreground rounded-br-md" : "bg-card border border-border text-foreground rounded-bl-md")}>
+                    <div className={cn("max-w-[85%] md:max-w-[75%] rounded-2xl px-4 md:px-5 py-2.5 md:py-3 shadow-xs", isMe ? "bg-primary text-primary-foreground rounded-br-md" : "bg-card border border-border text-foreground rounded-bl-md")}>
                       {msg.subject && (
                         <p className={cn("text-xs font-semibold mb-1", isMe ? "text-primary-foreground/80" : "text-primary-600")}>{msg.subject}</p>
                       )}
@@ -175,20 +175,20 @@ const CandidateMessagesPage = () => {
           </div>
 
           {/* Compose */}
-          <div className="p-4 border-t border-border bg-card">
-            <div className="flex gap-3">
-              <div className="flex-1 space-y-2">
+          <div className="p-3 md:p-4 border-t border-border bg-card">
+            <div className="flex gap-2 md:gap-3">
+              <div className="flex-1 space-y-1.5 md:space-y-2">
                 <Input
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   placeholder="Subject (optional)"
-                  className="h-9 text-sm"
+                  className="h-8 md:h-9 text-xs md:text-sm"
                 />
                 <Textarea
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
                   placeholder="Type your message..."
-                  className="min-h-[80px] text-sm resize-none"
+                  className="min-h-[60px] md:min-h-[80px] text-xs md:text-sm resize-none"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
                       e.preventDefault();
@@ -200,13 +200,14 @@ const CandidateMessagesPage = () => {
               <Button
                 onClick={() => sendMessage.mutate()}
                 disabled={!body.trim() || sendMessage.isPending}
-                className="self-end h-10 px-5"
+                size="sm"
+                className="self-end h-8 md:h-10 px-3 md:px-5"
               >
                 {sendMessage.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                Send
+                <span className="hidden md:inline ml-1">Send</span>
               </Button>
             </div>
-            <p className="text-[10px] text-muted-foreground mt-2">Press Ctrl+Enter to send quickly</p>
+            <p className="text-[10px] text-muted-foreground mt-1.5 hidden md:block">Press Ctrl+Enter to send quickly</p>
           </div>
         </div>
       </motion.div>

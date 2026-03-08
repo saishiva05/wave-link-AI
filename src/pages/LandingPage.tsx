@@ -285,7 +285,7 @@ const LandingPage = () => {
       </motion.nav>
 
       {/* ═══════════ HERO SECTION ═══════════ */}
-      <section className="relative overflow-hidden min-h-[92vh] flex items-center pt-16">
+      <section className="relative overflow-hidden min-h-[85vh] md:min-h-[92vh] flex items-center pt-16">
         {/* Background effects */}
         <div className="absolute inset-0 z-0">
           <motion.div
@@ -306,16 +306,16 @@ const LandingPage = () => {
           />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-16 pb-24 md:pt-24 md:pb-32 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 pt-10 pb-16 md:pt-24 md:pb-32 w-full">
           <motion.div initial="hidden" animate="visible" className="text-center max-w-5xl mx-auto">
             {/* Badge */}
-            <motion.div variants={scaleIn} custom={0} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full mb-10 border border-primary/30 bg-primary/10 backdrop-blur-sm">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary">AI-Powered Recruitment Intelligence</span>
+            <motion.div variants={scaleIn} custom={0} className="inline-flex items-center gap-1.5 md:gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-full mb-6 md:mb-10 border border-primary/30 bg-primary/10 backdrop-blur-sm">
+              <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary" />
+              <span className="text-xs md:text-sm font-semibold text-primary">AI-Powered Recruitment</span>
             </motion.div>
 
             {/* Headline */}
-            <motion.h1 variants={fadeUp} custom={1} className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-extrabold leading-[0.95] mb-8 tracking-tight text-foreground">
+            <motion.h1 variants={fadeUp} custom={1} className="font-display text-3xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-extrabold leading-[0.95] mb-5 md:mb-8 tracking-tight text-foreground">
               The Unfair{" "}
               <br className="hidden md:block" />
               Career{" "}
@@ -338,20 +338,20 @@ const LandingPage = () => {
             </motion.h1>
 
             {/* Subtitle */}
-            <motion.p variants={fadeUp} custom={2} className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
+            <motion.p variants={fadeUp} custom={2} className="text-sm md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8 md:mb-12 leading-relaxed px-2">
               AI-powered job matching, ATS-optimized resumes, and dedicated recruiter support.{" "}
               <span className="text-foreground font-semibold">One platform. Complete career acceleration.</span>
             </motion.p>
 
             {/* CTA */}
-            <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row items-center justify-center gap-5">
+            <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-5">
               <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }} className="relative group">
                 <motion.div
                   className="absolute -inset-1 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                   style={{ background: "hsl(var(--primary) / 0.3)", filter: "blur(12px)" }}
                 />
-                <Button size="lg" onClick={() => navigate("/login")} className="relative text-base px-10 h-14 font-bold shadow-xl rounded-xl bg-primary text-primary-foreground hover:bg-primary/90">
-                  Sign In <ArrowRight className="ml-2 w-5 h-5" />
+                <Button size="lg" onClick={() => navigate("/login")} className="relative text-sm md:text-base px-8 md:px-10 h-12 md:h-14 font-bold shadow-xl rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto">
+                  Sign In <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }}>
@@ -363,10 +363,10 @@ const LandingPage = () => {
             </motion.div>
 
             {/* Trust indicators */}
-            <motion.div variants={fadeUp} custom={4} className="mt-8 flex items-center justify-center gap-6 text-sm text-muted-foreground flex-wrap">
-              {[{ icon: CheckCircle2, text: "No credit card" }, { icon: CheckCircle2, text: "100% free for students" }, { icon: CheckCircle2, text: "Instant access" }].map((item, i) => (
-                <motion.span key={item.text} className="flex items-center gap-1.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 + i * 0.15 }}>
-                  <item.icon className="w-4 h-4 text-primary" /> {item.text}
+            <motion.div variants={fadeUp} custom={4} className="mt-6 md:mt-8 flex items-center justify-center gap-3 md:gap-6 text-xs md:text-sm text-muted-foreground flex-wrap">
+              {[{ icon: CheckCircle2, text: "No credit card" }, { icon: CheckCircle2, text: "Free for students" }, { icon: CheckCircle2, text: "Instant access" }].map((item, i) => (
+                <motion.span key={item.text} className="flex items-center gap-1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 + i * 0.15 }}>
+                  <item.icon className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary" /> {item.text}
                 </motion.span>
               ))}
             </motion.div>
@@ -377,7 +377,7 @@ const LandingPage = () => {
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1, duration: 0.8 }}
-            className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto"
+            className="mt-12 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 max-w-5xl mx-auto"
           >
             {stats.map((stat, i) => (
               <motion.div
@@ -386,12 +386,12 @@ const LandingPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.2 + i * 0.15 }}
                 whileHover={{ y: -6, borderColor: "hsl(var(--primary) / 0.4)" }}
-                className="text-center p-6 rounded-2xl border border-border bg-card/50 backdrop-blur-sm transition-all duration-300"
+                className="text-center p-4 md:p-6 rounded-xl md:rounded-2xl border border-border bg-card/50 backdrop-blur-sm transition-all duration-300"
               >
-                <div className="font-display text-3xl lg:text-4xl font-black text-foreground">
+                <div className="font-display text-2xl md:text-3xl lg:text-4xl font-black text-foreground">
                   <AnimatedCounter target={stat.value} suffix={stat.suffix} />
                 </div>
-                <div className="text-xs text-muted-foreground mt-2 font-medium">{stat.label}</div>
+                <div className="text-[10px] md:text-xs text-muted-foreground mt-1.5 md:mt-2 font-medium">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
@@ -399,20 +399,20 @@ const LandingPage = () => {
       </section>
 
       {/* ═══════════ FEATURES SECTION ═══════════ */}
-      <section id="features" className="py-28 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="text-center mb-16">
-            <motion.div variants={scaleIn} custom={0} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
+      <section id="features" className="py-16 md:py-28 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="text-center mb-10 md:mb-16">
+            <motion.div variants={scaleIn} custom={0} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4 md:mb-6">
               <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary">WHAT WE DO</span>
+              <span className="text-xs md:text-sm font-semibold text-primary">WHAT WE DO</span>
             </motion.div>
-            <motion.h2 variants={fadeUp} custom={1} className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4">
+            <motion.h2 variants={fadeUp} custom={1} className="font-display text-2xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 md:mb-4">
               Everything you need.{" "}
               <br className="hidden md:block" />
               <span className="text-muted-foreground">Nothing you don't.</span>
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Powerful tools designed to eliminate the grind of job searching. Focus on what matters — your career.
+            <motion.p variants={fadeUp} custom={2} className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto">
+              Powerful tools designed to eliminate the grind of job searching.
             </motion.p>
           </motion.div>
 
