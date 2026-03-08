@@ -1,7 +1,6 @@
 import { AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import wavelynkIcon from "@/assets/wavelynk-icon.png";
-import wavelynkLogoLight from "@/assets/wavelynk-logo-light.png";
+import wavelynkLogo from "@/assets/wavelynk-logo-unified.png";
 
 interface PlatformSelectorProps {
   value: string;
