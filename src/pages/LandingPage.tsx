@@ -306,7 +306,7 @@ const LandingPage = () => {
           />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-16 pb-24 md:pt-24 md:pb-32 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 pt-10 pb-16 md:pt-24 md:pb-32 w-full">
           <motion.div initial="hidden" animate="visible" className="text-center max-w-5xl mx-auto">
             {/* Badge */}
             <motion.div variants={scaleIn} custom={0} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full mb-10 border border-primary/30 bg-primary/10 backdrop-blur-sm">
