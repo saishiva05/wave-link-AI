@@ -285,7 +285,7 @@ const LandingPage = () => {
       </motion.nav>
 
       {/* ═══════════ HERO SECTION ═══════════ */}
-      <section className="relative overflow-hidden min-h-[92vh] flex items-center pt-16">
+      <section className="relative overflow-hidden min-h-[85vh] md:min-h-[92vh] flex items-center pt-16">
         {/* Background effects */}
         <div className="absolute inset-0 z-0">
           <motion.div
