@@ -338,7 +338,7 @@ const LandingPage = () => {
             </motion.h1>
 
             {/* Subtitle */}
-            <motion.p variants={fadeUp} custom={2} className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
+            <motion.p variants={fadeUp} custom={2} className="text-sm md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8 md:mb-12 leading-relaxed px-2">
               AI-powered job matching, ATS-optimized resumes, and dedicated recruiter support.{" "}
               <span className="text-foreground font-semibold">One platform. Complete career acceleration.</span>
             </motion.p>
