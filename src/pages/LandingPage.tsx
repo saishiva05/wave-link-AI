@@ -399,20 +399,20 @@ const LandingPage = () => {
       </section>
 
       {/* ═══════════ FEATURES SECTION ═══════════ */}
-      <section id="features" className="py-28 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="text-center mb-16">
-            <motion.div variants={scaleIn} custom={0} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
+      <section id="features" className="py-16 md:py-28 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="text-center mb-10 md:mb-16">
+            <motion.div variants={scaleIn} custom={0} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4 md:mb-6">
               <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary">WHAT WE DO</span>
+              <span className="text-xs md:text-sm font-semibold text-primary">WHAT WE DO</span>
             </motion.div>
-            <motion.h2 variants={fadeUp} custom={1} className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4">
+            <motion.h2 variants={fadeUp} custom={1} className="font-display text-2xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 md:mb-4">
               Everything you need.{" "}
               <br className="hidden md:block" />
               <span className="text-muted-foreground">Nothing you don't.</span>
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Powerful tools designed to eliminate the grind of job searching. Focus on what matters — your career.
+            <motion.p variants={fadeUp} custom={2} className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto">
+              Powerful tools designed to eliminate the grind of job searching.
             </motion.p>
           </motion.div>
 
