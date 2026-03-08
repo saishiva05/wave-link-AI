@@ -198,23 +198,28 @@ const JobCardView = ({ jobs, selectedIds, onToggleSelect, onViewDetails, onRunAT
                       <Mail className="w-4 h-4" /> Generate Email
                     </button>
                   )}
-                  {/* Step 4: Apply to Job */}
+                  {/* Apply to Job (redirects to external URL) */}
+                  <button onClick={() => {
+                    let url = job.job_apply_url;
+                    if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+                    window.open(url, "_blank");
+                  }} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-all">
+                    <ExternalLink className="w-4 h-4" /> Apply to Job
+                  </button>
+                  {/* Submit Application (records in system) */}
                   {jobApplications.length > 0 ? (
                     <span className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-success-100 text-success-700 border border-success-200">
-                      <CheckCircle className="w-4 h-4" /> Applied ({jobApplications.length})
+                      <CheckCircle className="w-4 h-4" /> Submitted ({jobApplications.length})
                     </span>
                   ) : (
-                    <button onClick={() => onApplyToJob(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-all">
-                      <Send className="w-4 h-4" /> Apply to Job
+                    <button onClick={() => onApplyToJob(job)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-all">
+                      <Send className="w-4 h-4" /> Submit Application
                     </button>
                   )}
                   <div className="flex items-center gap-2 pt-1">
                     <button onClick={() => onViewDetails(job)} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
                       <Eye className="w-3.5 h-3.5" /> Details
                     </button>
-                    <a href={job.job_apply_url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-blue-600 hover:bg-blue-50 transition-all">
-                      <ExternalLink className="w-3.5 h-3.5" /> External
-                    </a>
                   </div>
                 </div>
               )}

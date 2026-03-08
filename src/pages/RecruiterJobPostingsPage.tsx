@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Briefcase, CheckCircle2, Loader2, Building, MapPin, Users } from "lucide-react";
+import { Briefcase, CheckCircle2, Loader2, Building, MapPin, Users, Eye, ExternalLink, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { useRecruiterCandidates, useRecruiterCVs } from "@/hooks/useRecruiterData";
 import ApplyToJobModal from "@/components/recruiter/ApplyToJobModal";
+import JobDetailsModal from "@/components/recruiter/JobDetailsModal";
 import type { ScrapedJob } from "@/data/mockScrapedJobs";
 import { mapDbJob } from "@/data/mockScrapedJobs";
 
@@ -19,6 +20,7 @@ const RecruiterJobPostingsPage = () => {
   const { data: candidatesData = [] } = useRecruiterCandidates();
   const { data: cvsData = [] } = useRecruiterCVs();
   const [applyJob, setApplyJob] = useState<ScrapedJob | null>(null);
+  const [detailsJob, setDetailsJob] = useState<ScrapedJob | null>(null);
 
   const { data: adminJobs = [], isLoading } = useQuery({
     queryKey: ["recruiter", "admin-job-postings", "page"],
