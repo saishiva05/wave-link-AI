@@ -103,7 +103,7 @@ const ApplyExternallyButton = ({ job }: { job: ScrapedJob }) => {
 
   return (
     <div className="inline-flex items-center gap-2">
-      <button onClick={handleClick} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-blue-50 to-info-50 text-blue-700 border border-blue-200 hover:border-blue-300 hover:shadow-md transition-all">
+      <button onClick={handleClick} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-blue-50 to-info-50 text-blue-700 border border-blue-200 hover:border-blue-300 hover:shadow-md transition-all dark:from-blue-950 dark:to-blue-900/50 dark:text-blue-400 dark:border-blue-800 dark:hover:border-blue-700">
         <ArrowUpRight className="w-4 h-4" /> Apply to Job
       </button>
       {startedAt && elapsed > 0 && (
