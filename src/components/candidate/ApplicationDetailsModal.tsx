@@ -161,7 +161,7 @@ const ApplicationDetailsModal = ({ application, onClose }: ApplicationDetailsMod
           {/* Original Posting */}
           <h3 className="text-lg font-semibold text-secondary-900 font-display mb-4">Original Job Posting</h3>
           <Button variant="outline" onClick={() => window.open(application.job_apply_url, "_blank")}>
-            <ExternalLink className="w-4 h-4" /> View on {application.platform_type === "linkedin" ? "LinkedIn" : "JSearch"}
+            <ExternalLink className="w-4 h-4" /> View on Career Platform
           </Button>
         </div>
 
