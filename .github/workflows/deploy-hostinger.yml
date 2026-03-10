@@ -1,4 +1,4 @@
-# Auto-deploy to Hostinger via FTPS
+# Auto-deploy to Hostinger via SFTP
 name: Deploy to Hostinger
 
 on:
@@ -29,13 +29,13 @@ jobs:
         run: npm run build
 
       - name: Deploy via SFTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        uses: wangyucode/sftp-upload-action@v2.0.2
         with:
-          server: ${{ secrets.FTP_SERVER }}
+          host: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 65002
-          protocol: ftps
-          local-dir: ./dist/
-          server-dir: /public_html/
-          dangerous-clean-slate: true
+          localDir: ./dist/
+          remoteDir: /public_html/
+          dryRun: false
+          removeExtraFilesOnServer: true
