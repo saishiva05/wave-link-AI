@@ -36,6 +36,6 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: 65002
           localDir: ./dist/
-          remoteDir: /home/${{ secrets.FTP_USERNAME }}/public_html/
+          remoteDir: ./public_html/
           dryRun: false
           removeExtraFilesOnServer: true
