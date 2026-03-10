@@ -8,7 +8,7 @@ const mockLogs = [
   { id: 3, action: "New jobs scraped", user: "Mike Chen", target: "45 jobs from WaveLynk Max", time: "6 hours ago", icon: Briefcase, type: "info" },
   { id: 4, action: "Updated platform settings", user: "Admin", target: "Email notifications enabled", time: "1 day ago", icon: Settings, type: "default" },
   { id: 5, action: "Created recruiter account", user: "Admin", target: "Alex Brown", time: "2 days ago", icon: UserPlus, type: "create" },
-  { id: 6, action: "New jobs scraped", user: "John Smith", target: "32 jobs from JSearch", time: "2 days ago", icon: Briefcase, type: "info" },
+  { id: 6, action: "New jobs scraped", user: "John Smith", target: "32 jobs from WaveLynk Pro", time: "2 days ago", icon: Briefcase, type: "info" },
 ];
 
 const typeStyles: Record<string, string> = {
