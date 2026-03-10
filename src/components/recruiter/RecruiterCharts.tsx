@@ -22,17 +22,17 @@ const RecruiterCharts = () => {
   const totalApplications = applicationStatusData.reduce((sum: number, d: any) => sum + d.value, 0);
 
   const isDark = theme === "dark";
-  const gridColor = isDark ? "hsl(100, 8%, 16%)" : "hsl(80, 8%, 90%)";
-  const axisColor = isDark ? "hsl(80, 6%, 40%)" : "hsl(80, 5%, 55%)";
-  const tooltipBg = isDark ? "hsl(100, 10%, 12%)" : "hsl(0, 0%, 100%)";
-  const tooltipText = isDark ? "hsl(70, 20%, 92%)" : "hsl(100, 8%, 12%)";
-  const tooltipBorder = isDark ? "hsl(100, 8%, 20%)" : "hsl(80, 8%, 88%)";
-  const barFill = isDark ? "hsl(72, 100%, 50%)" : "hsl(100, 8%, 18%)";
+  const gridColor = isDark ? "hsl(0, 0%, 14%)" : "hsl(220, 10%, 91%)";
+  const axisColor = isDark ? "hsl(0, 0%, 40%)" : "hsl(220, 8%, 55%)";
+  const tooltipBg = isDark ? "hsl(0, 0%, 9%)" : "hsl(0, 0%, 100%)";
+  const tooltipText = isDark ? "hsl(0, 0%, 93%)" : "hsl(220, 20%, 12%)";
+  const tooltipBorder = isDark ? "hsl(0, 0%, 18%)" : "hsl(220, 10%, 90%)";
+  const barFill = isDark ? "hsl(72, 100%, 50%)" : "hsl(160, 84%, 36%)";
 
-  // Status colors using lime-green palette
+  // Status colors
   const statusColors = isDark
-    ? ["hsl(72, 100%, 50%)", "hsl(72, 60%, 35%)", "hsl(100, 8%, 30%)", "hsl(38, 82%, 56%)"]
-    : ["hsl(72, 100%, 45%)", "hsl(100, 8%, 18%)", "hsl(80, 6%, 55%)", "hsl(38, 92%, 50%)"];
+    ? ["hsl(72, 100%, 50%)", "hsl(72, 60%, 35%)", "hsl(0, 0%, 30%)", "hsl(38, 82%, 56%)"]
+    : ["hsl(160, 84%, 36%)", "hsl(215, 76%, 52%)", "hsl(220, 8%, 65%)", "hsl(40, 96%, 48%)"];
 
   return (
     <div className="space-y-5">
