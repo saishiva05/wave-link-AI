@@ -12,6 +12,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow, format } from "date-fns";
 import { cn } from "@/lib/utils";
 
+const ensureUrl = (url: string) => /^https?:\/\//i.test(url) ? url : `https://${url}`;
+
 const CandidateJobPostingsPage = () => {
   const { candidateId, user } = useAuth();
   const { toast } = useToast();
