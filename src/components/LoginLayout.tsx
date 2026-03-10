@@ -23,7 +23,7 @@ const LoginLayout = ({
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Left Branding Section */}
-      <div className={`${gradient} lg:w-[40%] lg:fixed lg:inset-y-0 lg:left-0 flex flex-col justify-between p-6 md:p-8 lg:p-16`}>
+      <div className={`${gradient} lg:w-[40%] lg:fixed lg:inset-y-0 lg:left-0 flex flex-col justify-between p-6 md:p-8 lg:p-16 relative overflow-hidden`}>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

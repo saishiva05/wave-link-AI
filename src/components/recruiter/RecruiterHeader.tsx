@@ -71,7 +71,7 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
   };
 
   return (
-    <header className="h-14 md:h-16 bg-card border-b border-border sticky top-0 z-30 flex items-center justify-between px-3 md:px-8">
+    <header className="h-14 md:h-16 bg-card/80 backdrop-blur-md border-b border-border sticky top-0 z-30 flex items-center justify-between px-3 md:px-8">
       {/* Left side */}
       <div className="flex items-center gap-2 md:gap-4 min-w-0">
         <button
