@@ -1,4 +1,4 @@
-# Auto-deploy to Hostinger via SFTP
+# Auto-deploy to Hostinger via FTPS
 name: Deploy to Hostinger
 
 on:
