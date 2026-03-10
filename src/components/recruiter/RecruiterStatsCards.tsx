@@ -1,9 +1,52 @@
 import { useNavigate } from "react-router-dom";
-import { Briefcase, Users, ClipboardCheck, Sparkles } from "lucide-react";
-import StatsCard from "@/components/admin/StatsCard";
-import { Progress } from "@/components/ui/progress";
+import { Briefcase, Users, ClipboardCheck, Sparkles, Info, MoreHorizontal, TrendingUp, TrendingDown } from "lucide-react";
 import { useRecruiterStats } from "@/hooks/useRecruiterData";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+
+interface StatCardProps {
+  title: string;
+  value: string;
+  change: string;
+  changeUp: boolean;
+  subtitle: string;
+  icon: React.ElementType;
+  onClick?: () => void;
+}
+
+const StatCard = ({ title, value, change, changeUp, subtitle, icon: Icon, onClick }: StatCardProps) => (
+  <div
+    onClick={onClick}
+    className="bg-card border border-border rounded-2xl p-6 cursor-pointer hover:shadow-card-hover transition-all duration-200 group"
+  >
+    <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-medium text-muted-foreground">{title}</span>
+        <Info className="w-3.5 h-3.5 text-neutral-400" />
+      </div>
+      <button className="text-neutral-400 hover:text-foreground transition-colors">
+        <MoreHorizontal className="w-5 h-5" />
+      </button>
+    </div>
+    <p className="text-3xl font-bold text-foreground font-display tracking-tight mb-3">
+      {value}
+    </p>
+    <div className="flex items-center gap-2">
+      <span
+        className={cn(
+          "inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full",
+          changeUp
+            ? "bg-success-50 text-success-600"
+            : "bg-error-50 text-error-600"
+        )}
+      >
+        {changeUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+        {change}
+      </span>
+      <span className="text-xs text-muted-foreground">{subtitle}</span>
+    </div>
+  </div>
+);
 
 const RecruiterStatsCards = () => {
   const navigate = useNavigate();
@@ -12,63 +55,57 @@ const RecruiterStatsCards = () => {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-        {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-40 rounded-xl" />)}
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-36 rounded-2xl" />
+        ))}
       </div>
     );
   }
 
+  const cards: StatCardProps[] = [
+    {
+      title: "Jobs Found",
+      value: (stats?.totalJobs ?? 0).toLocaleString(),
+      change: "3.5%",
+      changeUp: true,
+      subtitle: "Last month",
+      icon: Briefcase,
+      onClick: () => navigate("/recruiter/scraped-jobs"),
+    },
+    {
+      title: "Active Candidates",
+      value: String(stats?.totalCandidates ?? 0),
+      change: "0.0",
+      changeUp: true,
+      subtitle: "Last month",
+      icon: Users,
+      onClick: () => navigate("/recruiter/candidates"),
+    },
+    {
+      title: "Applications Submitted",
+      value: String(stats?.totalApplications ?? 0),
+      change: "7.5%",
+      changeUp: false,
+      subtitle: "Last month",
+      icon: ClipboardCheck,
+      onClick: () => navigate("/recruiter/applications"),
+    },
+    {
+      title: "ATS Analyses",
+      value: String(stats?.totalATS ?? 0),
+      change: "3.5%",
+      changeUp: true,
+      subtitle: "Last month",
+      icon: Sparkles,
+      onClick: () => navigate("/recruiter/scraped-jobs"),
+    },
+  ];
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-      <StatsCard
-        title="Jobs Found"
-        value={(stats?.totalJobs ?? 0).toLocaleString()}
-        trend="Total collected"
-        trendUp
-        icon={Briefcase}
-        iconBg="bg-primary-50"
-        iconColor="text-primary"
-        footerLink="View all jobs"
-        onFooterClick={() => navigate("/recruiter/scraped-jobs")}
-      />
-      <StatsCard
-        title="Active Candidates"
-        value={String(stats?.totalCandidates ?? 0)}
-        trend="Assigned to you"
-        trendUp
-        icon={Users}
-        iconBg="bg-success-50"
-        iconColor="text-success-500"
-        footerLink="Manage candidates"
-        onFooterClick={() => navigate("/recruiter/candidates")}
-      />
-      <StatsCard
-        title="Applications Submitted"
-        value={String(stats?.totalApplications ?? 0)}
-        trend="All time"
-        trendUp
-        icon={ClipboardCheck}
-        iconBg="bg-info-50"
-        iconColor="text-info-500"
-        footerLink="View applications"
-        onFooterClick={() => navigate("/recruiter/applications")}
-      />
-      <div className="bg-card border border-border rounded-xl p-6 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 group">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 bg-warning-50">
-            <Sparkles className="w-6 h-6 text-warning-500" />
-          </div>
-          <p className="text-sm font-medium text-muted-foreground">ATS Analyses Run</p>
-        </div>
-        <p className="text-3xl font-bold text-secondary-900 font-display mb-2">{stats?.totalATS ?? 0}</p>
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-xs text-muted-foreground">Success rate</span>
-          <span className="text-xs font-semibold text-success-600">{stats?.atsSuccessRate ?? 0}%</span>
-        </div>
-        <Progress value={stats?.atsSuccessRate ?? 0} className="h-1.5 bg-neutral-200 [&>div]:bg-success-500" />
-        <button onClick={() => navigate("/recruiter/scraped-jobs")} className="mt-4 text-sm text-primary hover:underline font-medium">
-          Run new analysis →
-        </button>
-      </div>
+      {cards.map((card) => (
+        <StatCard key={card.title} {...card} />
+      ))}
     </div>
   );
 };
