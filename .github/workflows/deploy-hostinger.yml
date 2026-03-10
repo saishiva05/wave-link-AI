@@ -1,3 +1,4 @@
+# Auto-deploy to Hostinger via SFTP
 name: Deploy to Hostinger
 
 on:
