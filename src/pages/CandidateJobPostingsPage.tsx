@@ -101,7 +101,7 @@ const CandidateJobPostingsPage = () => {
         application_status: "pending", apply_started_at: new Date().toISOString(),
       });
       if (error) throw error;
-      window.open(job.job_apply_url, "_blank", "noopener,noreferrer");
+      window.open(ensureUrl(job.job_apply_url), "_blank", "noopener,noreferrer");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["candidate", "admin-job-applications"] });
