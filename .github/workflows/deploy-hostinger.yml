@@ -28,14 +28,11 @@ jobs:
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
         run: npm run build
 
-      - name: Deploy via SFTP
-        uses: wangyucode/sftp-upload-action@v2.0.2
-        with:
-          host: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 65002
-          localDir: ./dist/
-          remoteDir: ./public_html/
-          dryRun: false
-          removeExtraFilesOnServer: true
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+
+      - name: Deploy via SCP
+        env:
+          SSHPASS: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          sshpass -e scp -o StrictHostKeyChecking=no -P 65002 -r dist/* ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}:~/public_html/
