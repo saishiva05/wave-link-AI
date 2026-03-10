@@ -19,8 +19,8 @@ const DashboardCharts = () => {
 
   const jobsByDateData = data?.jobsTrendData || [];
   const platformData = [
-    { name: "LinkedIn", value: data?.platformData.linkedin || 0, color: isDark ? "hsl(174, 72%, 45%)" : "hsl(174, 72%, 33%)" },
-    { name: "JSearch", value: data?.platformData.jsearch || 0, color: isDark ? "hsl(215, 40%, 55%)" : "hsl(215, 60%, 18%)" },
+    { name: "WaveLynk Max", value: data?.platformData.linkedin || 0, color: isDark ? "hsl(174, 72%, 45%)" : "hsl(174, 72%, 33%)" },
+    { name: "WaveLynk Pro", value: data?.platformData.jsearch || 0, color: isDark ? "hsl(215, 40%, 55%)" : "hsl(215, 60%, 18%)" },
   ];
   const total = data?.platformData.total || 0;
   const topRecruitersData = data?.topRecruiters || [];
