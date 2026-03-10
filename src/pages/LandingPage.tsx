@@ -575,25 +575,25 @@ const LandingPage = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="relative overflow-hidden rounded-3xl p-12 md:p-16 text-center border border-primary/20 bg-gradient-to-br from-secondary to-secondary/80"
+            className="relative overflow-hidden rounded-3xl p-12 md:p-16 text-center border border-border bg-card shadow-xl"
           >
             <motion.div
               className="absolute top-0 right-0 w-80 h-80 rounded-full pointer-events-none"
-              style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.2) 0%, transparent 70%)" }}
+              style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.15) 0%, transparent 70%)" }}
               animate={{ scale: [1, 1.3, 1] }}
               transition={{ duration: 6, repeat: Infinity }}
             />
 
             <motion.div variants={fadeUp} custom={0} className="relative z-10">
-              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-4">
+              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
                 The Network That Compounds{" "}
                 <br className="hidden md:block" />
                 Like <span className="text-primary">Capital.</span>
               </h2>
-              <p className="text-primary-foreground/60 text-lg mb-4 max-w-xl mx-auto">
+              <p className="text-muted-foreground text-lg mb-4 max-w-xl mx-auto">
                 Every application builds momentum. Every connection compounds. Join the career network that works harder the longer you're in it.
               </p>
-              <p className="text-primary-foreground/40 text-sm mb-8">Free forever for candidates. No hidden costs.</p>
+              <p className="text-muted-foreground/60 text-sm mb-8">Free forever for candidates. No hidden costs.</p>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                 <Button size="lg" onClick={() => navigate("/login")} className="px-10 h-14 font-bold rounded-xl shadow-2xl bg-primary text-primary-foreground hover:bg-primary/90">
                   Sign In & Join Now <ArrowRight className="ml-2 w-5 h-5" />
