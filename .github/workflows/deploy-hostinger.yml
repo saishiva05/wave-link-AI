@@ -1,4 +1,4 @@
-# Auto-deploy to Hostinger via FTP
+# Auto-deploy to Hostinger via FTP (port 21)
 name: Deploy to Hostinger
 
 on:
