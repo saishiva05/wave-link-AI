@@ -283,7 +283,7 @@ const CandidateJobPostingsPage = () => {
                     {isCompleted && (
                       <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-success-600"><CheckCircle2 className="w-4 h-4" /> Application Completed</span>
                     )}
-                    <Button variant="outline" onClick={() => window.open(selectedJob.job_apply_url, "_blank", "noopener,noreferrer")}>
+                    <Button variant="outline" onClick={() => window.open(ensureUrl(selectedJob.job_apply_url), "_blank", "noopener,noreferrer")}>
                       <ExternalLink className="w-4 h-4" /> View Original Posting
                     </Button>
                     <Button variant="ghost" onClick={() => setSelectedJob(null)} className="ml-auto">Close</Button>
