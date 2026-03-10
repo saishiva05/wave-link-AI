@@ -130,16 +130,16 @@ const JobTableView = ({
                 </th>
                 <th className="w-7 px-1 py-3"></th>
                 <th className="px-3 py-3 text-left font-medium text-muted-foreground text-[10px] uppercase tracking-wider cursor-pointer select-none group" onClick={() => onSort("job_title")}>
-                  <div className="flex items-center gap-1">Description <SortIcon field="job_title" sortField={sortField} sortDir={sortDir} /></div>
+                  <div className="flex items-center gap-1">Job Details <SortIcon field="job_title" sortField={sortField} sortDir={sortDir} /></div>
                 </th>
                 <th className="px-3 py-3 text-left font-medium text-muted-foreground text-[10px] uppercase tracking-wider">
-                  <div className="flex items-center gap-1">Area</div>
+                  <div className="flex items-center gap-1"><MapPin className="w-3 h-3" /> Location</div>
                 </th>
                 <th className="px-3 py-3 text-left font-medium text-muted-foreground text-[10px] uppercase tracking-wider">
-                  <div className="flex items-center gap-1">Vol</div>
+                  <div className="flex items-center gap-1"><CircleDollarSign className="w-3 h-3" /> Salary</div>
                 </th>
                 <th className="px-3 py-3 text-left font-medium text-muted-foreground text-[10px] uppercase tracking-wider cursor-pointer select-none group" onClick={() => onSort("scraped_at")}>
-                  <div className="flex items-center gap-1">Weight <SortIcon field="scraped_at" sortField={sortField} sortDir={sortDir} /></div>
+                  <div className="flex items-center gap-1"><Clock className="w-3 h-3" /> Added <SortIcon field="scraped_at" sortField={sortField} sortDir={sortDir} /></div>
                 </th>
                 <th className="px-3 py-3 text-center font-medium text-muted-foreground text-[10px] uppercase tracking-wider">ATS</th>
                 <th className="w-10 px-2 py-3"></th>
