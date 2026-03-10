@@ -12,6 +12,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow, format } from "date-fns";
 import { cn } from "@/lib/utils";
 
+const ensureUrl = (url: string) => /^https?:\/\//i.test(url) ? url : `https://${url}`;
+
 const CandidateJobPostingsPage = () => {
   const { candidateId, user } = useAuth();
   const { toast } = useToast();
@@ -99,7 +101,7 @@ const CandidateJobPostingsPage = () => {
         application_status: "pending", apply_started_at: new Date().toISOString(),
       });
       if (error) throw error;
-      window.open(job.job_apply_url, "_blank", "noopener,noreferrer");
+      window.open(ensureUrl(job.job_apply_url), "_blank", "noopener,noreferrer");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["candidate", "admin-job-applications"] });
@@ -225,7 +227,7 @@ const CandidateJobPostingsPage = () => {
                       Mark Completed
                     </Button>
                   )}
-                  <Button size="sm" variant="ghost" onClick={() => window.open(job.job_apply_url, "_blank", "noopener,noreferrer")}>
+                  <Button size="sm" variant="ghost" onClick={() => window.open(ensureUrl(job.job_apply_url), "_blank", "noopener,noreferrer")}>
                     <ExternalLink className="w-4 h-4" /> Open Job
                   </Button>
                 </div>
@@ -281,7 +283,7 @@ const CandidateJobPostingsPage = () => {
                     {isCompleted && (
                       <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-success-600"><CheckCircle2 className="w-4 h-4" /> Application Completed</span>
                     )}
-                    <Button variant="outline" onClick={() => window.open(selectedJob.job_apply_url, "_blank", "noopener,noreferrer")}>
+                    <Button variant="outline" onClick={() => window.open(ensureUrl(selectedJob.job_apply_url), "_blank", "noopener,noreferrer")}>
                       <ExternalLink className="w-4 h-4" /> View Original Posting
                     </Button>
                     <Button variant="ghost" onClick={() => setSelectedJob(null)} className="ml-auto">Close</Button>
