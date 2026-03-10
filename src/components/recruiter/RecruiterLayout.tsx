@@ -18,15 +18,14 @@ const RecruiterLayout = () => {
         mobileOpen={mobileOpen}
         onMobileClose={() => setMobileOpen(false)}
       />
-
       <div
         className={cn(
           "transition-all duration-300 ease-in-out min-h-screen",
-          sidebarCollapsed ? "lg:ml-[60px]" : "lg:ml-[280px]"
+          sidebarCollapsed ? "lg:ml-[56px]" : "lg:ml-[260px]"
         )}
       >
         <RecruiterHeader onMenuClick={() => setMobileOpen(true)} />
-        <main className="p-4 md:p-8">
+        <main className="p-4 md:p-6">
           <Outlet />
         </main>
       </div>
