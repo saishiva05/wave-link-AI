@@ -227,7 +227,7 @@ const CandidateJobPostingsPage = () => {
                       Mark Completed
                     </Button>
                   )}
-                  <Button size="sm" variant="ghost" onClick={() => window.open(job.job_apply_url, "_blank", "noopener,noreferrer")}>
+                  <Button size="sm" variant="ghost" onClick={() => window.open(ensureUrl(job.job_apply_url), "_blank", "noopener,noreferrer")}>
                     <ExternalLink className="w-4 h-4" /> Open Job
                   </Button>
                 </div>
