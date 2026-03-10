@@ -28,14 +28,27 @@ jobs:
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
         run: npm run build
 
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: 151.106.116.54
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftp
-          local-dir: ./dist/
-          server-dir: /public_html/
-          dangerous-clean-slate: true
+      - name: Verify build output
+        run: |
+          echo "=== dist/index.html ==="
+          cat dist/index.html
+          echo ""
+          echo "=== dist contents ==="
+          find dist -type f
+
+      - name: Install lftp
+        run: sudo apt-get install -y lftp
+
+      - name: Deploy via LFTP
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          lftp -u "$FTP_USERNAME","$FTP_PASSWORD" "ftp://$FTP_SERVER" -e "
+            set ftp:ssl-allow yes;
+            set ftp:ssl-force no;
+            set ssl:verify-certificate no;
+            mirror --reverse --delete --verbose dist/ /public_html/;
+            quit
+          "
