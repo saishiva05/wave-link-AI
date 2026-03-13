@@ -283,7 +283,7 @@ const RecruiterScrapeJobs = () => {
             <div className="mt-10 pt-8 border-t border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <Button type="button" variant="ghost" onClick={handleClear} className="text-neutral-600"><RotateCcw className="w-4 h-4" /> Clear Form</Button>
               <Button type="submit" variant="portal" size="lg" disabled={isLoading || queueStatus.isRunning}>
-                {isLoading ? (<><Loader2 className="w-5 h-5 animate-spin" /> Scraping Jobs...</>) : (<><Search className="w-5 h-5" /> Scrape Jobs</>)}
+                {isLoading ? (<><Loader2 className="w-5 h-5 animate-spin" /> Finding Jobs...</>) : (<><Search className="w-5 h-5" /> Find Jobs</>)}
               </Button>
             </div>
           </form>
