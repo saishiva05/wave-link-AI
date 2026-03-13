@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Users, User, Briefcase, Activity, UserPlus, Calendar, GraduationCap, Plus, ShieldPlus, Eye, MapPin, Building2, Clock, ClipboardCheck, TrendingUp, Power, Pencil } from "lucide-react";
+import { Users, User, Briefcase, Activity, UserPlus, Calendar, GraduationCap, Plus, ShieldPlus, Eye, MapPin, Building2, Clock, ClipboardCheck, TrendingUp, Power, Pencil, Sparkles, FileText, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import StatsCard from "@/components/admin/StatsCard";
@@ -13,6 +13,7 @@ import CreateAdminModal from "@/components/admin/CreateAdminModal";
 import CreateJobModal from "@/components/recruiter/CreateJobModal";
 import RecruiterActivityTracker from "@/components/admin/RecruiterActivityTracker";
 import EditJobModal from "@/components/admin/EditJobModal";
+import AdminJobDetailModal from "@/components/admin/AdminJobDetailModal";
 import { useAdminStats, useAdminRecruiters } from "@/hooks/useAdminData";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,6 +27,8 @@ const AdminDashboard = () => {
   const [adminModalOpen, setAdminModalOpen] = useState(false);
   const [editJobModalOpen, setEditJobModalOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<any>(null);
+  const [detailJob, setDetailJob] = useState<any>(null);
+  const [detailJobOpen, setDetailJobOpen] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: stats, isLoading } = useAdminStats();
@@ -282,7 +285,18 @@ const AdminDashboard = () => {
                   {job.salary_range && <p className="flex items-center gap-1.5">💰 {job.salary_range}</p>}
                   <p className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> {formatDistanceToNow(new Date(job.scraped_at), { addSuffix: true })}</p>
                 </div>
-                <div className="flex gap-2 mt-3">
+                <div className="flex flex-wrap gap-2 mt-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs"
+                    onClick={() => {
+                      setDetailJob(job);
+                      setDetailJobOpen(true);
+                    }}
+                  >
+                    <Eye className="w-3 h-3" /> Details
+                  </Button>
                   <Button
                     variant="outline"
                     size="sm"
@@ -295,12 +309,12 @@ const AdminDashboard = () => {
                     <Pencil className="w-3 h-3" /> Edit
                   </Button>
                   {job.job_apply_url && job.job_apply_url !== "#" && (
-                    <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={() => {
+                    <Button variant="outline" size="sm" className="text-xs" onClick={() => {
                       let url = job.job_apply_url;
                       if (!/^https?:\/\//i.test(url)) url = "https://" + url;
                       window.open(url, "_blank");
                     }}>
-                      <Eye className="w-3 h-3" /> View Listing
+                      <ExternalLink className="w-3 h-3" /> Listing
                     </Button>
                   )}
                   <Button
@@ -380,6 +394,14 @@ const AdminDashboard = () => {
           job={editingJob}
         />
       )}
+      <AdminJobDetailModal
+        open={detailJobOpen}
+        onOpenChange={(v) => {
+          setDetailJobOpen(v);
+          if (!v) setDetailJob(null);
+        }}
+        job={detailJob}
+      />
     </div>
   );
 };

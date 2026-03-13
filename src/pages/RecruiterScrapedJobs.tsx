@@ -285,7 +285,10 @@ const RecruiterScrapedJobs = () => {
             <span className="text-sm font-medium text-primary-foreground">{selectedIds.size} job{selectedIds.size > 1 ? "s" : ""} selected</span>
             <div className="flex items-center gap-2">
               <Button size="sm" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 text-xs h-8" onClick={() => setBatchATSOpen(true)}><Sparkles className="w-3 h-3" /> Run ATS</Button>
-              <Button size="sm" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-xs h-8"><Download className="w-3 h-3" /> Export</Button>
+              <Button size="sm" className="bg-card text-foreground border border-border hover:bg-muted text-xs h-8" onClick={handleExportCSV} disabled={isExporting}>
+                {isExporting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />}
+                Export
+              </Button>
               <Button size="sm" variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-xs h-8"><Trash className="w-3 h-3" /></Button>
               <button onClick={() => setSelectedIds(new Set())} className="text-primary-foreground/70 hover:text-primary-foreground ml-1"><X className="w-4 h-4" /></button>
             </div>

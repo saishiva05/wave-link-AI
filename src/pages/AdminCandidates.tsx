@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { GraduationCap, ChevronLeft, ChevronRight, Search, MoreVertical, Eye, Power, Edit } from "lucide-react";
+import { GraduationCap, ChevronLeft, ChevronRight, Search, MoreVertical, Eye, Power, Edit, Trash2, Loader2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,6 +18,8 @@ const AdminCandidates = () => {
   const [search, setSearch] = useState("");
   const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const perPage = 10;
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -53,6 +55,24 @@ const AdminCandidates = () => {
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     toast({ title: currentlyActive ? "Candidate deactivated" : "Candidate activated" });
     queryClient.invalidateQueries({ queryKey: ["admin"] });
+  };
+
+  const handleDeleteCandidate = async (userId: string) => {
+    setIsDeleting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-user", {
+        body: { action: "delete-user", userId },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast({ title: "Candidate deleted successfully" });
+      queryClient.invalidateQueries({ queryKey: ["admin"] });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "Failed to delete candidate", variant: "destructive" });
+    } finally {
+      setIsDeleting(false);
+      setDeleteConfirm(null);
+    }
   };
 
   const openDetail = (candidate: any) => {
@@ -153,6 +173,10 @@ const AdminCandidates = () => {
                               <DropdownMenuItem onClick={() => toggleActive(c.user_id, isActive)}>
                                 <Power className="w-4 h-4 mr-2" />{isActive ? "Deactivate" : "Activate"}
                               </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteConfirm(c)}>
+                                <Trash2 className="w-4 h-4 mr-2" /> Delete
+                              </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </td>
@@ -211,6 +235,29 @@ const AdminCandidates = () => {
 
       <CreateCandidateModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
       <CandidateDetailModal open={detailOpen} onOpenChange={setDetailOpen} candidate={selectedCandidate} />
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => !isDeleting && setDeleteConfirm(null)}>
+          <div className="bg-card rounded-2xl shadow-2xl max-w-[420px] w-full animate-scale-in p-6 text-center" onClick={(e) => e.stopPropagation()}>
+            <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+              <AlertTriangle className="w-7 h-7 text-destructive" />
+            </div>
+            <h3 className="text-lg font-bold text-foreground font-display mt-4">Delete Candidate?</h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              Are you sure you want to permanently delete <span className="font-medium text-foreground">{deleteConfirm.users?.full_name}</span>?
+              This will remove all their resumes, applications, ATS analyses, and messages from the system.
+            </p>
+            <div className="flex items-center gap-3 mt-6">
+              <Button variant="outline" className="flex-1" onClick={() => setDeleteConfirm(null)} disabled={isDeleting}>Cancel</Button>
+              <Button variant="destructive" className="flex-1" onClick={() => handleDeleteCandidate(deleteConfirm.user_id)} disabled={isDeleting}>
+                {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                {isDeleting ? "Deleting..." : "Delete"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

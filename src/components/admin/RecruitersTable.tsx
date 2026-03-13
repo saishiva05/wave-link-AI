@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MoreVertical, Eye, Edit, Power, Trash2, ChevronLeft, ChevronRight, UserPlus, Users } from "lucide-react";
+import { MoreVertical, Eye, Edit, Power, Trash2, ChevronLeft, ChevronRight, UserPlus, Users, Loader2, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,8 @@ const RecruitersTable = ({ onCreateNew }: RecruitersTableProps) => {
   const [search, setSearch] = useState("");
   const [selectedRecruiter, setSelectedRecruiter] = useState<any>(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const perPage = 10;
   const { data, isLoading } = useAdminRecruiters(currentPage, perPage, search);
   const queryClient = useQueryClient();
@@ -34,6 +36,24 @@ const RecruitersTable = ({ onCreateNew }: RecruitersTableProps) => {
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     toast({ title: currentlyActive ? "Recruiter deactivated" : "Recruiter activated" });
     queryClient.invalidateQueries({ queryKey: ["admin"] });
+  };
+
+  const handleDeleteRecruiter = async (userId: string) => {
+    setIsDeleting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-user", {
+        body: { action: "delete-user", userId },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast({ title: "Recruiter deleted successfully" });
+      queryClient.invalidateQueries({ queryKey: ["admin"] });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "Failed to delete recruiter", variant: "destructive" });
+    } finally {
+      setIsDeleting(false);
+      setDeleteConfirm(null);
+    }
   };
 
   const openDetail = (recruiter: any) => {
@@ -124,7 +144,7 @@ const RecruitersTable = ({ onCreateNew }: RecruitersTableProps) => {
                             <Power className="w-4 h-4 mr-2" />{isActive ? "Deactivate" : "Activate"}
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive focus:text-destructive"><Trash2 className="w-4 h-4 mr-2" /> Delete</DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteConfirm(r)}><Trash2 className="w-4 h-4 mr-2" /> Delete</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </td>
@@ -180,6 +200,29 @@ const RecruitersTable = ({ onCreateNew }: RecruitersTableProps) => {
       </div>
 
       <RecruiterDetailModal open={detailOpen} onOpenChange={setDetailOpen} recruiter={selectedRecruiter} />
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => !isDeleting && setDeleteConfirm(null)}>
+          <div className="bg-card rounded-2xl shadow-2xl max-w-[420px] w-full animate-scale-in p-6 text-center" onClick={(e) => e.stopPropagation()}>
+            <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+              <AlertTriangle className="w-7 h-7 text-destructive" />
+            </div>
+            <h3 className="text-lg font-bold text-foreground font-display mt-4">Delete Recruiter?</h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              Are you sure you want to permanently delete <span className="font-medium text-foreground">{deleteConfirm.users?.full_name}</span>?
+              This will remove all their data including jobs, candidates, CVs, and applications.
+            </p>
+            <div className="flex items-center gap-3 mt-6">
+              <Button variant="outline" className="flex-1" onClick={() => setDeleteConfirm(null)} disabled={isDeleting}>Cancel</Button>
+              <Button variant="destructive" className="flex-1" onClick={() => handleDeleteRecruiter(deleteConfirm.user_id)} disabled={isDeleting}>
+                {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                {isDeleting ? "Deleting..." : "Delete"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
