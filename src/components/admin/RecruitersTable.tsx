@@ -144,7 +144,7 @@ const RecruitersTable = ({ onCreateNew }: RecruitersTableProps) => {
                             <Power className="w-4 h-4 mr-2" />{isActive ? "Deactivate" : "Activate"}
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive focus:text-destructive"><Trash2 className="w-4 h-4 mr-2" /> Delete</DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteConfirm(r)}><Trash2 className="w-4 h-4 mr-2" /> Delete</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </td>
