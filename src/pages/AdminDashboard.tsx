@@ -13,6 +13,7 @@ import CreateAdminModal from "@/components/admin/CreateAdminModal";
 import CreateJobModal from "@/components/recruiter/CreateJobModal";
 import RecruiterActivityTracker from "@/components/admin/RecruiterActivityTracker";
 import EditJobModal from "@/components/admin/EditJobModal";
+import AdminJobDetailModal from "@/components/admin/AdminJobDetailModal";
 import { useAdminStats, useAdminRecruiters } from "@/hooks/useAdminData";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
