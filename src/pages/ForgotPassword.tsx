@@ -47,8 +47,8 @@ const ForgotPassword = () => {
 
   const handleVerifyOTP = async (e: FormEvent) => {
     e.preventDefault();
-    if (otp.length !== 6) {
-      setError("Please enter the complete 6-digit code");
+    if (otp.length !== 8) {
+      setError("Please enter the complete 8-digit code");
       return;
     }
     setIsLoading(true);
