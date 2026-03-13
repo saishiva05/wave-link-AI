@@ -18,6 +18,8 @@ const AdminCandidates = () => {
   const [search, setSearch] = useState("");
   const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const perPage = 10;
   const queryClient = useQueryClient();
   const { toast } = useToast();
