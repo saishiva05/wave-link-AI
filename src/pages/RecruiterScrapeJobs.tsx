@@ -296,7 +296,7 @@ const RecruiterScrapeJobs = () => {
             {(scrapeHistory || []).length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <Search className="w-12 h-12 text-neutral-300 mb-3" />
-                <p className="text-sm text-muted-foreground">No scraping activity yet</p>
+                <p className="text-sm text-muted-foreground">No search activity yet</p>
               </div>
             ) : (
               (scrapeHistory || []).map((item: any, i: number) => (
