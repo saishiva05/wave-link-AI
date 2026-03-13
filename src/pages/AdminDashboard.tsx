@@ -394,6 +394,14 @@ const AdminDashboard = () => {
           job={editingJob}
         />
       )}
+      <AdminJobDetailModal
+        open={detailJobOpen}
+        onOpenChange={(v) => {
+          setDetailJobOpen(v);
+          if (!v) setDetailJob(null);
+        }}
+        job={detailJob}
+      />
     </div>
   );
 };
