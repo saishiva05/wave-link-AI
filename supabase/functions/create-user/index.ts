@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 interface CreateUserRequest {
-  action?: "create" | "update-password";
+  action?: "create" | "update-password" | "delete-user";
   email?: string;
   full_name?: string;
   password?: string;
@@ -21,7 +21,7 @@ interface CreateUserRequest {
   current_location?: string;
   experience_years?: number;
   skills?: string[];
-  // For password update
+  // For password update / delete
   userId?: string;
 }
 
@@ -69,6 +69,165 @@ serve(async (req: Request) => {
     const isRecruiter = callerRoleList.includes("recruiter");
 
     const body: CreateUserRequest = await req.json();
+
+    // Handle delete user action
+    if (body.action === "delete-user") {
+      if (!isAdmin) {
+        return new Response(
+          JSON.stringify({ error: "Only admins can delete users" }),
+          { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+      if (!body.userId) {
+        return new Response(
+          JSON.stringify({ error: "userId is required" }),
+          { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+
+      // Prevent self-deletion
+      if (body.userId === callerUser.id) {
+        return new Response(
+          JSON.stringify({ error: "Cannot delete your own account" }),
+          { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+
+      // Determine the user's role
+      const { data: targetRoles } = await adminClient
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", body.userId);
+      const targetRoleList = targetRoles?.map((r) => r.role) || [];
+
+      // If candidate, delete CVs from storage first
+      if (targetRoleList.includes("candidate")) {
+        const { data: candidateData } = await adminClient
+          .from("candidates")
+          .select("candidate_id")
+          .eq("user_id", body.userId)
+          .single();
+
+        if (candidateData) {
+          const candidateId = candidateData.candidate_id;
+
+          // Get all CVs for this candidate to delete from storage
+          const { data: cvs } = await adminClient
+            .from("cvs")
+            .select("cv_id, file_url")
+            .eq("candidate_id", candidateId);
+
+          if (cvs && cvs.length > 0) {
+            // Delete CV files from storage
+            const cvPaths = cvs.map((cv) => {
+              const url = cv.file_url;
+              const match = url.match(/\/storage\/v1\/object\/(?:public|sign)\/cvs-bucket\/(.+)/);
+              return match ? match[1] : null;
+            }).filter(Boolean) as string[];
+
+            if (cvPaths.length > 0) {
+              await adminClient.storage.from("cvs-bucket").remove(cvPaths);
+            }
+
+            // Delete updated CVs from storage
+            const cvIds = cvs.map((cv) => cv.cv_id);
+            const { data: updatedCvs } = await adminClient
+              .from("updated_cvs")
+              .select("updated_file_url")
+              .eq("candidate_id", candidateId);
+
+            if (updatedCvs && updatedCvs.length > 0) {
+              const updatedPaths = updatedCvs.map((ucv) => {
+                const url = ucv.updated_file_url;
+                const match = url.match(/\/storage\/v1\/object\/(?:public|sign)\/Update%20cv's\/(.+)/);
+                return match ? decodeURIComponent(match[1]) : null;
+              }).filter(Boolean) as string[];
+
+              if (updatedPaths.length > 0) {
+                await adminClient.storage.from("Update cv's").remove(updatedPaths);
+              }
+            }
+
+            // Delete ATS analyses for this candidate's CVs
+            for (const cvId of cvIds) {
+              await adminClient.from("ats_analyses").delete().eq("cv_id", cvId);
+            }
+
+            // Delete updated_cvs records
+            await adminClient.from("updated_cvs").delete().eq("candidate_id", candidateId);
+
+            // Delete CVs records
+            await adminClient.from("cvs").delete().eq("candidate_id", candidateId);
+          }
+
+          // Delete job applications
+          await adminClient.from("job_applications").delete().eq("candidate_id", candidateId);
+
+          // Delete messages
+          await adminClient.from("messages").delete().eq("candidate_id", candidateId);
+
+          // Delete candidate record
+          await adminClient.from("candidates").delete().eq("candidate_id", candidateId);
+        }
+      }
+
+      // If recruiter, handle recruiter-specific cleanup
+      if (targetRoleList.includes("recruiter")) {
+        const { data: recruiterData } = await adminClient
+          .from("recruiters")
+          .select("recruiter_id")
+          .eq("user_id", body.userId)
+          .single();
+
+        if (recruiterData) {
+          const recruiterId = recruiterData.recruiter_id;
+
+          // Delete recruiter sessions
+          await adminClient.from("recruiter_sessions").delete().eq("recruiter_id", recruiterId);
+
+          // Delete generated emails
+          await adminClient.from("generated_emails").delete().eq("recruiter_id", recruiterId);
+
+          // Delete ATS analyses
+          await adminClient.from("ats_analyses").delete().eq("recruiter_id", recruiterId);
+
+          // Delete updated CVs
+          await adminClient.from("updated_cvs").delete().eq("recruiter_id", recruiterId);
+
+          // Delete job applications
+          await adminClient.from("job_applications").delete().eq("recruiter_id", recruiterId);
+
+          // Delete CVs
+          await adminClient.from("cvs").delete().eq("recruiter_id", recruiterId);
+
+          // Delete scraped jobs
+          await adminClient.from("scraped_jobs").delete().eq("recruiter_id", recruiterId);
+
+          // Delete recruiter record
+          await adminClient.from("recruiters").delete().eq("recruiter_id", recruiterId);
+        }
+      }
+
+      // Delete user roles
+      await adminClient.from("user_roles").delete().eq("user_id", body.userId);
+
+      // Delete user profile
+      await adminClient.from("users").delete().eq("user_id", body.userId);
+
+      // Delete auth user
+      const { error: deleteAuthError } = await adminClient.auth.admin.deleteUser(body.userId);
+      if (deleteAuthError) {
+        return new Response(JSON.stringify({ error: deleteAuthError.message }), {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, message: "User deleted successfully" }),
+        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
 
     // Handle password update action
     if (body.action === "update-password") {
