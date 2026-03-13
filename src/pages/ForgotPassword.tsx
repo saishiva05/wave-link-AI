@@ -168,7 +168,7 @@ const ForgotPassword = () => {
               Verify Your Identity
             </h1>
             <p className="text-muted-foreground text-center mb-2">
-              We've sent a 6-digit code to
+              We've sent an 8-digit code to
             </p>
             <p className="text-primary font-medium text-center mb-8">{email}</p>
 
