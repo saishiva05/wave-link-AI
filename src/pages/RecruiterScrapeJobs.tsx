@@ -291,7 +291,7 @@ const RecruiterScrapeJobs = () => {
 
         {/* Recent Scraping History */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.2 }} className="max-w-[900px] mx-auto">
-          <h2 className="text-xl font-bold text-secondary-900 font-display mb-5">Recent Scraping Activity</h2>
+          <h2 className="text-xl font-bold text-secondary-900 font-display mb-5">Recent Search Activity</h2>
           <div className="bg-card border border-border rounded-xl shadow-card overflow-hidden">
             {(scrapeHistory || []).length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
