@@ -174,7 +174,7 @@ const ForgotPassword = () => {
 
             <form onSubmit={handleVerifyOTP} className="space-y-6">
               <div className="flex justify-center">
-                <InputOTP maxLength={6} value={otp} onChange={setOtp}>
+                <InputOTP maxLength={8} value={otp} onChange={setOtp}>
                   <InputOTPGroup>
                     <InputOTPSlot index={0} />
                     <InputOTPSlot index={1} />
@@ -182,6 +182,8 @@ const ForgotPassword = () => {
                     <InputOTPSlot index={3} />
                     <InputOTPSlot index={4} />
                     <InputOTPSlot index={5} />
+                    <InputOTPSlot index={6} />
+                    <InputOTPSlot index={7} />
                   </InputOTPGroup>
                 </InputOTP>
               </div>
