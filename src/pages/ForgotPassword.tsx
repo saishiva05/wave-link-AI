@@ -188,7 +188,7 @@ const ForgotPassword = () => {
                 </InputOTP>
               </div>
 
-              <Button type="submit" variant="portal" size="lg" className="w-full group" disabled={isLoading || otp.length !== 6}>
+              <Button type="submit" variant="portal" size="lg" className="w-full group" disabled={isLoading || otp.length !== 8}>
                 {isLoading ? (
                   <><Loader2 className="w-4 h-4 animate-spin" /> Verifying...</>
                 ) : (
