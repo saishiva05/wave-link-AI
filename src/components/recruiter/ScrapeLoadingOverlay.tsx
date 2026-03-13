@@ -8,7 +8,7 @@ interface ScrapeLoadingOverlayProps {
 const ScrapeLoadingOverlay = ({ isLoading, platform }: ScrapeLoadingOverlayProps) => {
   if (!isLoading) return null;
 
-  const platformName = platform === "linkedin" ? "LinkedIn" : "JSearch";
+  const platformName = platform === "linkedin" ? "WaveLynk Max" : "WaveLynk Pro";
 
   return (
     <div className="fixed inset-0 z-[1000] flex flex-col items-center justify-center bg-white/95 backdrop-blur-sm">
