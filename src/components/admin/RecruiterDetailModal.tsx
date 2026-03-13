@@ -195,7 +195,7 @@ const RecruiterDetailModal = ({ open, onOpenChange, recruiter }: RecruiterDetail
             </div>
 
             <div className="grid grid-cols-2 gap-4 text-sm border-t border-border pt-4">
-              <div><span className="text-muted-foreground">Jobs Scraped:</span> <span className="font-semibold text-foreground">{recruiter.total_jobs_scraped}</span></div>
+              <div><span className="text-muted-foreground">Jobs Found:</span> <span className="font-semibold text-foreground">{recruiter.total_jobs_scraped}</span></div>
               <div><span className="text-muted-foreground">Candidates Managed:</span> <span className="font-semibold text-foreground">{recruiter.total_candidates_managed}</span></div>
               <div><span className="text-muted-foreground">Created:</span> <span className="text-foreground">{format(new Date(recruiter.created_at), "MMM d, yyyy")}</span></div>
             </div>
