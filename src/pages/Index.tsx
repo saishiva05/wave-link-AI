@@ -58,9 +58,9 @@ const Index = () => {
             <PortalCard
               icon={Briefcase}
               title="Recruiter Portal"
-              description="Source top talent, scrape jobs from multiple platforms, and manage candidate applications with AI assistance."
+              description="Source top talent, find jobs from multiple platforms, and manage candidate applications with AI assistance."
               features={[
-                "AI-Powered Job Scraping",
+                "AI-Powered Job Discovery",
                 "ATS Resume Matching",
                 "Candidate Management",
               ]}

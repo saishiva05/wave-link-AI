@@ -283,7 +283,7 @@ const RecruiterScrapeJobs = () => {
             <div className="mt-10 pt-8 border-t border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <Button type="button" variant="ghost" onClick={handleClear} className="text-neutral-600"><RotateCcw className="w-4 h-4" /> Clear Form</Button>
               <Button type="submit" variant="portal" size="lg" disabled={isLoading || queueStatus.isRunning}>
-                {isLoading ? (<><Loader2 className="w-5 h-5 animate-spin" /> Scraping Jobs...</>) : (<><Search className="w-5 h-5" /> Scrape Jobs</>)}
+                {isLoading ? (<><Loader2 className="w-5 h-5 animate-spin" /> Finding Jobs...</>) : (<><Search className="w-5 h-5" /> Find Jobs</>)}
               </Button>
             </div>
           </form>
@@ -291,12 +291,12 @@ const RecruiterScrapeJobs = () => {
 
         {/* Recent Scraping History */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.2 }} className="max-w-[900px] mx-auto">
-          <h2 className="text-xl font-bold text-secondary-900 font-display mb-5">Recent Scraping Activity</h2>
+          <h2 className="text-xl font-bold text-secondary-900 font-display mb-5">Recent Search Activity</h2>
           <div className="bg-card border border-border rounded-xl shadow-card overflow-hidden">
             {(scrapeHistory || []).length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <Search className="w-12 h-12 text-neutral-300 mb-3" />
-                <p className="text-sm text-muted-foreground">No scraping activity yet</p>
+                <p className="text-sm text-muted-foreground">No search activity yet</p>
               </div>
             ) : (
               (scrapeHistory || []).map((item: any, i: number) => (

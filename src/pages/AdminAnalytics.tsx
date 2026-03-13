@@ -7,7 +7,7 @@ const AdminAnalytics = () => {
   const { data: stats, isLoading } = useAdminStats();
 
   const quickStats = [
-    { label: "Total Jobs Scraped", value: isLoading ? "..." : (stats?.totalJobs ?? 0).toLocaleString(), color: "bg-primary-50 text-primary" },
+    { label: "Total Jobs Found", value: isLoading ? "..." : (stats?.totalJobs ?? 0).toLocaleString(), color: "bg-primary-50 text-primary" },
     { label: "Total Recruiters", value: isLoading ? "..." : String(stats?.totalRecruiters ?? 0), color: "bg-secondary-50 text-secondary" },
     { label: "Total Candidates", value: isLoading ? "..." : String(stats?.totalCandidates ?? 0), color: "bg-info-50 text-info-500" },
     { label: "Total Applications", value: isLoading ? "..." : String(stats?.totalApplications ?? 0), color: "bg-warning-50 text-warning-500" },

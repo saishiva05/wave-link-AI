@@ -8,7 +8,7 @@ interface ScrapeLoadingOverlayProps {
 const ScrapeLoadingOverlay = ({ isLoading, platform }: ScrapeLoadingOverlayProps) => {
   if (!isLoading) return null;
 
-  const platformName = platform === "linkedin" ? "LinkedIn" : "JSearch";
+  const platformName = platform === "linkedin" ? "WaveLynk Max" : "WaveLynk Pro";
 
   return (
     <div className="fixed inset-0 z-[1000] flex flex-col items-center justify-center bg-white/95 backdrop-blur-sm">
@@ -27,7 +27,7 @@ const ScrapeLoadingOverlay = ({ isLoading, platform }: ScrapeLoadingOverlayProps
 
       <Loader2 className="w-16 h-16 text-primary animate-spin" />
       <h3 className="text-xl font-bold text-secondary-900 font-display mt-6">
-        Searching jobs on {platformName}...
+        Finding jobs via {platformName}...
       </h3>
       <p className="text-base text-muted-foreground mt-2">
         This may take 10–30 seconds

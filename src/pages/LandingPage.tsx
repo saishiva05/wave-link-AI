@@ -79,7 +79,7 @@ const features = [
 
 const howItWorks = [
   { step: "01", title: "Sign Up & Upload CV", description: "Create your profile and upload your resume. That's all you need to do.", icon: GraduationCap },
-  { step: "02", title: "AI Finds Dream Jobs", description: "Our AI scrapes hundreds of job platforms daily, matching you with perfect roles.", icon: Search },
+  { step: "02", title: "AI Finds Dream Jobs", description: "Our AI searches hundreds of job platforms daily, matching you with perfect roles.", icon: Search },
   { step: "03", title: "We Apply For You", description: "Your recruiter submits tailored applications with AI-optimized resumes.", icon: Rocket },
   { step: "04", title: "You Get Hired", description: "Track applications in real-time, attend interviews, land your dream job.", icon: Award },
 ];
