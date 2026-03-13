@@ -57,6 +57,24 @@ const AdminCandidates = () => {
     queryClient.invalidateQueries({ queryKey: ["admin"] });
   };
 
+  const handleDeleteCandidate = async (userId: string) => {
+    setIsDeleting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-user", {
+        body: { action: "delete-user", userId },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast({ title: "Candidate deleted successfully" });
+      queryClient.invalidateQueries({ queryKey: ["admin"] });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "Failed to delete candidate", variant: "destructive" });
+    } finally {
+      setIsDeleting(false);
+      setDeleteConfirm(null);
+    }
+  };
+
   const openDetail = (candidate: any) => {
     setSelectedCandidate(candidate);
     setDetailOpen(true);
