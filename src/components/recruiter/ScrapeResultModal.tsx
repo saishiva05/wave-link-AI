@@ -17,7 +17,7 @@ interface ScrapeResultModalProps {
 const ScrapeResultModal = ({ result, platform, location, onClose, onViewJobs, onScrapeMore }: ScrapeResultModalProps) => {
   if (!result) return null;
 
-  const platformName = platform === "linkedin" ? "LinkedIn" : "JSearch";
+  const platformName = platform === "linkedin" ? "WaveLynk Max" : "WaveLynk Pro";
 
   return (
     <div className="fixed inset-0 z-[1001] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
