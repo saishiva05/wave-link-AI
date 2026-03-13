@@ -27,6 +27,8 @@ const AdminDashboard = () => {
   const [adminModalOpen, setAdminModalOpen] = useState(false);
   const [editJobModalOpen, setEditJobModalOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<any>(null);
+  const [detailJob, setDetailJob] = useState<any>(null);
+  const [detailJobOpen, setDetailJobOpen] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: stats, isLoading } = useAdminStats();
