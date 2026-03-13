@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MoreVertical, Eye, Edit, Power, Trash2, ChevronLeft, ChevronRight, UserPlus, Users } from "lucide-react";
+import { MoreVertical, Eye, Edit, Power, Trash2, ChevronLeft, ChevronRight, UserPlus, Users, Loader2, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,8 @@ const RecruitersTable = ({ onCreateNew }: RecruitersTableProps) => {
   const [search, setSearch] = useState("");
   const [selectedRecruiter, setSelectedRecruiter] = useState<any>(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const perPage = 10;
   const { data, isLoading } = useAdminRecruiters(currentPage, perPage, search);
   const queryClient = useQueryClient();
@@ -34,6 +36,24 @@ const RecruitersTable = ({ onCreateNew }: RecruitersTableProps) => {
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     toast({ title: currentlyActive ? "Recruiter deactivated" : "Recruiter activated" });
     queryClient.invalidateQueries({ queryKey: ["admin"] });
+  };
+
+  const handleDeleteRecruiter = async (userId: string) => {
+    setIsDeleting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-user", {
+        body: { action: "delete-user", userId },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast({ title: "Recruiter deleted successfully" });
+      queryClient.invalidateQueries({ queryKey: ["admin"] });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "Failed to delete recruiter", variant: "destructive" });
+    } finally {
+      setIsDeleting(false);
+      setDeleteConfirm(null);
+    }
   };
 
   const openDetail = (recruiter: any) => {
