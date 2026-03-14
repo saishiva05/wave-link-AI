@@ -329,7 +329,7 @@ export function useCandidateDashboard() {
   const clearAllFilters = () => { setSearch(""); setStatusFilter(""); setTypeFilter(""); setLocationFilter(""); setDateFilter(""); setPage(1); };
 
   return {
-    applications: paginatedApplications, allFilteredApplications: filteredApplications, recentApplications,
+    applications: paginatedApplications, allFilteredApplications: filteredApplications, recentApplications, todayApplications,
     cvs, recruiter: recruiterInfo, notifications, unreadCount, markAllRead, stats, chartData,
     adminJobPostings,
     search, setSearch, statusFilter, setStatusFilter, dateFilter, setDateFilter,
