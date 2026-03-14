@@ -17,7 +17,7 @@ import WavePattern from "@/components/WavePattern";
 const CandidateDashboardPage = () => {
   const navigate = useNavigate();
   const { fullName } = useAuth();
-  const { recentApplications, recruiter, stats, chartData, isLoading, cvs, adminJobPostings } = useCandidateDashboard();
+  const { recentApplications, todayApplications, recruiter, stats, chartData, isLoading, cvs, adminJobPostings } = useCandidateDashboard();
   const [detailApp, setDetailApp] = useState<CandidateApplication | null>(null);
   const firstName = fullName?.split(" ")[0] || "there";
 
