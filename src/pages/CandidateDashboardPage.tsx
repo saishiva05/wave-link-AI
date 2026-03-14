@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Sparkles, Mail, FileText, Clock, CheckCircle, Loader2, MessageSquare, Briefcase, XCircle, Calendar, Eye } from "lucide-react";
+import { Sparkles, Mail, FileText, Clock, CheckCircle, Loader2, MessageSquare, Briefcase, XCircle, Calendar, Eye, CalendarCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useCandidateDashboard } from "@/hooks/useCandidateDashboard";
