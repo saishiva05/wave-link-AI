@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Sparkles, Mail, FileText, Clock, CheckCircle, Loader2, MessageSquare, Briefcase, XCircle, Calendar, Eye, CalendarCheck } from "lucide-react";
