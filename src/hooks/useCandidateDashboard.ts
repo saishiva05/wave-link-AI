@@ -310,6 +310,11 @@ export function useCandidateDashboard() {
   const totalPages = Math.ceil(filteredApplications.length / perPage);
   const paginatedApplications = filteredApplications.slice((page - 1) * perPage, page * perPage);
   const recentApplications = [...rawApplications].sort((a, b) => new Date(b.applied_at).getTime() - new Date(a.applied_at).getTime()).slice(0, 5);
+  const todayApplications = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return rawApplications.filter((a) => new Date(a.applied_at) >= today).sort((a, b) => new Date(b.applied_at).getTime() - new Date(a.applied_at).getTime());
+  }, [rawApplications]);
   const uniqueLocations = [...new Set(rawApplications.map((a) => a.location))].filter(Boolean);
 
   const activeFilters: { label: string; onRemove: () => void }[] = [];
