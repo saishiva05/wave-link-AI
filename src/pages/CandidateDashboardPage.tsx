@@ -105,6 +105,56 @@ const CandidateDashboardPage = () => {
           </motion.div>
         )}
 
+        {/* Today's Applications */}
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.12 }}>
+          <div className="bg-card border border-border rounded-xl shadow-xs overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+              <div className="flex items-center gap-2">
+                <CalendarCheck className="w-5 h-5 text-primary" />
+                <h3 className="text-lg font-semibold text-foreground font-display">Today's Applications</h3>
+                <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">{todayApplications.length}</span>
+              </div>
+            </div>
+            {todayApplications.length === 0 ? (
+              <div className="py-12 text-center">
+                <CalendarCheck className="w-10 h-10 text-muted-foreground/40 mx-auto mb-2" />
+                <p className="text-sm font-medium text-muted-foreground">No applications submitted today</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">Your recruiter hasn't submitted any applications today yet.</p>
+              </div>
+            ) : (
+              todayApplications.map((app, i) => {
+                const statusMap: Record<string, { bg: string; text: string; label: string }> = {
+                  pending: { bg: "bg-warning-100", text: "text-warning-700", label: "Pending" },
+                  submitted: { bg: "bg-info-100", text: "text-info-700", label: "In Review" },
+                  interview_scheduled: { bg: "bg-primary-100", text: "text-primary-700", label: "Interview" },
+                  interviewed: { bg: "bg-primary-100", text: "text-primary-700", label: "Interviewed" },
+                  offer_received: { bg: "bg-success-100", text: "text-success-700", label: "Offer" },
+                  hired: { bg: "bg-success-100", text: "text-success-700", label: "Hired" },
+                  rejected: { bg: "bg-error-100", text: "text-error-700", label: "Rejected" },
+                  declined: { bg: "bg-muted", text: "text-muted-foreground", label: "Declined" },
+                };
+                const badge = statusMap[app.application_status] || statusMap.pending;
+                return (
+                  <div
+                    key={app.application_id}
+                    onClick={() => setDetailApp(app)}
+                    className={cn("flex items-center gap-4 px-6 py-4 hover:bg-muted/50 cursor-pointer transition-colors", i < todayApplications.length - 1 && "border-b border-border")}
+                  >
+                    <div className="w-10 h-10 rounded-lg border border-border bg-card flex items-center justify-center shrink-0">
+                      <Briefcase className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-foreground truncate">{app.job_title}</p>
+                      <p className="text-xs text-muted-foreground truncate">{app.company_name} · {app.location}</p>
+                    </div>
+                    <span className={cn("px-2.5 py-1 rounded-full text-xs font-medium shrink-0", badge.bg, badge.text)}>{badge.label}</span>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </motion.div>
+
         {/* Recent Applications */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.15 }}>
           <RecentApplicationsList applications={recentApplications} onViewDetails={setDetailApp} onViewAll={() => navigate("/candidate/applications")} />
