@@ -133,14 +133,16 @@ const ApplicationDetailsModal = ({ application, onClose }: ApplicationDetailsMod
                   >
                     <Eye className="w-4 h-4" />
                   </button>
-                  <a
-                    href={application.updated_cv_file_url!}
-                    download={application.updated_cv_file_name}
+                  <button
+                    onClick={async () => {
+                      const { downloadFile } = await import("@/lib/downloadFile");
+                      await downloadFile(application.updated_cv_file_url!, application.updated_cv_file_name || "updated_cv.pdf");
+                    }}
                     className="w-9 h-9 rounded-lg bg-teal-100 flex items-center justify-center text-teal-700 hover:bg-teal-200 transition-colors"
                     title="Download"
                   >
                     <Download className="w-4 h-4" />
-                  </a>
+                  </button>
                 </div>
               )}
             </div>
