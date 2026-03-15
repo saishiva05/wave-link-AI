@@ -171,14 +171,13 @@ const CandidateCVSection = ({
                       >
                         <Eye className="w-4 h-4" />
                       </button>
-                      <a
-                        href={ucv.updated_file_url}
-                        download
+                      <button
+                        onClick={() => onDownloadUpdated(ucv.updated_file_url, ucv.updated_file_name)}
                         className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-teal-100 text-teal-600 transition-colors"
                         title="Download"
                       >
                         <Download className="w-4 h-4" />
-                      </a>
+                      </button>
                       <a
                         href={ucv.updated_file_url}
                         target="_blank"

@@ -169,14 +169,16 @@ const UpdatedCVsBadge = ({ updatedCVs, compact = false }: UpdatedCVsBadgeProps) 
                           >
                             <Eye className="w-4 h-4" />
                           </button>
-                          <a
-                            href={ucv.updated_file_url}
-                            download
+                          <button
+                            onClick={async () => {
+                              const { downloadFile } = await import("@/lib/downloadFile");
+                              await downloadFile(ucv.updated_file_url, ucv.updated_file_name);
+                            }}
                             className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-emerald-100 text-emerald-600 transition-colors"
                             title="Download Updated CV"
                           >
                             <Download className="w-4 h-4" />
-                          </a>
+                          </button>
                         </div>
                       </div>
                     </div>
