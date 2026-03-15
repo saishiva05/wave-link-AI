@@ -316,7 +316,8 @@ export function useRecruiterCandidates() {
           users!candidates_user_id_fkey (
             full_name,
             email,
-            is_active
+            is_active,
+            avatar_url
           )
         `)
         .eq("assigned_recruiter_id", recruiterId!)
