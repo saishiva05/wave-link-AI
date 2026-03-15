@@ -114,7 +114,10 @@ const RecruiterCandidates = () => {
                 )}
                 <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
                   <span className="text-xs text-neutral-500">{c.experience_years ? `${c.experience_years} yrs exp` : "—"}</span>
-                  <button className="text-xs font-medium text-primary hover:underline flex items-center gap-1">
+                  <button
+                    onClick={() => navigate(`/recruiter/cv-management?candidate=${c.candidate_id}`)}
+                    className="text-xs font-medium text-primary hover:underline flex items-center gap-1"
+                  >
                     View Details <ChevronRight className="w-3 h-3" />
                   </button>
                 </div>
