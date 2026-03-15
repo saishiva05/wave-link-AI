@@ -379,12 +379,20 @@ export function useCVManagement() {
     }
   }, [toast]);
 
-  const handleDownloadUpdated = useCallback((url: string, fileName: string) => {
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = fileName;
-    a.target = "_blank";
-    a.click();
+  const handleDownloadUpdated = useCallback(async (url: string, fileName: string) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      // Fallback: open in new tab
+      window.open(url, "_blank");
+    }
   }, []);
 
   return {
