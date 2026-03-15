@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Bell,
   Menu,
@@ -40,6 +40,7 @@ const mockNotifications = [
 ];
 
 const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
+  const navigate = useNavigate();
   const { fullName, email, signOut, profile } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -211,17 +212,19 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
               </div>
               <div className="p-1.5">
                 {[
-                  { icon: User, label: "My Profile" },
-                  { icon: Settings, label: "Account Settings" },
-                  { icon: Sliders, label: "Preferences" },
+                  { icon: User, label: "My Profile", route: "/recruiter/settings" },
+                  { icon: Settings, label: "Account Settings", route: "/recruiter/settings" },
+                  { icon: Sliders, label: "Preferences", route: "/recruiter/settings" },
                 ].map((item) => (
-                  <button
+                  <Link
                     key={item.label}
+                    to={item.route}
+                    onClick={closeAll}
                     className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-md text-sm text-foreground hover:bg-muted transition-colors"
                   >
                     <item.icon className="w-4 h-4 text-muted-foreground" />
                     {item.label}
-                  </button>
+                  </Link>
                 ))}
                 <div className="my-1 border-t border-border" />
                 <Link

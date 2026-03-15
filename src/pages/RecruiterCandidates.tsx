@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Users, UserPlus, Search, MapPin, Briefcase, Calendar, Mail, Phone, ChevronRight, Loader2, X } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useRecruiterCandidates } from "@/hooks/useRecruiterData";
@@ -82,9 +83,10 @@ const RecruiterCandidates = () => {
                 className="bg-card border border-border rounded-xl p-6 shadow-xs hover:shadow-card hover:-translate-y-0.5 transition-all duration-200"
               >
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-semibold shrink-0">
-                    {getInitials(name)}
-                  </div>
+                  <Avatar className="w-12 h-12 shrink-0">
+                    <AvatarImage src={c.users?.avatar_url || undefined} alt={name} />
+                    <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">{getInitials(name)}</AvatarFallback>
+                  </Avatar>
                   <div className="min-w-0">
                     <p className="text-base font-semibold text-secondary-900 truncate">{name}</p>
                     <p className="text-sm text-muted-foreground truncate">{email}</p>
@@ -112,7 +114,10 @@ const RecruiterCandidates = () => {
                 )}
                 <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
                   <span className="text-xs text-neutral-500">{c.experience_years ? `${c.experience_years} yrs exp` : "—"}</span>
-                  <button className="text-xs font-medium text-primary hover:underline flex items-center gap-1">
+                  <button
+                    onClick={() => navigate(`/recruiter/cv-management?candidate=${c.candidate_id}`)}
+                    className="text-xs font-medium text-primary hover:underline flex items-center gap-1"
+                  >
                     View Details <ChevronRight className="w-3 h-3" />
                   </button>
                 </div>
