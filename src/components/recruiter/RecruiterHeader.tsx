@@ -40,6 +40,7 @@ const mockNotifications = [
 ];
 
 const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
+  const navigate = useNavigate();
   const { fullName, email, signOut, profile } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
