@@ -83,9 +83,10 @@ const RecruiterCandidates = () => {
                 className="bg-card border border-border rounded-xl p-6 shadow-xs hover:shadow-card hover:-translate-y-0.5 transition-all duration-200"
               >
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-semibold shrink-0">
-                    {getInitials(name)}
-                  </div>
+                  <Avatar className="w-12 h-12 shrink-0">
+                    <AvatarImage src={c.users?.avatar_url || undefined} alt={name} />
+                    <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">{getInitials(name)}</AvatarFallback>
+                  </Avatar>
                   <div className="min-w-0">
                     <p className="text-base font-semibold text-secondary-900 truncate">{name}</p>
                     <p className="text-sm text-muted-foreground truncate">{email}</p>
