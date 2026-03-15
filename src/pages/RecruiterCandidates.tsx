@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Users, UserPlus, Search, MapPin, Briefcase, Calendar, Mail, Phone, ChevronRight, Loader2, X } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useRecruiterCandidates } from "@/hooks/useRecruiterData";
