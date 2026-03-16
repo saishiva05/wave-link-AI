@@ -166,7 +166,9 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
             webhook_response: result,
             ats_analysis_id: atsAnalysisData?.analysis_id || null,
           });
-          queryClient.invalidateQueries({ queryKey: ["recruiter", "job-updated-cvs"] });
+          await queryClient.invalidateQueries({ queryKey: ["recruiter", "job-updated-cvs"] });
+          await queryClient.invalidateQueries({ queryKey: ["recruiter", "updated-cvs"] });
+          await queryClient.invalidateQueries({ queryKey: ["recruiter", "cvs"] });
         } catch (dbErr) {
           console.error("Failed to save updated CV record:", dbErr);
         }
