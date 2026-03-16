@@ -148,7 +148,7 @@ const CreateCandidateModal = ({ open, onClose }: Props) => {
             <label className="block text-sm font-medium text-secondary-900 mb-1">
               <MapPin className="w-3.5 h-3.5 inline mr-1 text-neutral-400" />Location
             </label>
-            <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Hyderabad, India"
+            <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Austin, TX"
               className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-card outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground" />
           </div>
 

@@ -117,7 +117,7 @@ const EditJobModal = ({ open, onOpenChange, job }: EditJobModalProps) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Location *</Label>
-              <Input value={form.location} onChange={(e) => updateField("location", e.target.value)} placeholder="e.g. Bangalore, India" />
+              <Input value={form.location} onChange={(e) => updateField("location", e.target.value)} placeholder="e.g. San Francisco, CA" />
             </div>
             <div className="space-y-2">
               <Label>Apply URL</Label>
