@@ -166,7 +166,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
             webhook_response: result,
             ats_analysis_id: atsAnalysisData?.analysis_id || null,
           });
-          await queryClient.invalidateQueries({ queryKey: ["recruiter", "job-updated-cvs"] });
+          await queryClient.refetchQueries({ queryKey: ["recruiter", "job-updated-cvs"] });
           await queryClient.invalidateQueries({ queryKey: ["recruiter", "updated-cvs"] });
           await queryClient.invalidateQueries({ queryKey: ["recruiter", "cvs"] });
         } catch (dbErr) {
