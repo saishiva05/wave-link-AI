@@ -268,7 +268,7 @@ const RecruiterScrapeJobs = () => {
 
             <div className="space-y-6">
               <ScrapeFormField label="Job Title" required icon={Briefcase} placeholder="e.g. AI Automation Developer" value={jobTitle} onChange={setJobTitle} error={errors.jobTitle} helper="Enter the job position you're looking for" />
-              <ScrapeFormField label="Job Location" required icon={MapPin} placeholder="e.g. Hyderabad, India" value={jobLocation} onChange={setJobLocation} error={errors.jobLocation} helper="City, State or Country" />
+              <ScrapeFormField label="Job Location" required icon={MapPin} placeholder="e.g. New York, NY" value={jobLocation} onChange={setJobLocation} error={errors.jobLocation} helper="City, State or Country" />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <ScrapeFormSelect label="Posted Within" icon={Calendar} placeholder="Select time range" value={publishedTime} onChange={setPublishedTime} options={publishedTimeOptions} helper="Filter jobs by how recently they were posted" optional />
                 <ScrapeFormSelect label="Work Mode" icon={Building} placeholder="Select work mode" value={workType} onChange={setWorkType} options={workTypeOptions} optional />
