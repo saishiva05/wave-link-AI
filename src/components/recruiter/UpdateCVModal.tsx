@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { ScrapedJob } from "@/data/mockScrapedJobs";
 import {
   X, Briefcase, MapPin, FileText, Info, FilePen, Loader2, CheckCircle,
-  XCircle, Search, Download,
+  XCircle, Search, Download, Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
