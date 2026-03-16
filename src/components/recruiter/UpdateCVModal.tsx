@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { ScrapedJob } from "@/data/mockScrapedJobs";
 import {
   X, Briefcase, MapPin, FileText, Info, FilePen, Loader2, CheckCircle,
-  XCircle, Search, Download,
+  XCircle, Search, Download, Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -166,7 +166,9 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
             webhook_response: result,
             ats_analysis_id: atsAnalysisData?.analysis_id || null,
           });
-          queryClient.invalidateQueries({ queryKey: ["recruiter", "job-updated-cvs"] });
+          await queryClient.invalidateQueries({ queryKey: ["recruiter", "job-updated-cvs"] });
+          await queryClient.invalidateQueries({ queryKey: ["recruiter", "updated-cvs"] });
+          await queryClient.invalidateQueries({ queryKey: ["recruiter", "cvs"] });
         } catch (dbErr) {
           console.error("Failed to save updated CV record:", dbErr);
         }
@@ -289,25 +291,53 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
             </div>
           )}
 
-          {state === "success" && (
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <div className="w-16 h-16 rounded-full bg-success-50 flex items-center justify-center"><CheckCircle className="w-10 h-10 text-success-500" /></div>
-              <h3 className="text-xl font-bold text-secondary-900 font-display mt-6">CV Updated Successfully!</h3>
-              <p className="text-sm text-muted-foreground mt-2">The CV has been rewritten with optimized content based on the job requirements.</p>
-              {updateResult && (
-                <div className="mt-6 w-full text-left bg-muted/50 border border-border rounded-lg p-4 max-h-[200px] overflow-y-auto">
-                  <h4 className="text-sm font-semibold text-secondary-900 mb-2">Update Details</h4>
-                  <pre className="text-xs text-muted-foreground whitespace-pre-wrap break-words">{typeof updateResult === "string" ? updateResult : JSON.stringify(updateResult, null, 2)}</pre>
+          {state === "success" && (() => {
+            const updatedUrl = updateResult?.updated_cv_url || updateResult?.file_url || updateResult?.download_url || "";
+            const updatedName = updateResult?.updated_file_name || `Updated_${cvs.find((cv: any) => cv.cv_id === selectedCV)?.file_name || "resume.pdf"}`;
+            const candidateName = selectedCandidateObj?.users?.full_name || "Candidate";
+            return (
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <div className="w-20 h-20 rounded-full bg-success-50 flex items-center justify-center">
+                  <CheckCircle className="w-12 h-12 text-success-500" />
                 </div>
-              )}
-              <div className="flex gap-3 mt-6 w-full">
-                {(updateResult?.updated_cv_url || updateResult?.file_url || updateResult?.download_url) && (
-                  <Button variant="portal" className="flex-1" onClick={handleDownloadUpdated}><Download className="w-4 h-4" /> Download Updated CV</Button>
-                )}
-                <Button variant="outline" className="flex-1" onClick={handleClose}>Close</Button>
+                <h3 className="text-xl font-bold text-secondary-900 font-display mt-6">CV Updated Successfully!</h3>
+                <p className="text-sm text-muted-foreground mt-2 max-w-sm">
+                  The resume for <span className="font-semibold text-foreground">{candidateName}</span> has been AI-optimized for the <span className="font-semibold text-foreground">{job?.job_title}</span> role.
+                </p>
+
+                {/* Updated CV card */}
+                <div className="mt-6 w-full bg-gradient-to-br from-teal-50 to-emerald-50 border border-teal-200 rounded-xl p-5">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-xl bg-teal-100 flex items-center justify-center shrink-0">
+                      <FileText className="w-7 h-7 text-teal-600" />
+                    </div>
+                    <div className="flex-1 min-w-0 text-left">
+                      <p className="text-sm font-semibold text-secondary-900 truncate">{updatedName}</p>
+                      <p className="text-xs text-teal-700 font-medium mt-0.5">✨ AI-Optimized Resume</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 mt-6 w-full">
+                  {updatedUrl && (
+                    <>
+                      <Button
+                        variant="portal"
+                        className="flex-1"
+                        onClick={() => window.open(updatedUrl, "_blank")}
+                      >
+                        <Eye className="w-4 h-4" /> View Updated CV
+                      </Button>
+                      <Button variant="outline" className="flex-1" onClick={handleDownloadUpdated}>
+                        <Download className="w-4 h-4" /> Download
+                      </Button>
+                    </>
+                  )}
+                </div>
+                <Button variant="ghost" className="mt-3 w-full" onClick={handleClose}>Close</Button>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {state === "error" && (
             <div className="flex flex-col items-center justify-center py-10 text-center">
