@@ -3,6 +3,11 @@
  * This works for cross-origin URLs where the <a download> attribute is ignored.
  */
 export async function downloadFile(url: string, fileName: string): Promise<void> {
+  // Ensure the file always downloads with a .pdf extension
+  if (!fileName.toLowerCase().endsWith(".pdf")) {
+    fileName = fileName.replace(/\.[^.]+$/, "") + ".pdf";
+    if (fileName === ".pdf") fileName = "document.pdf";
+  }
   try {
     const response = await fetch(url);
     const blob = await response.blob();
