@@ -208,12 +208,9 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
   };
 
   const handleDownloadUpdated = async () => {
-    if (updateResult?.updated_cv_url || updateResult?.file_url || updateResult?.download_url) {
-      const url = updateResult.updated_cv_url || updateResult.file_url || updateResult.download_url;
-      const cvObj = cvs.find((cv: any) => cv.cv_id === selectedCV);
-      const fileName = cvObj?.file_name ? `Updated_${cvObj.file_name}` : "updated_cv.pdf";
+    if (savedFileUrl) {
       const { downloadFile } = await import("@/lib/downloadFile");
-      await downloadFile(url, fileName);
+      await downloadFile(savedFileUrl, savedFileName || "updated_cv.pdf");
     }
   };
 
