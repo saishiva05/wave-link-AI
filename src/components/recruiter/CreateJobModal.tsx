@@ -86,7 +86,7 @@ const CreateJobModal = ({ open, onOpenChange, recruiterId, recruiterOptions, adm
       onOpenChange(false);
       setForm({
         job_title: "", company_name: "", location: "", contract_type: "Full-time",
-        work_type: "On-site", experience_level: "", salary_range: "", job_description: "", job_apply_url: "",
+        work_type: "On-site", apply_type: "External", experience_level: "", salary_range: "", job_description: "", job_apply_url: "",
       });
     },
     onError: (err: any) => {
