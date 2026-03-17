@@ -246,7 +246,7 @@ const RecruiterScrapedJobs = () => {
               <Button variant="outline" size="sm" onClick={() => setCreateJobOpen(true)}>
                 <Plus className="w-3.5 h-3.5" /> Add Job
               </Button>
-              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => navigate("/recruiter/scrape-jobs")}>
+              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => navigate("/recruiter/find-jobs")}>
                 <Plus className="w-3.5 h-3.5" /> Find New Jobs
               </Button>
             </div>
