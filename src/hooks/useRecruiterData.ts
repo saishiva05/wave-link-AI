@@ -239,6 +239,7 @@ export function useScrapedJobs(recruiterId: string | null, filters: {
   page: number;
   perPage: number;
   applicantsRange?: string;
+  applyType?: string;
 }) {
   return useQuery({
     queryKey: ["recruiter", "scraped-jobs", recruiterId, filters],
