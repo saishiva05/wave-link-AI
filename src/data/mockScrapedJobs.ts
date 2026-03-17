@@ -17,6 +17,7 @@ export interface ScrapedJob {
   is_active?: boolean;
   scraped_at?: string;
   applications_count?: string | null;
+  apply_type?: string;
 }
 
 /** Map a database row to the ScrapedJob UI interface */
