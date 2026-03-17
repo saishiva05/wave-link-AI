@@ -123,6 +123,7 @@ const RecruiterScrapedJobs = () => {
   if (contractFilter.length > 0) activeFilters.push({ label: `Type: ${contractFilter.join(", ")}`, onRemove: () => setContractFilter([]) });
   if (workModeFilter) activeFilters.push({ label: `Mode: ${workModeFilter}`, onRemove: () => setWorkModeFilter("") });
   if (applicantsFilter) activeFilters.push({ label: `Applicants: ${applicantsOptions.find((a) => a.value === applicantsFilter)?.label}`, onRemove: () => setApplicantsFilter("") });
+  if (applyTypeFilter) activeFilters.push({ label: `Apply: ${applyTypeFilter === "Easy_Apply" ? "Easy Apply" : "External"}`, onRemove: () => setApplyTypeFilter("") });
 
   const clearAllFilters = () => {
     setSearch(""); setPlatformFilter(""); setDateFilter(""); setContractFilter([]); setWorkModeFilter(""); setApplicantsFilter(""); setPage(1);
