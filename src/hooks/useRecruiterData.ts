@@ -244,6 +244,7 @@ export function useScrapedJobs(recruiterId: string | null, filters: {
   return useQuery({
     queryKey: ["recruiter", "scraped-jobs", recruiterId, filters],
     enabled: !!recruiterId,
+    placeholderData: (prev) => prev,
     queryFn: async () => {
       let query = supabase
         .from("scraped_jobs")
