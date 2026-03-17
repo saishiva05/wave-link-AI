@@ -37,6 +37,8 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
   const [candidateSearch, setCandidateSearch] = useState("");
   const [state, setState] = useState<ModalState>("form");
   const [updateResult, setUpdateResult] = useState<any>(null);
+  const [savedFileUrl, setSavedFileUrl] = useState("");
+  const [savedFileName, setSavedFileName] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
   const candidateCVs = useMemo(
@@ -150,28 +152,46 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
       const result = await response.json();
       setUpdateResult(result);
 
+      // Build the file URL - prefer webhook response, fallback to constructed storage URL
+      const webhookUrl = result?.updated_cv_url || result?.file_url || result?.download_url || "";
+      const finalFileName = result?.updated_file_name || `Updated_${cvObj.file_name}`;
+      
       // Save to updated_cvs table
-      const updatedFileUrl = result?.updated_cv_url || result?.file_url || result?.download_url || "";
-      if (updatedFileUrl && recruiterId) {
+      if (recruiterId) {
         try {
-          await supabase.from("updated_cvs").insert({
+          const { data: insertedRow } = await supabase.from("updated_cvs").insert({
             job_id: job.id,
             cv_id: selectedCV,
             candidate_id: selectedCandidate,
             recruiter_id: recruiterId,
             original_file_name: cvObj.file_name,
-            updated_file_name: result?.updated_file_name || `Updated_${cvObj.file_name}`,
-            updated_file_url: updatedFileUrl,
+            updated_file_name: finalFileName,
+            updated_file_url: webhookUrl,
             updated_file_size_bytes: result?.file_size || null,
             webhook_response: result,
             ats_analysis_id: atsAnalysisData?.analysis_id || null,
-          });
+          }).select("updated_file_url, updated_file_name").single();
+          
+          // Use the URL from the DB record (most reliable)
+          if (insertedRow?.updated_file_url) {
+            setSavedFileUrl(insertedRow.updated_file_url);
+            setSavedFileName(insertedRow.updated_file_name || finalFileName);
+          } else {
+            setSavedFileUrl(webhookUrl);
+            setSavedFileName(finalFileName);
+          }
+          
           queryClient.invalidateQueries({ queryKey: ["recruiter", "job-updated-cvs"] });
           queryClient.invalidateQueries({ queryKey: ["recruiter", "updated-cvs"] });
           queryClient.invalidateQueries({ queryKey: ["recruiter", "cvs"] });
         } catch (dbErr) {
           console.error("Failed to save updated CV record:", dbErr);
+          setSavedFileUrl(webhookUrl);
+          setSavedFileName(finalFileName);
         }
+      } else {
+        setSavedFileUrl(webhookUrl);
+        setSavedFileName(finalFileName);
       }
 
       setState("success");
@@ -183,17 +203,14 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
   };
 
   const handleClose = () => {
-    setSelectedCandidate(""); setSelectedCV(""); setCandidateSearch(""); setState("form"); setUpdateResult(null); setErrorMsg("");
+    setSelectedCandidate(""); setSelectedCV(""); setCandidateSearch(""); setState("form"); setUpdateResult(null); setSavedFileUrl(""); setSavedFileName(""); setErrorMsg("");
     onClose();
   };
 
   const handleDownloadUpdated = async () => {
-    if (updateResult?.updated_cv_url || updateResult?.file_url || updateResult?.download_url) {
-      const url = updateResult.updated_cv_url || updateResult.file_url || updateResult.download_url;
-      const cvObj = cvs.find((cv: any) => cv.cv_id === selectedCV);
-      const fileName = cvObj?.file_name ? `Updated_${cvObj.file_name}` : "updated_cv.pdf";
+    if (savedFileUrl) {
       const { downloadFile } = await import("@/lib/downloadFile");
-      await downloadFile(url, fileName);
+      await downloadFile(savedFileUrl, savedFileName || "updated_cv.pdf");
     }
   };
 
@@ -292,10 +309,8 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
           )}
 
           {state === "success" && (() => {
-            const updatedUrl = updateResult?.updated_cv_url || updateResult?.file_url || updateResult?.download_url || "";
-            const updatedName = updateResult?.updated_file_name || `Updated_${cvs.find((cv: any) => cv.cv_id === selectedCV)?.file_name || "resume.pdf"}`;
             const candidateName = selectedCandidateObj?.users?.full_name || "Candidate";
-            const googleViewerUrl = updatedUrl ? `https://docs.google.com/gview?url=${encodeURIComponent(updatedUrl)}&embedded=true` : "";
+            const googleViewerUrl = savedFileUrl ? `https://docs.google.com/gview?url=${encodeURIComponent(savedFileUrl)}&embedded=true` : "";
             return (
               <div className="flex flex-col items-center text-center">
                 <div className="w-16 h-16 rounded-full bg-success-50 flex items-center justify-center">
@@ -312,19 +327,19 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
                     <iframe
                       src={googleViewerUrl}
                       className="w-full h-full border-0"
-                      title={`Preview of ${updatedName}`}
+                      title={`Preview of ${savedFileName}`}
                     />
                   </div>
                 )}
 
-                {/* Action buttons - always visible */}
+                {/* Action buttons */}
                 <div className="flex gap-3 mt-4 w-full">
-                  {updatedUrl ? (
+                  {savedFileUrl ? (
                     <>
                       <Button
                         variant="portal"
                         className="flex-1"
-                        onClick={() => window.open(updatedUrl, "_blank")}
+                        onClick={() => window.open(savedFileUrl, "_blank")}
                       >
                         <Eye className="w-4 h-4" /> View Resume
                       </Button>
