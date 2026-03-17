@@ -38,5 +38,6 @@ export function mapDbJob(row: any): ScrapedJob {
     is_active: row.is_active,
     scraped_at: row.scraped_at,
     applications_count: row.applications_count || null,
+    apply_type: row.apply_type || "External",
   };
 }
