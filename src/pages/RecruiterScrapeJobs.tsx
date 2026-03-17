@@ -312,7 +312,7 @@ const RecruiterScrapeJobs = () => {
                       <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{item.time}</span>
                     </div>
                   </div>
-                  <button onClick={() => navigate("/recruiter/scraped-jobs")} className="text-sm text-primary font-medium hover:underline shrink-0 hidden sm:block">View Jobs →</button>
+                  <button onClick={() => navigate("/recruiter/job-board")} className="text-sm text-primary font-medium hover:underline shrink-0 hidden sm:block">View Jobs →</button>
                 </div>
               ))
             )}

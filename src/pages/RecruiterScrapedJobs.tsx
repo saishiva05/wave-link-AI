@@ -323,7 +323,7 @@ const RecruiterScrapedJobs = () => {
               {search || activeFilters.length > 0 ? (
                 <Button variant="outline" size="sm" onClick={clearAllFilters}>Clear Filters</Button>
               ) : (
-                <Button size="sm" className="bg-primary text-primary-foreground" onClick={() => navigate("/recruiter/scrape-jobs")}>
+                <Button size="sm" className="bg-primary text-primary-foreground" onClick={() => navigate("/recruiter/find-jobs")}>
                   <Plus className="w-3.5 h-3.5" /> Find New Jobs
                 </Button>
               )}

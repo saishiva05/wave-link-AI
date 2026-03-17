@@ -23,8 +23,8 @@ import { useAuth } from "@/hooks/useAuth";
 
 const mainMenuItems = [
   { title: "Dashboard", icon: LayoutDashboard, route: "/recruiter/dashboard" },
-  { title: "Find Jobs", icon: Search, route: "/recruiter/scrape-jobs" },
-  { title: "Job Board", icon: Briefcase, route: "/recruiter/scraped-jobs" },
+  { title: "Find Jobs", icon: Search, route: "/recruiter/find-jobs" },
+  { title: "Job Board", icon: Briefcase, route: "/recruiter/job-board" },
   { title: "CV Management", icon: FileUp, route: "/recruiter/cv-management" },
   { title: "Job Postings", icon: Newspaper, route: "/recruiter/job-postings" },
   { title: "Candidates", icon: Users, route: "/recruiter/candidates" },
