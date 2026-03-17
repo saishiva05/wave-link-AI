@@ -183,7 +183,7 @@ const RecruiterScrapeJobs = () => {
         platform={platform}
         location={jobLocation}
         onClose={handleResultClose}
-        onViewJobs={() => navigate("/recruiter/scraped-jobs")}
+        onViewJobs={() => navigate("/recruiter/job-board")}
         onScrapeMore={() => { handleClear(); setResultModal(null); }}
       />
 
