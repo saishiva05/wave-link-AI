@@ -1,0 +1,1 @@
+ALTER TABLE public.job_applications DROP CONSTRAINT job_applications_job_id_candidate_id_key;
