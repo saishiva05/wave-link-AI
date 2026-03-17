@@ -17,6 +17,7 @@ export interface ScrapedJob {
   is_active?: boolean;
   scraped_at?: string;
   applications_count?: string | null;
+  apply_type?: string;
 }
 
 /** Map a database row to the ScrapedJob UI interface */
@@ -37,5 +38,6 @@ export function mapDbJob(row: any): ScrapedJob {
     is_active: row.is_active,
     scraped_at: row.scraped_at,
     applications_count: row.applications_count || null,
+    apply_type: row.apply_type || "External",
   };
 }

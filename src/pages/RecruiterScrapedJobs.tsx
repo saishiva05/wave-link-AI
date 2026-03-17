@@ -59,6 +59,12 @@ const applicantsOptions = [
   { value: "has_applicants", label: "Has Applicants" },
 ];
 
+const applyTypeOptions = [
+  { value: "", label: "All Apply Types" },
+  { value: "Easy_Apply", label: "Easy Apply" },
+  { value: "External", label: "External" },
+];
+
 const ITEMS_PER_PAGE = 10;
 
 const RecruiterScrapedJobs = () => {
@@ -71,6 +77,7 @@ const RecruiterScrapedJobs = () => {
   const [contractFilter, setContractFilter] = useState<string[]>([]);
   const [workModeFilter, setWorkModeFilter] = useState("");
   const [applicantsFilter, setApplicantsFilter] = useState("");
+  const [applyTypeFilter, setApplyTypeFilter] = useState("");
 
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
   const [sortField, setSortField] = useState("scraped_at");
@@ -94,7 +101,7 @@ const RecruiterScrapedJobs = () => {
     search, platform: platformFilter, contractType: contractFilter,
     workMode: workModeFilter, dateRange: dateFilter,
     sortField, sortDir, page, perPage: ITEMS_PER_PAGE,
-    applicantsRange: applicantsFilter,
+    applicantsRange: applicantsFilter, applyType: applyTypeFilter,
   });
 
   const { data: candidatesData = [] } = useRecruiterCandidates();
@@ -116,9 +123,10 @@ const RecruiterScrapedJobs = () => {
   if (contractFilter.length > 0) activeFilters.push({ label: `Type: ${contractFilter.join(", ")}`, onRemove: () => setContractFilter([]) });
   if (workModeFilter) activeFilters.push({ label: `Mode: ${workModeFilter}`, onRemove: () => setWorkModeFilter("") });
   if (applicantsFilter) activeFilters.push({ label: `Applicants: ${applicantsOptions.find((a) => a.value === applicantsFilter)?.label}`, onRemove: () => setApplicantsFilter("") });
+  if (applyTypeFilter) activeFilters.push({ label: `Apply: ${applyTypeFilter === "Easy_Apply" ? "Easy Apply" : "External"}`, onRemove: () => setApplyTypeFilter("") });
 
   const clearAllFilters = () => {
-    setSearch(""); setPlatformFilter(""); setDateFilter(""); setContractFilter([]); setWorkModeFilter(""); setApplicantsFilter(""); setPage(1);
+    setSearch(""); setPlatformFilter(""); setDateFilter(""); setContractFilter([]); setWorkModeFilter(""); setApplicantsFilter(""); setApplyTypeFilter(""); setPage(1);
   };
 
   const toggleSelect = (id: string) => {
@@ -261,6 +269,7 @@ const RecruiterScrapedJobs = () => {
             <FilterDropdown label="All Types" icon={<Briefcase className="w-3.5 h-3.5" />} value={contractFilter} options={contractOptions} onChange={(v) => { setContractFilter(v as string[]); setPage(1); }} multi />
             <FilterDropdown label="All Modes" icon={<Building className="w-3.5 h-3.5" />} value={workModeFilter} options={workModeOptions} onChange={(v) => { setWorkModeFilter(v as string); setPage(1); }} />
             <FilterDropdown label="All Applicants" icon={<Briefcase className="w-3.5 h-3.5" />} value={applicantsFilter} options={applicantsOptions} onChange={(v) => { setApplicantsFilter(v as string); setPage(1); }} />
+            <FilterDropdown label="All Apply Types" icon={<Briefcase className="w-3.5 h-3.5" />} value={applyTypeFilter} options={applyTypeOptions} onChange={(v) => { setApplyTypeFilter(v as string); setPage(1); }} />
             <div className="flex gap-1 ml-auto">
               <button onClick={() => setViewMode("table")} className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-colors", viewMode === "table" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted")} title="Table view"><List className="w-3.5 h-3.5" /></button>
               <button onClick={() => setViewMode("card")} className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-colors", viewMode === "card" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted")} title="Card view"><LayoutGrid className="w-3.5 h-3.5" /></button>

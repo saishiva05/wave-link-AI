@@ -239,6 +239,7 @@ export function useScrapedJobs(recruiterId: string | null, filters: {
   page: number;
   perPage: number;
   applicantsRange?: string;
+  applyType?: string;
 }) {
   return useQuery({
     queryKey: ["recruiter", "scraped-jobs", recruiterId, filters],
@@ -277,6 +278,10 @@ export function useScrapedJobs(recruiterId: string | null, filters: {
         } else if (filters.applicantsRange === "has_applicants") {
           query = query.not("applications_count", "is", null);
         }
+      }
+
+      if (filters.applyType) {
+        query = query.eq("apply_type", filters.applyType);
       }
 
       const ascending = filters.sortDir === "asc";

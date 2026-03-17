@@ -452,6 +452,7 @@ export type Database = {
       scraped_jobs: {
         Row: {
           applications_count: string | null
+          apply_type: string | null
           company_name: string
           contract_type: string | null
           experience_level: string | null
@@ -473,6 +474,7 @@ export type Database = {
         }
         Insert: {
           applications_count?: string | null
+          apply_type?: string | null
           company_name: string
           contract_type?: string | null
           experience_level?: string | null
@@ -494,6 +496,7 @@ export type Database = {
         }
         Update: {
           applications_count?: string | null
+          apply_type?: string | null
           company_name?: string
           contract_type?: string | null
           experience_level?: string | null
