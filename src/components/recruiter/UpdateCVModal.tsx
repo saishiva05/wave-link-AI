@@ -37,6 +37,8 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
   const [candidateSearch, setCandidateSearch] = useState("");
   const [state, setState] = useState<ModalState>("form");
   const [updateResult, setUpdateResult] = useState<any>(null);
+  const [savedFileUrl, setSavedFileUrl] = useState("");
+  const [savedFileName, setSavedFileName] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
   const candidateCVs = useMemo(
