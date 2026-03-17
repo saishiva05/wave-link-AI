@@ -77,6 +77,7 @@ const RecruiterScrapedJobs = () => {
   const [contractFilter, setContractFilter] = useState<string[]>([]);
   const [workModeFilter, setWorkModeFilter] = useState("");
   const [applicantsFilter, setApplicantsFilter] = useState("");
+  const [applyTypeFilter, setApplyTypeFilter] = useState("");
 
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
   const [sortField, setSortField] = useState("scraped_at");
