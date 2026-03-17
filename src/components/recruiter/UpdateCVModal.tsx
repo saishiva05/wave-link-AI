@@ -295,46 +295,48 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
             const updatedUrl = updateResult?.updated_cv_url || updateResult?.file_url || updateResult?.download_url || "";
             const updatedName = updateResult?.updated_file_name || `Updated_${cvs.find((cv: any) => cv.cv_id === selectedCV)?.file_name || "resume.pdf"}`;
             const candidateName = selectedCandidateObj?.users?.full_name || "Candidate";
+            const googleViewerUrl = updatedUrl ? `https://docs.google.com/gview?url=${encodeURIComponent(updatedUrl)}&embedded=true` : "";
             return (
-              <div className="flex flex-col items-center justify-center py-8 text-center">
-                <div className="w-20 h-20 rounded-full bg-success-50 flex items-center justify-center">
-                  <CheckCircle className="w-12 h-12 text-success-500" />
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-full bg-success-50 flex items-center justify-center">
+                  <CheckCircle className="w-10 h-10 text-success-500" />
                 </div>
-                <h3 className="text-xl font-bold text-secondary-900 font-display mt-6">CV Updated Successfully!</h3>
-                <p className="text-sm text-muted-foreground mt-2 max-w-sm">
-                  The resume for <span className="font-semibold text-foreground">{candidateName}</span> has been AI-optimized for the <span className="font-semibold text-foreground">{job?.job_title}</span> role.
+                <h3 className="text-lg font-bold text-secondary-900 font-display mt-4">CV Updated Successfully!</h3>
+                <p className="text-sm text-muted-foreground mt-1 max-w-sm">
+                  Resume for <span className="font-semibold text-foreground">{candidateName}</span> optimized for <span className="font-semibold text-foreground">{job?.job_title}</span>.
                 </p>
 
-                {/* Updated CV card */}
-                <div className="mt-6 w-full bg-gradient-to-br from-teal-50 to-emerald-50 border border-teal-200 rounded-xl p-5">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-xl bg-teal-100 flex items-center justify-center shrink-0">
-                      <FileText className="w-7 h-7 text-teal-600" />
-                    </div>
-                    <div className="flex-1 min-w-0 text-left">
-                      <p className="text-sm font-semibold text-secondary-900 truncate">{updatedName}</p>
-                      <p className="text-xs text-teal-700 font-medium mt-0.5">✨ AI-Optimized Resume</p>
-                    </div>
+                {/* Inline preview */}
+                {googleViewerUrl && (
+                  <div className="mt-4 w-full rounded-xl border border-border overflow-hidden bg-muted/30 relative" style={{ height: 320 }}>
+                    <iframe
+                      src={googleViewerUrl}
+                      className="w-full h-full border-0"
+                      title={`Preview of ${updatedName}`}
+                    />
                   </div>
-                </div>
+                )}
 
-                <div className="flex gap-3 mt-6 w-full">
-                  {updatedUrl && (
+                {/* Action buttons - always visible */}
+                <div className="flex gap-3 mt-4 w-full">
+                  {updatedUrl ? (
                     <>
                       <Button
                         variant="portal"
                         className="flex-1"
                         onClick={() => window.open(updatedUrl, "_blank")}
                       >
-                        <Eye className="w-4 h-4" /> View Updated CV
+                        <Eye className="w-4 h-4" /> View Resume
                       </Button>
                       <Button variant="outline" className="flex-1" onClick={handleDownloadUpdated}>
                         <Download className="w-4 h-4" /> Download
                       </Button>
                     </>
+                  ) : (
+                    <p className="text-xs text-muted-foreground w-full">No download URL returned from the webhook.</p>
                   )}
                 </div>
-                <Button variant="ghost" className="mt-3 w-full" onClick={handleClose}>Close</Button>
+                <Button variant="ghost" className="mt-2 w-full" onClick={handleClose}>Close</Button>
               </div>
             );
           })()}
