@@ -240,9 +240,9 @@ const RecruiterScrapeJobs = () => {
             <Sparkles className="w-5 h-5 text-info-500 shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-semibold" style={{ color: "hsl(215, 60%, 14%)" }}>Auto-ATS Complete</p>
-              <p className="text-sm mt-0.5">{queueStatus.completed} jobs analyzed, {queueStatus.failed} failed. View results in Scraped Jobs.</p>
+              <p className="text-sm mt-0.5">{queueStatus.completed} jobs analyzed, {queueStatus.failed} failed. View results in Job Board.</p>
             </div>
-            <Button size="sm" variant="outline" onClick={() => navigate("/recruiter/scraped-jobs")} className="shrink-0">
+            <Button size="sm" variant="outline" onClick={() => navigate("/recruiter/job-board")} className="shrink-0">
               View Results <ArrowRight className="w-3.5 h-3.5" />
             </Button>
           </motion.div>
