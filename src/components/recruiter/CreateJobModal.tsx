@@ -31,6 +31,7 @@ const CreateJobModal = ({ open, onOpenChange, recruiterId, recruiterOptions, adm
     location: "",
     contract_type: "Full-time",
     work_type: "On-site",
+    apply_type: "External",
     experience_level: "",
     salary_range: "",
     job_description: "",
