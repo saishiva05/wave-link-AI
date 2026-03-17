@@ -356,41 +356,50 @@ const RecruiterScrapedJobs = () => {
         </motion.div>
 
         {/* Pagination */}
-        {totalCount > 0 && totalPages > 1 && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-card border border-border rounded-xl px-5 py-4">
-            <p className="text-xs text-muted-foreground">
-              Showing {(page - 1) * ITEMS_PER_PAGE + 1}–{Math.min(page * ITEMS_PER_PAGE, totalCount)} of {totalCount} jobs
-            </p>
-            <div className="flex items-center gap-3 flex-1 max-w-md">
-              <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="w-8 h-8 rounded-lg flex items-center justify-center border border-border hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors shrink-0"><ChevronLeft className="w-4 h-4" /></button>
-              <div className="flex items-center gap-3 flex-1">
-                <input
-                  type="range"
-                  min={1}
-                  max={totalPages}
-                  value={page}
-                  onChange={(e) => setPage(Number(e.target.value))}
-                  className="flex-1 h-2 accent-primary cursor-pointer"
-                />
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <input
-                    type="number"
-                    min={1}
-                    max={totalPages}
-                    value={page}
-                    onChange={(e) => {
-                      const v = Number(e.target.value);
-                      if (v >= 1 && v <= totalPages) setPage(v);
-                    }}
-                    className="w-12 h-8 text-center text-sm font-medium border border-border rounded-lg bg-background outline-none focus:border-primary transition-colors"
-                  />
-                  <span className="text-xs text-muted-foreground whitespace-nowrap">/ {totalPages}</span>
-                </div>
+        {totalCount > 0 && totalPages > 1 && (() => {
+          const GROUP_SIZE = 5;
+          const currentGroup = Math.floor((page - 1) / GROUP_SIZE);
+          const groupStart = currentGroup * GROUP_SIZE + 1;
+          const groupEnd = Math.min(groupStart + GROUP_SIZE - 1, totalPages);
+          const hasPrevGroup = groupStart > 1;
+          const hasNextGroup = groupEnd < totalPages;
+
+          return (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-card border border-border rounded-xl px-5 py-4">
+              <p className="text-xs text-muted-foreground">
+                Showing {(page - 1) * ITEMS_PER_PAGE + 1}–{Math.min(page * ITEMS_PER_PAGE, totalCount)} of {totalCount} jobs
+              </p>
+              <div className="flex items-center gap-1.5">
+                {/* Prev page */}
+                <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="w-8 h-8 rounded-lg flex items-center justify-center border border-border hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors"><ChevronLeft className="w-4 h-4" /></button>
+
+                {/* Prev group indicator */}
+                {hasPrevGroup && (
+                  <>
+                    <button onClick={() => setPage(1)} className="w-8 h-8 rounded-lg text-xs font-medium border border-border hover:bg-muted transition-colors">1</button>
+                    <button onClick={() => setPage(groupStart - 1)} className="w-8 h-8 rounded-lg text-xs text-muted-foreground hover:bg-muted transition-colors">«</button>
+                  </>
+                )}
+
+                {/* Current group pages */}
+                {Array.from({ length: groupEnd - groupStart + 1 }, (_, i) => groupStart + i).map((p) => (
+                  <button key={p} onClick={() => setPage(p)} className={cn("w-8 h-8 rounded-lg text-xs font-medium transition-colors", page === p ? "bg-primary text-primary-foreground" : "border border-border hover:bg-muted")}>{p}</button>
+                ))}
+
+                {/* Next group indicator */}
+                {hasNextGroup && (
+                  <>
+                    <button onClick={() => setPage(groupEnd + 1)} className="w-8 h-8 rounded-lg text-xs text-muted-foreground hover:bg-muted transition-colors">»</button>
+                    <button onClick={() => setPage(totalPages)} className="w-8 h-8 rounded-lg text-xs font-medium border border-border hover:bg-muted transition-colors">{totalPages}</button>
+                  </>
+                )}
+
+                {/* Next page */}
+                <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-8 h-8 rounded-lg flex items-center justify-center border border-border hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors"><ChevronRight className="w-4 h-4" /></button>
               </div>
-              <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-8 h-8 rounded-lg flex items-center justify-center border border-border hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors shrink-0"><ChevronRight className="w-4 h-4" /></button>
             </div>
-          </div>
-        )}
+          );
+        })()}
       </div>
     </>
   );
