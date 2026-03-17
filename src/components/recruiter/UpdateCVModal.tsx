@@ -152,28 +152,46 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
       const result = await response.json();
       setUpdateResult(result);
 
+      // Build the file URL - prefer webhook response, fallback to constructed storage URL
+      const webhookUrl = result?.updated_cv_url || result?.file_url || result?.download_url || "";
+      const finalFileName = result?.updated_file_name || `Updated_${cvObj.file_name}`;
+      
       // Save to updated_cvs table
-      const updatedFileUrl = result?.updated_cv_url || result?.file_url || result?.download_url || "";
-      if (updatedFileUrl && recruiterId) {
+      if (recruiterId) {
         try {
-          await supabase.from("updated_cvs").insert({
+          const { data: insertedRow } = await supabase.from("updated_cvs").insert({
             job_id: job.id,
             cv_id: selectedCV,
             candidate_id: selectedCandidate,
             recruiter_id: recruiterId,
             original_file_name: cvObj.file_name,
-            updated_file_name: result?.updated_file_name || `Updated_${cvObj.file_name}`,
-            updated_file_url: updatedFileUrl,
+            updated_file_name: finalFileName,
+            updated_file_url: webhookUrl,
             updated_file_size_bytes: result?.file_size || null,
             webhook_response: result,
             ats_analysis_id: atsAnalysisData?.analysis_id || null,
-          });
+          }).select("updated_file_url, updated_file_name").single();
+          
+          // Use the URL from the DB record (most reliable)
+          if (insertedRow?.updated_file_url) {
+            setSavedFileUrl(insertedRow.updated_file_url);
+            setSavedFileName(insertedRow.updated_file_name || finalFileName);
+          } else {
+            setSavedFileUrl(webhookUrl);
+            setSavedFileName(finalFileName);
+          }
+          
           queryClient.invalidateQueries({ queryKey: ["recruiter", "job-updated-cvs"] });
           queryClient.invalidateQueries({ queryKey: ["recruiter", "updated-cvs"] });
           queryClient.invalidateQueries({ queryKey: ["recruiter", "cvs"] });
         } catch (dbErr) {
           console.error("Failed to save updated CV record:", dbErr);
+          setSavedFileUrl(webhookUrl);
+          setSavedFileName(finalFileName);
         }
+      } else {
+        setSavedFileUrl(webhookUrl);
+        setSavedFileName(finalFileName);
       }
 
       setState("success");
