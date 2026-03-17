@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Search, Plus, Globe, Calendar, Briefcase, Building, LayoutGrid, List,
-  Sparkles, Download, Trash, X, ChevronLeft, ChevronRight, Loader2, FileDown,
+  Sparkles, Download, Trash, X, ChevronLeft, ChevronRight, Loader2, FileDown, Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
