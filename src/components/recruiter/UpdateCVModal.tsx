@@ -312,10 +312,8 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
           )}
 
           {state === "success" && (() => {
-            const updatedUrl = updateResult?.updated_cv_url || updateResult?.file_url || updateResult?.download_url || "";
-            const updatedName = updateResult?.updated_file_name || `Updated_${cvs.find((cv: any) => cv.cv_id === selectedCV)?.file_name || "resume.pdf"}`;
             const candidateName = selectedCandidateObj?.users?.full_name || "Candidate";
-            const googleViewerUrl = updatedUrl ? `https://docs.google.com/gview?url=${encodeURIComponent(updatedUrl)}&embedded=true` : "";
+            const googleViewerUrl = savedFileUrl ? `https://docs.google.com/gview?url=${encodeURIComponent(savedFileUrl)}&embedded=true` : "";
             return (
               <div className="flex flex-col items-center text-center">
                 <div className="w-16 h-16 rounded-full bg-success-50 flex items-center justify-center">
@@ -332,19 +330,19 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
                     <iframe
                       src={googleViewerUrl}
                       className="w-full h-full border-0"
-                      title={`Preview of ${updatedName}`}
+                      title={`Preview of ${savedFileName}`}
                     />
                   </div>
                 )}
 
-                {/* Action buttons - always visible */}
+                {/* Action buttons */}
                 <div className="flex gap-3 mt-4 w-full">
-                  {updatedUrl ? (
+                  {savedFileUrl ? (
                     <>
                       <Button
                         variant="portal"
                         className="flex-1"
-                        onClick={() => window.open(updatedUrl, "_blank")}
+                        onClick={() => window.open(savedFileUrl, "_blank")}
                       >
                         <Eye className="w-4 h-4" /> View Resume
                       </Button>
