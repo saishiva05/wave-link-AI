@@ -54,9 +54,9 @@ const workModeOptions = [
 ];
 
 const applicantsOptions = [
-  { value: "", label: "All Applicants" },
-  { value: "none", label: "No Data" },
-  { value: "has_applicants", label: "Has Applicants" },
+  { value: "", label: "All Jobs" },
+  { value: "has_applicants", label: "With Applicant Data" },
+  { value: "none", label: "No Applicant Data" },
 ];
 
 const applyTypeOptions = [
