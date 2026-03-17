@@ -506,11 +506,16 @@ export function useJobUpdatedCVs(jobIds: string[]) {
       if (error) throw error;
 
       // Group by job_id - multiple updated CVs per job (different candidates)
+      // Ignore malformed rows without a usable file URL.
       const byJob: Record<string, any[]> = {};
       (data || []).forEach((ucv: any) => {
+        const fileUrl = (ucv.updated_file_url || "").trim();
+        if (!fileUrl) return;
+
         if (!byJob[ucv.job_id]) byJob[ucv.job_id] = [];
         byJob[ucv.job_id].push({
           ...ucv,
+          updated_file_url: fileUrl,
           candidate_name: ucv.candidates?.users?.full_name || "Unknown",
         });
       });
