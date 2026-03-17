@@ -94,6 +94,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
       if (!cvObj) throw new Error("CV not found");
 
       const candidateName = selectedCandidateObj?.users?.full_name || cvObj.candidate_name || "Unknown";
+      const requestStartedAt = new Date().toISOString();
 
       // Parse CV content via edge function
       const cvText = await parseCV(cvObj, true);
@@ -152,40 +153,66 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
       const result = await response.json();
       setUpdateResult(result);
 
-      // Build the file URL - prefer webhook response, fallback to constructed storage URL
-      const webhookUrl = result?.updated_cv_url || result?.file_url || result?.download_url || "";
+      // Build the file URL - prefer explicit updated_file_url first
+      const webhookUrl = (
+        result?.updated_file_url ||
+        result?.updated_cv_url ||
+        result?.file_url ||
+        result?.download_url ||
+        ""
+      ).trim();
       const finalFileName = result?.updated_file_name || `Updated_${cvObj.file_name}`;
-      
-      // Save to updated_cvs table
+
       if (recruiterId) {
         try {
-          const { data: insertedRow } = await supabase.from("updated_cvs").insert({
-            job_id: job.id,
-            cv_id: selectedCV,
-            candidate_id: selectedCandidate,
-            recruiter_id: recruiterId,
-            original_file_name: cvObj.file_name,
-            updated_file_name: finalFileName,
-            updated_file_url: webhookUrl,
-            updated_file_size_bytes: result?.file_size || null,
-            webhook_response: result,
-            ats_analysis_id: atsAnalysisData?.analysis_id || null,
-          }).select("updated_file_url, updated_file_name").single();
-          
-          // Use the URL from the DB record (most reliable)
-          if (insertedRow?.updated_file_url) {
-            setSavedFileUrl(insertedRow.updated_file_url);
-            setSavedFileName(insertedRow.updated_file_name || finalFileName);
+          // Prefer the record already written by the webhook flow
+          const { data: recentRows } = await supabase
+            .from("updated_cvs")
+            .select("updated_file_url, updated_file_name")
+            .eq("job_id", job.id)
+            .eq("cv_id", selectedCV)
+            .eq("candidate_id", selectedCandidate)
+            .eq("recruiter_id", recruiterId)
+            .gte("created_at", requestStartedAt)
+            .order("created_at", { ascending: false })
+            .limit(5);
+
+          const latestValidRow = (recentRows || []).find((row) => (row.updated_file_url || "").trim());
+
+          if (latestValidRow?.updated_file_url) {
+            setSavedFileUrl(latestValidRow.updated_file_url);
+            setSavedFileName(latestValidRow.updated_file_name || finalFileName);
+          } else if (webhookUrl) {
+            // Fallback insert only when we have a valid URL
+            const { data: insertedRow } = await supabase
+              .from("updated_cvs")
+              .insert({
+                job_id: job.id,
+                cv_id: selectedCV,
+                candidate_id: selectedCandidate,
+                recruiter_id: recruiterId,
+                original_file_name: cvObj.file_name,
+                updated_file_name: finalFileName,
+                updated_file_url: webhookUrl,
+                updated_file_size_bytes: result?.file_size || null,
+                webhook_response: result,
+                ats_analysis_id: atsAnalysisData?.analysis_id || null,
+              })
+              .select("updated_file_url, updated_file_name")
+              .single();
+
+            setSavedFileUrl(insertedRow?.updated_file_url || webhookUrl);
+            setSavedFileName(insertedRow?.updated_file_name || finalFileName);
           } else {
-            setSavedFileUrl(webhookUrl);
+            setSavedFileUrl("");
             setSavedFileName(finalFileName);
           }
-          
+
           queryClient.invalidateQueries({ queryKey: ["recruiter", "job-updated-cvs"] });
           queryClient.invalidateQueries({ queryKey: ["recruiter", "updated-cvs"] });
           queryClient.invalidateQueries({ queryKey: ["recruiter", "cvs"] });
         } catch (dbErr) {
-          console.error("Failed to save updated CV record:", dbErr);
+          console.error("Failed to resolve updated CV record:", dbErr);
           setSavedFileUrl(webhookUrl);
           setSavedFileName(finalFileName);
         }
