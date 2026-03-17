@@ -203,7 +203,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
   };
 
   const handleClose = () => {
-    setSelectedCandidate(""); setSelectedCV(""); setCandidateSearch(""); setState("form"); setUpdateResult(null); setErrorMsg("");
+    setSelectedCandidate(""); setSelectedCV(""); setCandidateSearch(""); setState("form"); setUpdateResult(null); setSavedFileUrl(""); setSavedFileName(""); setErrorMsg("");
     onClose();
   };
 
