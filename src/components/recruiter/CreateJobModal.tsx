@@ -162,7 +162,7 @@ const CreateJobModal = ({ open, onOpenChange, recruiterId, recruiterOptions, adm
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Contract Type</Label>
               <Select value={form.contract_type} onValueChange={(v) => updateField("contract_type", v)}>
@@ -185,15 +185,27 @@ const CreateJobModal = ({ open, onOpenChange, recruiterId, recruiterOptions, adm
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label>Apply Type</Label>
+              <Select value={form.apply_type} onValueChange={(v) => updateField("apply_type", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Easy_Apply">Easy Apply</SelectItem>
+                  <SelectItem value="External">External</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <div className="space-y-2">
               <Label>Experience Level</Label>
               <Input value={form.experience_level} onChange={(e) => updateField("experience_level", e.target.value)} placeholder="e.g. Mid-Senior" />
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Salary Range</Label>
-            <Input value={form.salary_range} onChange={(e) => updateField("salary_range", e.target.value)} placeholder="e.g. ₹12-18 LPA" />
+            <div className="space-y-2">
+              <Label>Salary Range</Label>
+              <Input value={form.salary_range} onChange={(e) => updateField("salary_range", e.target.value)} placeholder="e.g. $80k-$120k" />
+            </div>
           </div>
 
           <div className="space-y-2">

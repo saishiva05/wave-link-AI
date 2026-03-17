@@ -280,6 +280,10 @@ export function useScrapedJobs(recruiterId: string | null, filters: {
         }
       }
 
+      if (filters.applyType) {
+        query = query.eq("apply_type", filters.applyType);
+      }
+
       const ascending = filters.sortDir === "asc";
       if (filters.sortField === "published_date") {
         query = query.order("published_date", { ascending, nullsFirst: false });
