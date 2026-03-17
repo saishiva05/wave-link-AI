@@ -67,6 +67,7 @@ const CreateJobModal = ({ open, onOpenChange, recruiterId, recruiterOptions, adm
         location: form.location,
         contract_type: form.contract_type,
         work_type: form.work_type,
+        apply_type: form.apply_type,
         experience_level: form.experience_level || null,
         salary_range: form.salary_range || null,
         job_description: form.job_description,
