@@ -54,10 +54,10 @@ const RecruiterStatsCards = () => {
   }
 
   const cards: StatCardProps[] = [
-    { title: "Jobs Found", value: (stats?.totalJobs ?? 0).toLocaleString(), change: "3.5%", changeUp: true, icon: Briefcase, onClick: () => navigate("/recruiter/scraped-jobs") },
+    { title: "Jobs Found", value: (stats?.totalJobs ?? 0).toLocaleString(), change: "3.5%", changeUp: true, icon: Briefcase, onClick: () => navigate("/recruiter/job-board") },
     { title: "Active Candidates", value: String(stats?.totalCandidates ?? 0), change: "0.0%", changeUp: true, icon: Users, onClick: () => navigate("/recruiter/candidates") },
     { title: "Applications", value: String(stats?.totalApplications ?? 0), change: "7.5%", changeUp: false, icon: ClipboardCheck, onClick: () => navigate("/recruiter/applications") },
-    { title: "ATS Analyses", value: String(stats?.totalATS ?? 0), change: "3.5%", changeUp: true, icon: Sparkles, onClick: () => navigate("/recruiter/scraped-jobs") },
+    { title: "ATS Analyses", value: String(stats?.totalATS ?? 0), change: "3.5%", changeUp: true, icon: Sparkles, onClick: () => navigate("/recruiter/job-board") },
   ];
 
   return (

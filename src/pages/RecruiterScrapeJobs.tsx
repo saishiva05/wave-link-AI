@@ -183,7 +183,7 @@ const RecruiterScrapeJobs = () => {
         platform={platform}
         location={jobLocation}
         onClose={handleResultClose}
-        onViewJobs={() => navigate("/recruiter/scraped-jobs")}
+        onViewJobs={() => navigate("/recruiter/job-board")}
         onScrapeMore={() => { handleClear(); setResultModal(null); }}
       />
 
@@ -240,9 +240,9 @@ const RecruiterScrapeJobs = () => {
             <Sparkles className="w-5 h-5 text-info-500 shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-semibold" style={{ color: "hsl(215, 60%, 14%)" }}>Auto-ATS Complete</p>
-              <p className="text-sm mt-0.5">{queueStatus.completed} jobs analyzed, {queueStatus.failed} failed. View results in Scraped Jobs.</p>
+              <p className="text-sm mt-0.5">{queueStatus.completed} jobs analyzed, {queueStatus.failed} failed. View results in Job Board.</p>
             </div>
-            <Button size="sm" variant="outline" onClick={() => navigate("/recruiter/scraped-jobs")} className="shrink-0">
+            <Button size="sm" variant="outline" onClick={() => navigate("/recruiter/job-board")} className="shrink-0">
               View Results <ArrowRight className="w-3.5 h-3.5" />
             </Button>
           </motion.div>
@@ -312,7 +312,7 @@ const RecruiterScrapeJobs = () => {
                       <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{item.time}</span>
                     </div>
                   </div>
-                  <button onClick={() => navigate("/recruiter/scraped-jobs")} className="text-sm text-primary font-medium hover:underline shrink-0 hidden sm:block">View Jobs →</button>
+                  <button onClick={() => navigate("/recruiter/job-board")} className="text-sm text-primary font-medium hover:underline shrink-0 hidden sm:block">View Jobs →</button>
                 </div>
               ))
             )}

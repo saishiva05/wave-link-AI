@@ -117,10 +117,10 @@ const RecruiterHeader = ({ onMenuClick }: RecruiterHeaderProps) => {
             <div className="absolute right-0 top-12 w-64 bg-card rounded-xl border border-border shadow-elevated overflow-hidden animate-scale-in z-50">
               <div className="p-1.5">
                 {[
-                  { icon: Search, label: "Scrape New Jobs", route: "/recruiter/scrape-jobs" },
+                  { icon: Search, label: "Find New Jobs", route: "/recruiter/find-jobs" },
                   { icon: Upload, label: "Upload CV", route: "/recruiter/cv-management" },
                   { icon: UserPlus, label: "Add Candidate", route: "/recruiter/candidates" },
-                  { icon: Sparkles, label: "Run ATS Analysis", route: "/recruiter/scraped-jobs" },
+                  { icon: Sparkles, label: "Run ATS Analysis", route: "/recruiter/job-board" },
                 ].map((item) => (
                   <Link
                     key={item.label}
