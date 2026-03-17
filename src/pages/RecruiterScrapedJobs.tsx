@@ -101,7 +101,7 @@ const RecruiterScrapedJobs = () => {
     search, platform: platformFilter, contractType: contractFilter,
     workMode: workModeFilter, dateRange: dateFilter,
     sortField, sortDir, page, perPage: ITEMS_PER_PAGE,
-    applicantsRange: applicantsFilter,
+    applicantsRange: applicantsFilter, applyType: applyTypeFilter,
   });
 
   const { data: candidatesData = [] } = useRecruiterCandidates();
