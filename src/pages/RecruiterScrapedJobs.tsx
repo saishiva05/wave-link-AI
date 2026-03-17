@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Search, Plus, Globe, Calendar, Briefcase, Building, LayoutGrid, List,
-  Sparkles, Download, Trash, X, ChevronLeft, ChevronRight, Loader2, FileDown,
+  Sparkles, Download, Trash, X, ChevronLeft, ChevronRight, Loader2, FileDown, Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -54,9 +54,9 @@ const workModeOptions = [
 ];
 
 const applicantsOptions = [
-  { value: "", label: "All Applicants" },
-  { value: "none", label: "No Data" },
-  { value: "has_applicants", label: "Has Applicants" },
+  { value: "", label: "All Jobs" },
+  { value: "has_applicants", label: "With Applicant Data" },
+  { value: "none", label: "No Applicant Data" },
 ];
 
 const applyTypeOptions = [
@@ -268,7 +268,7 @@ const RecruiterScrapedJobs = () => {
             <FilterDropdown label="All Time" icon={<Calendar className="w-3.5 h-3.5" />} value={dateFilter} options={dateOptions} onChange={(v) => { setDateFilter(v as string); setPage(1); }} />
             <FilterDropdown label="All Types" icon={<Briefcase className="w-3.5 h-3.5" />} value={contractFilter} options={contractOptions} onChange={(v) => { setContractFilter(v as string[]); setPage(1); }} multi />
             <FilterDropdown label="All Modes" icon={<Building className="w-3.5 h-3.5" />} value={workModeFilter} options={workModeOptions} onChange={(v) => { setWorkModeFilter(v as string); setPage(1); }} />
-            <FilterDropdown label="All Applicants" icon={<Briefcase className="w-3.5 h-3.5" />} value={applicantsFilter} options={applicantsOptions} onChange={(v) => { setApplicantsFilter(v as string); setPage(1); }} />
+            <FilterDropdown label="Applicant Data" icon={<Users className="w-3.5 h-3.5" />} value={applicantsFilter} options={applicantsOptions} onChange={(v) => { setApplicantsFilter(v as string); setPage(1); }} />
             <FilterDropdown label="All Apply Types" icon={<Briefcase className="w-3.5 h-3.5" />} value={applyTypeFilter} options={applyTypeOptions} onChange={(v) => { setApplyTypeFilter(v as string); setPage(1); }} />
             <div className="flex gap-1 ml-auto">
               <button onClick={() => setViewMode("table")} className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-colors", viewMode === "table" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted")} title="Table view"><List className="w-3.5 h-3.5" /></button>
