@@ -126,7 +126,7 @@ const RecruiterScrapedJobs = () => {
   if (applyTypeFilter) activeFilters.push({ label: `Apply: ${applyTypeFilter === "Easy_Apply" ? "Easy Apply" : "External"}`, onRemove: () => setApplyTypeFilter("") });
 
   const clearAllFilters = () => {
-    setSearch(""); setPlatformFilter(""); setDateFilter(""); setContractFilter([]); setWorkModeFilter(""); setApplicantsFilter(""); setPage(1);
+    setSearch(""); setPlatformFilter(""); setDateFilter(""); setContractFilter([]); setWorkModeFilter(""); setApplicantsFilter(""); setApplyTypeFilter(""); setPage(1);
   };
 
   const toggleSelect = (id: string) => {
