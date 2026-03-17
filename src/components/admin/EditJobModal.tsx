@@ -39,6 +39,7 @@ const EditJobModal = ({ open, onOpenChange, job }: EditJobModalProps) => {
         location: job.location || "",
         contract_type: job.contract_type || "Full-time",
         work_type: job.work_type || "On-site",
+        apply_type: job.apply_type || "External",
         experience_level: job.experience_level || "",
         salary_range: job.salary_range || "",
         job_description: job.job_description || "",
