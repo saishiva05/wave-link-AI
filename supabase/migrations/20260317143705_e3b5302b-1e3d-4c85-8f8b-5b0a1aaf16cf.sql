@@ -1,0 +1,1 @@
+ALTER TABLE public.scraped_jobs ADD COLUMN apply_type text DEFAULT 'External';
