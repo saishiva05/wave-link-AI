@@ -59,6 +59,12 @@ const applicantsOptions = [
   { value: "has_applicants", label: "Has Applicants" },
 ];
 
+const applyTypeOptions = [
+  { value: "", label: "All Apply Types" },
+  { value: "Easy_Apply", label: "Easy Apply" },
+  { value: "External", label: "External" },
+];
+
 const ITEMS_PER_PAGE = 10;
 
 const RecruiterScrapedJobs = () => {
