@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { ScrapedJob } from "@/data/mockScrapedJobs";
 import {
   X, Briefcase, MapPin, FileText, Info, FilePen, Loader2, CheckCircle,
-  XCircle, Search, Download, Eye,
+  XCircle, Search, Download, Eye, Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -18,6 +18,14 @@ interface UpdateCVModalProps {
 }
 
 type ModalState = "form" | "loading" | "success" | "error";
+type CVSource = "existing" | "upload";
+
+const ALLOWED_TYPES = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
+const MAX_SIZE = 10 * 1024 * 1024;
 
 const formatBytes = (bytes: number | null) => {
   if (!bytes) return "";
@@ -40,6 +48,8 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
   const [savedFileUrl, setSavedFileUrl] = useState("");
   const [savedFileName, setSavedFileName] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [cvSource, setCvSource] = useState<CVSource>("existing");
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const candidateCVs = useMemo(
     () => cvs.filter((cv: any) => cv.candidate_id === selectedCandidate),
@@ -86,20 +96,58 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
     return parsed.text;
   };
 
+  const parseUploadedFile = async (file: File): Promise<{ text: string; fileUrl: string; fileName: string }> => {
+    // Upload to storage first
+    const filePath = `${selectedCandidate}/${Date.now()}_${file.name}`;
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from("cvs-bucket")
+      .upload(filePath, file, { contentType: file.type });
+    if (uploadError) throw new Error(`Upload failed: ${uploadError.message}`);
+
+    // Parse via edge function
+    const parseResp = await supabase.functions.invoke("parse-cv", {
+      body: { bucket: "cvs-bucket", filePath, fileName: file.name },
+    });
+    if (parseResp.error) throw new Error(`Failed to parse CV: ${parseResp.error.message}`);
+    const parsed = parseResp.data;
+    if (parsed?.error) throw new Error(`CV parse error: ${parsed.error}`);
+    if (!parsed?.text) throw new Error("No text content extracted from CV");
+
+    // Get public URL
+    const { data: urlData } = supabase.storage.from("cvs-bucket").getPublicUrl(filePath);
+
+    return { text: parsed.text, fileUrl: urlData.publicUrl || "", fileName: file.name };
+  };
+
   const handleUpdate = async () => {
     setState("loading");
     setErrorMsg("");
     try {
-      const cvObj = cvs.find((cv: any) => cv.cv_id === selectedCV);
-      if (!cvObj) throw new Error("CV not found");
+      let cvText: string;
+      let originalFileName: string;
+      let cvUrl: string;
+      let cvId: string;
 
-      const candidateName = selectedCandidateObj?.users?.full_name || cvObj.candidate_name || "Unknown";
+      if (cvSource === "upload" && uploadedFile) {
+        const result = await parseUploadedFile(uploadedFile);
+        cvText = result.text;
+        originalFileName = result.fileName;
+        cvUrl = result.fileUrl;
+        // Use first CV id if available, or a placeholder
+        cvId = candidateCVs[0]?.cv_id || "uploaded";
+      } else {
+        const cvObj = cvs.find((cv: any) => cv.cv_id === selectedCV);
+        if (!cvObj) throw new Error("CV not found");
+        cvText = await parseCV(cvObj, true);
+        originalFileName = cvObj.file_name;
+        cvUrl = cvObj.file_url;
+        cvId = selectedCV;
+      }
+
+      const candidateName = selectedCandidateObj?.users?.full_name || "Unknown";
       const requestStartedAt = new Date().toISOString();
 
-      // Parse CV content via edge function
-      const cvText = await parseCV(cvObj, true);
-
-      // Fetch ATS analysis data for this job+CV if available
+      // Fetch ATS analysis data for this job if available
       let atsAnalysisData: any = null;
       if (recruiterId) {
         const { data: atsData } = await supabase
@@ -116,13 +164,13 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
 
       const payload: any = {
         job_id: job.id,
-        cv_id: selectedCV,
+        cv_id: cvId,
         candidate_id: selectedCandidate,
         recruiter_id: recruiterId,
-        original_file_name: cvObj.file_name,
+        original_file_name: originalFileName,
         candidate_name: candidateName,
         cv_content: cvText,
-        cv_url: cvObj.file_url,
+        cv_url: cvUrl,
         job_title: job.job_title,
         company_name: job.company_name,
         location: job.location,
@@ -135,7 +183,6 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
         scraped_at: job.scraped_at || "",
       };
 
-      // Include ATS analysis info if available
       if (atsAnalysisData) {
         payload.ats_analysis_id = atsAnalysisData.analysis_id;
         payload.ats_score = atsAnalysisData.ats_score;
@@ -153,7 +200,6 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
       const result = await response.json();
       setUpdateResult(result);
 
-      // Build the file URL - prefer explicit updated_file_url first
       const webhookUrl = (
         result?.updated_file_url ||
         result?.updated_cv_url ||
@@ -161,16 +207,14 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
         result?.download_url ||
         ""
       ).trim();
-      const finalFileName = result?.updated_file_name || `Updated_${cvObj.file_name}`;
+      const finalFileName = result?.updated_file_name || `Updated_${originalFileName}`;
 
       if (recruiterId) {
         try {
-          // Prefer the record already written by the webhook flow
           const { data: recentRows } = await supabase
             .from("updated_cvs")
             .select("updated_file_url, updated_file_name")
             .eq("job_id", job.id)
-            .eq("cv_id", selectedCV)
             .eq("candidate_id", selectedCandidate)
             .eq("recruiter_id", recruiterId)
             .gte("created_at", requestStartedAt)
@@ -183,15 +227,14 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
             setSavedFileUrl(latestValidRow.updated_file_url);
             setSavedFileName(latestValidRow.updated_file_name || finalFileName);
           } else if (webhookUrl) {
-            // Fallback insert only when we have a valid URL
             const { data: insertedRow } = await supabase
               .from("updated_cvs")
               .insert({
                 job_id: job.id,
-                cv_id: selectedCV,
+                cv_id: cvId === "uploaded" ? candidateCVs[0]?.cv_id : cvId,
                 candidate_id: selectedCandidate,
                 recruiter_id: recruiterId,
-                original_file_name: cvObj.file_name,
+                original_file_name: originalFileName,
                 updated_file_name: finalFileName,
                 updated_file_url: webhookUrl,
                 updated_file_size_bytes: result?.file_size || null,
@@ -230,7 +273,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
   };
 
   const handleClose = () => {
-    setSelectedCandidate(""); setSelectedCV(""); setCandidateSearch(""); setState("form"); setUpdateResult(null); setSavedFileUrl(""); setSavedFileName(""); setErrorMsg("");
+    setSelectedCandidate(""); setSelectedCV(""); setCandidateSearch(""); setState("form"); setUpdateResult(null); setSavedFileUrl(""); setSavedFileName(""); setErrorMsg(""); setCvSource("existing"); setUploadedFile(null);
     onClose();
   };
 
@@ -240,6 +283,26 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
       await downloadFile(savedFileUrl, savedFileName || "updated_cv.pdf");
     }
   };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setErrorMsg("Only PDF, DOC, and DOCX files are allowed");
+      return;
+    }
+    if (file.size > MAX_SIZE) {
+      setErrorMsg("File size must be under 10MB");
+      return;
+    }
+    setErrorMsg("");
+    setUploadedFile(file);
+  };
+
+  const isReadyToUpdate = selectedCandidate && (
+    (cvSource === "existing" && selectedCV) ||
+    (cvSource === "upload" && uploadedFile)
+  );
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={handleClose}>
@@ -278,7 +341,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
                 </div>
                 <div className="max-h-[180px] overflow-y-auto border border-border rounded-lg">
                   {filteredCandidates.map((c: any) => (
-                    <button key={c.candidate_id} type="button" onClick={() => { setSelectedCandidate(c.candidate_id); setSelectedCV(""); }}
+                    <button key={c.candidate_id} type="button" onClick={() => { setSelectedCandidate(c.candidate_id); setSelectedCV(""); setUploadedFile(null); }}
                       className={cn("w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors", selectedCandidate === c.candidate_id ? "bg-primary-100" : "hover:bg-muted/50")}>
                       <div className="w-8 h-8 rounded-full bg-info-500 flex items-center justify-center text-primary-foreground text-xs font-semibold shrink-0">{getInitials(c.users?.full_name || "?")}</div>
                       <div className="min-w-0 flex-1">
@@ -291,12 +354,41 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
                 </div>
               </div>
 
-              {/* CV selection */}
+              {/* CV Source Toggle */}
               {selectedCandidate && (
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-foreground/80 mb-2">Resume Source <span className="text-destructive">*</span></label>
+                  <div className="flex rounded-lg border border-border overflow-hidden">
+                    <button
+                      type="button"
+                      onClick={() => { setCvSource("existing"); setUploadedFile(null); }}
+                      className={cn(
+                        "flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors",
+                        cvSource === "existing" ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground hover:bg-muted/50"
+                      )}
+                    >
+                      <FileText className="w-4 h-4" /> Existing CVs
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setCvSource("upload"); setSelectedCV(""); }}
+                      className={cn(
+                        "flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors",
+                        cvSource === "upload" ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground hover:bg-muted/50"
+                      )}
+                    >
+                      <Upload className="w-4 h-4" /> Upload Resume
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Existing CV selection */}
+              {selectedCandidate && cvSource === "existing" && (
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-foreground/80 mb-2">Select CV to Update <span className="text-destructive">*</span></label>
+                  <label className="block text-sm font-medium text-foreground/80 mb-2">Select CV to Update</label>
                   {candidateCVs.length === 0 ? (
-                    <p className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">No CVs uploaded for this candidate.</p>
+                    <p className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">No CVs uploaded for this candidate. Try uploading one instead.</p>
                   ) : (
                     <div className="space-y-2">
                       {candidateCVs.map((cv: any) => (
@@ -316,6 +408,35 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
                         </button>
                       ))}
                     </div>
+                  )}
+                </div>
+              )}
+
+              {/* Upload CV */}
+              {selectedCandidate && cvSource === "upload" && (
+                <div className="mb-5">
+                  <label className="block text-sm font-medium text-foreground/80 mb-2">Upload Resume (PDF, DOC, DOCX)</label>
+                  {uploadedFile ? (
+                    <div className="flex items-center gap-3 p-3 rounded-lg border border-primary/30 bg-primary/5">
+                      <FileText className="w-5 h-5 text-primary shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-secondary-900 truncate">{uploadedFile.name}</p>
+                        <p className="text-xs text-muted-foreground">{formatBytes(uploadedFile.size)}</p>
+                      </div>
+                      <button onClick={() => setUploadedFile(null)} className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-muted text-muted-foreground transition-colors shrink-0">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="flex flex-col items-center justify-center gap-2 p-6 rounded-lg border-2 border-dashed border-border hover:border-primary/40 cursor-pointer transition-colors bg-muted/20">
+                      <Upload className="w-8 h-8 text-muted-foreground/50" />
+                      <span className="text-sm text-muted-foreground">Click to select a resume file</span>
+                      <span className="text-xs text-muted-foreground/60">PDF, DOC, DOCX • Max 10MB</span>
+                      <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileSelect} className="hidden" />
+                    </label>
+                  )}
+                  {errorMsg && state === "form" && (
+                    <p className="text-xs text-destructive mt-2">{errorMsg}</p>
                   )}
                 </div>
               )}
@@ -348,7 +469,6 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
                   Resume for <span className="font-semibold text-foreground">{candidateName}</span> optimized for <span className="font-semibold text-foreground">{job?.job_title}</span>.
                 </p>
 
-                {/* Inline preview */}
                 {googleViewerUrl && (
                   <div className="mt-4 w-full rounded-xl border border-border overflow-hidden bg-muted/30 relative" style={{ height: 320 }}>
                     <iframe
@@ -359,7 +479,6 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
                   </div>
                 )}
 
-                {/* Action buttons */}
                 <div className="flex gap-3 mt-4 w-full">
                   {savedFileUrl ? (
                     <>
@@ -400,7 +519,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
         {state === "form" && (
           <div className="px-6 py-4 border-t border-border flex items-center justify-between shrink-0">
             <Button variant="ghost" onClick={handleClose}>Cancel</Button>
-            <Button variant="portal-info" onClick={handleUpdate} disabled={!selectedCandidate || !selectedCV}><FilePen className="w-4 h-4" /> Update CV</Button>
+            <Button variant="portal-info" onClick={handleUpdate} disabled={!isReadyToUpdate}><FilePen className="w-4 h-4" /> Update CV</Button>
           </div>
         )}
       </div>

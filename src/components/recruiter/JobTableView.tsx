@@ -327,6 +327,10 @@ const JobExpandableRow = ({
                   <Eye className="w-3 h-3" /> Details
                 </button>
 
+                <button onClick={() => onViewDetails()} className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium text-primary hover:bg-primary/10 transition-colors">
+                  <Pencil className="w-3 h-3" /> Edit Description
+                </button>
+
                 <div className="ml-auto">
                   <button className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium text-destructive hover:bg-destructive/5 transition-colors">
                     <Trash className="w-3 h-3" /> Delete
