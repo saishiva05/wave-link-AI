@@ -6,7 +6,7 @@ import {
   ChevronRight, Mail, Sparkles, Copy, Check,
   Send, CheckCircle, BarChart3,
   FileCheck, Zap, ArrowUpRight, CircleDollarSign,
-  Timer, Users, FileText, MoreVertical,
+  Timer, Users, FileText, MoreVertical, Pencil, Save, Loader2, X as XIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useCallback } from "react";

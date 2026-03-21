@@ -2,6 +2,7 @@ import { ScrapedJob } from "@/data/mockScrapedJobs";
 import {
   X, MapPin, Calendar, Briefcase, ExternalLink, Building2, Award,
   Clock, Globe, DollarSign, Sparkles, FilePen, Copy, CheckCircle,
+  Pencil, Save, Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -9,6 +10,8 @@ import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { getPlatformDisplayName } from "@/lib/platformBranding";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface JobDetailsModalProps {
   job: ScrapedJob | null;
@@ -36,7 +39,11 @@ const timeAgo = (dateStr: string | undefined) => {
 
 const JobDetailsModal = ({ job, onClose, onRunATS }: JobDetailsModalProps) => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [copied, setCopied] = useState(false);
+  const [isEditingDesc, setIsEditingDesc] = useState(false);
+  const [editedDesc, setEditedDesc] = useState("");
+  const [isSavingDesc, setIsSavingDesc] = useState(false);
 
   if (!job) return null;
 
@@ -45,6 +52,30 @@ const JobDetailsModal = ({ job, onClose, onRunATS }: JobDetailsModalProps) => {
     setCopied(true);
     toast({ title: "Copied!", description: "Job URL copied to clipboard" });
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleStartEditDesc = () => {
+    setEditedDesc(job.job_description);
+    setIsEditingDesc(true);
+  };
+
+  const handleSaveDesc = async () => {
+    setIsSavingDesc(true);
+    try {
+      const { error } = await supabase
+        .from("scraped_jobs")
+        .update({ job_description: editedDesc })
+        .eq("job_id", job.id);
+      if (error) throw error;
+      job.job_description = editedDesc;
+      setIsEditingDesc(false);
+      queryClient.invalidateQueries({ queryKey: ["recruiter", "scraped-jobs"] });
+      toast({ title: "Saved!", description: "Job description updated successfully" });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "Failed to save", variant: "destructive" });
+    } finally {
+      setIsSavingDesc(false);
+    }
   };
 
   const platformLabel = getPlatformDisplayName(job.platform);
@@ -115,12 +146,47 @@ const JobDetailsModal = ({ job, onClose, onRunATS }: JobDetailsModalProps) => {
 
           {/* Description */}
           <div>
-            <h3 className="text-sm font-bold text-secondary-900 mb-3 flex items-center gap-2">
-              <div className="w-1 h-5 rounded-full bg-primary" />
-              Job Description
-            </h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-secondary-900 flex items-center gap-2">
+                <div className="w-1 h-5 rounded-full bg-primary" />
+                Job Description
+              </h3>
+              {!isEditingDesc ? (
+                <button
+                  onClick={handleStartEditDesc}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-primary hover:bg-primary/10 border border-primary/20 transition-colors"
+                >
+                  <Pencil className="w-3.5 h-3.5" /> Edit
+                </button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setIsEditingDesc(false)}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:bg-muted transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveDesc}
+                    disabled={isSavingDesc}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-primary-foreground bg-primary hover:bg-primary/90 transition-colors disabled:opacity-50"
+                  >
+                    {isSavingDesc ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                    Save
+                  </button>
+                </div>
+              )}
+            </div>
             <div className="bg-muted/30 border border-border/60 rounded-xl p-5">
-              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{job.job_description}</p>
+              {isEditingDesc ? (
+                <textarea
+                  value={editedDesc}
+                  onChange={(e) => setEditedDesc(e.target.value)}
+                  className="w-full min-h-[200px] text-sm text-foreground leading-relaxed bg-background border border-border rounded-lg p-3 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-y"
+                />
+              ) : (
+                <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{job.job_description}</p>
+              )}
             </div>
           </div>
 
