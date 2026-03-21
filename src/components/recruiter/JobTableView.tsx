@@ -388,9 +388,10 @@ const JobExpandableRow = ({
                 </div>
               )}
 
-              <p className="text-[11px] text-muted-foreground/50 line-clamp-2 max-w-3xl leading-relaxed">
-                {job.job_description}
-              </p>
+              <div
+                className="text-[11px] text-muted-foreground/50 line-clamp-2 max-w-3xl leading-relaxed prose prose-xs dark:prose-invert max-w-none prose-headings:text-xs prose-p:text-[11px] prose-li:text-[11px]"
+                dangerouslySetInnerHTML={{ __html: job.job_description }}
+              />
             </div>
           </td>
         </tr>

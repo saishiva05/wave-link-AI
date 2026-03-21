@@ -185,7 +185,10 @@ const JobDetailsModal = ({ job, onClose, onRunATS }: JobDetailsModalProps) => {
                   className="w-full min-h-[200px] text-sm text-foreground leading-relaxed bg-background border border-border rounded-lg p-3 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-y"
                 />
               ) : (
-                <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{job.job_description}</p>
+                <div
+                  className="text-sm text-muted-foreground leading-relaxed prose prose-sm dark:prose-invert max-w-none prose-headings:text-foreground prose-strong:text-foreground prose-li:text-muted-foreground prose-a:text-primary"
+                  dangerouslySetInnerHTML={{ __html: job.job_description }}
+                />
               )}
             </div>
           </div>
