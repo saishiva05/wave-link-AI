@@ -34,6 +34,7 @@ import RecruiterSettingsPage from "./pages/RecruiterSettingsPage";
 import RecruiterSupportPage from "./pages/RecruiterSupportPage";
 import RecruiterMessagesPage from "./pages/RecruiterMessagesPage";
 import RecruiterJobPostingsPage from "./pages/RecruiterJobPostingsPage";
+import RecruiterUpdateCV from "./pages/RecruiterUpdateCV";
 import CandidateLayout from "./components/candidate/CandidateLayout";
 import CandidateDashboardPage from "./pages/CandidateDashboardPage";
 import CandidateApplicationsPage from "./pages/CandidateApplicationsPage";
@@ -104,6 +105,7 @@ const App = () => (
               <Route path="cv-management" element={<RecruiterCVManagement />} />
               <Route path="candidates" element={<RecruiterCandidates />} />
               <Route path="applications" element={<RecruiterApplications />} />
+              <Route path="update-cv" element={<RecruiterUpdateCV />} />
               <Route path="messages" element={<RecruiterMessagesPage />} />
               <Route path="settings" element={<RecruiterSettingsPage />} />
               <Route path="support" element={<RecruiterSupportPage />} />

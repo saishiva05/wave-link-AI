@@ -15,6 +15,7 @@ import {
   ChevronRight,
   X,
   Newspaper,
+  FilePen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WaveLynkLogo from "@/components/WaveLynkLogo";
@@ -29,6 +30,7 @@ const mainMenuItems = [
   { title: "Job Postings", icon: Newspaper, route: "/recruiter/job-postings" },
   { title: "Candidates", icon: Users, route: "/recruiter/candidates" },
   { title: "Applications", icon: ClipboardCheck, route: "/recruiter/applications" },
+  { title: "Update CV", icon: FilePen, route: "/recruiter/update-cv" },
   { title: "Messages", icon: MessageSquare, route: "/recruiter/messages" },
 ];
 
