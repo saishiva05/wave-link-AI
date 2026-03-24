@@ -15,6 +15,7 @@ import {
   ChevronRight,
   X,
   Newspaper,
+  FilePen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WaveLynkLogo from "@/components/WaveLynkLogo";

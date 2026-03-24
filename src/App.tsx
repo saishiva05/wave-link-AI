@@ -104,6 +104,7 @@ const App = () => (
               <Route path="cv-management" element={<RecruiterCVManagement />} />
               <Route path="candidates" element={<RecruiterCandidates />} />
               <Route path="applications" element={<RecruiterApplications />} />
+              <Route path="update-cv" element={<RecruiterUpdateCV />} />
               <Route path="messages" element={<RecruiterMessagesPage />} />
               <Route path="settings" element={<RecruiterSettingsPage />} />
               <Route path="support" element={<RecruiterSupportPage />} />
