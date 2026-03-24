@@ -34,6 +34,7 @@ import RecruiterSettingsPage from "./pages/RecruiterSettingsPage";
 import RecruiterSupportPage from "./pages/RecruiterSupportPage";
 import RecruiterMessagesPage from "./pages/RecruiterMessagesPage";
 import RecruiterJobPostingsPage from "./pages/RecruiterJobPostingsPage";
+import RecruiterUpdateCV from "./pages/RecruiterUpdateCV";
 import CandidateLayout from "./components/candidate/CandidateLayout";
 import CandidateDashboardPage from "./pages/CandidateDashboardPage";
 import CandidateApplicationsPage from "./pages/CandidateApplicationsPage";
