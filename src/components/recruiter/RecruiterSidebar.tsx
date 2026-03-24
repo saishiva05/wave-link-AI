@@ -29,6 +29,7 @@ const mainMenuItems = [
   { title: "Job Postings", icon: Newspaper, route: "/recruiter/job-postings" },
   { title: "Candidates", icon: Users, route: "/recruiter/candidates" },
   { title: "Applications", icon: ClipboardCheck, route: "/recruiter/applications" },
+  { title: "Update CV", icon: FilePen, route: "/recruiter/update-cv" },
   { title: "Messages", icon: MessageSquare, route: "/recruiter/messages" },
 ];
 
