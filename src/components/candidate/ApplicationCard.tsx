@@ -68,7 +68,17 @@ const ApplicationCard = ({ application, onViewDetails }: ApplicationCardProps) =
         <button className="flex-1 flex items-center justify-center gap-1.5 text-xs font-medium text-primary border border-primary px-3 py-1.5 rounded-md hover:bg-primary-50 transition-colors">
           View Details <ArrowRight className="w-3 h-3" />
         </button>
-        <button className="w-8 h-8 flex items-center justify-center rounded-md border border-border text-neutral-500 hover:bg-neutral-100 transition-colors" title="Download CV">
+        <button
+          onClick={async (e) => {
+            e.stopPropagation();
+            if (application.cv_file_url) {
+              const { downloadFile } = await import("@/lib/downloadFile");
+              await downloadFile(application.cv_file_url, application.cv_file_name);
+            }
+          }}
+          className="w-8 h-8 flex items-center justify-center rounded-md border border-border text-neutral-500 hover:bg-neutral-100 transition-colors"
+          title="Download CV"
+        >
           <Download className="w-3.5 h-3.5" />
         </button>
       </div>
