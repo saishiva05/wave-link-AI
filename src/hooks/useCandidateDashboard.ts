@@ -18,6 +18,7 @@ export interface CandidateApplication {
   applied_at: string;
   status_updated_at: string;
   cv_file_name: string;
+  cv_file_url: string;
   cv_id: string;
   recruiter_notes: string | null;
   platform_type: string;
