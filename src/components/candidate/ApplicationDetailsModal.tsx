@@ -105,10 +105,25 @@ const ApplicationDetailsModal = ({ application, onClose }: ApplicationDetailsMod
               <p className="text-xs text-neutral-600 mt-0.5">Original CV</p>
             </div>
             <div className="flex gap-2 shrink-0">
-              <button className="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center text-primary hover:bg-primary-100 transition-colors" title="Preview">
+              <button
+                onClick={() => {
+                  if (application.cv_file_url) window.open(application.cv_file_url, "_blank");
+                }}
+                className="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center text-primary hover:bg-primary-100 transition-colors"
+                title="Preview"
+              >
                 <Eye className="w-4 h-4" />
               </button>
-              <button className="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center text-primary hover:bg-primary-100 transition-colors" title="Download">
+              <button
+                onClick={async () => {
+                  if (application.cv_file_url) {
+                    const { downloadFile } = await import("@/lib/downloadFile");
+                    await downloadFile(application.cv_file_url, application.cv_file_name);
+                  }
+                }}
+                className="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center text-primary hover:bg-primary-100 transition-colors"
+                title="Download"
+              >
                 <Download className="w-4 h-4" />
               </button>
             </div>

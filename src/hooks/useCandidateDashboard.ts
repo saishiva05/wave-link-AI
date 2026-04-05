@@ -135,6 +135,7 @@ export function useCandidateDashboard() {
           applied_at: a.applied_at,
           status_updated_at: a.status_updated_at,
           cv_file_name: a.cvs?.file_name || "",
+          cv_file_url: a.cvs?.file_url || "",
           cv_id: a.cvs?.cv_id || a.cv_id,
           recruiter_notes: a.recruiter_notes,
           platform_type: a.scraped_jobs?.platform_type || "",
