@@ -36,13 +36,15 @@ const UpdatedCVPreviewModal = ({ ucv, onClose }: UpdatedCVPreviewModalProps) => 
             <p className="text-xs text-muted-foreground/70 mt-1">Original: {ucv.original_file_name}</p>
           </div>
           <div className="flex items-center gap-2 shrink-0 ml-4">
-            <a
-              href={ucv.updated_file_url}
-              download
+            <button
+              onClick={async () => {
+                const { downloadFile } = await import("@/lib/downloadFile");
+                await downloadFile(ucv.updated_file_url, ucv.updated_file_name);
+              }}
               className="h-9 px-3 rounded-lg bg-teal-600 text-white flex items-center gap-2 text-sm font-medium hover:bg-teal-700 transition-colors"
             >
               <Download className="w-4 h-4" /> Download
-            </a>
+            </button>
             <a
               href={ucv.updated_file_url}
               target="_blank"
