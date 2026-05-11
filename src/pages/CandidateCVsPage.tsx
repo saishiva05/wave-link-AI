@@ -59,19 +59,7 @@ const CandidateCVsPage = () => {
 
   const handleDownload = async (cv: typeof cvs[0]) => {
     try {
-      const urlParts = cv.file_url.split("/cvs-bucket/");
-      if (urlParts[1]) {
-        const { data, error } = await supabase.storage.from("cvs-bucket").download(urlParts[1]);
-        if (error) throw error;
-        const url = URL.createObjectURL(data);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = cv.file_name;
-        a.click();
-        URL.revokeObjectURL(url);
-      } else {
-        window.open(cv.file_url, "_blank");
-      }
+      await downloadFile(cv.file_url, cv.file_name);
     } catch {
       toast({ title: "Download failed", variant: "destructive" });
     }
