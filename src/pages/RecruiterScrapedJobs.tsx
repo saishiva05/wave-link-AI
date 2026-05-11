@@ -436,6 +436,29 @@ const RecruiterScrapedJobs = () => {
           );
         })()}
       </div>
+
+      {(deleteJob || bulkDeleteOpen) && (
+        <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => !isDeleting && (deleteJob ? setDeleteJob(null) : setBulkDeleteOpen(false))}>
+          <div className="bg-card rounded-2xl shadow-2xl max-w-[420px] w-full p-6 text-center animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+              <AlertTriangle className="w-7 h-7 text-destructive" />
+            </div>
+            <h3 className="text-lg font-bold text-foreground mt-4">
+              {deleteJob ? "Delete this job?" : `Delete ${selectedIds.size} jobs?`}
+            </h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              This permanently removes the job along with its ATS analyses, generated emails, updated resumes and applications.
+            </p>
+            <div className="flex items-center gap-3 mt-6">
+              <Button variant="outline" className="flex-1" disabled={isDeleting} onClick={() => { setDeleteJob(null); setBulkDeleteOpen(false); }}>Cancel</Button>
+              <Button variant="destructive" className="flex-1" disabled={isDeleting} onClick={() => performJobDelete(deleteJob ? [deleteJob.id] : Array.from(selectedIds))}>
+                {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash className="w-4 h-4" />}
+                {isDeleting ? "Deleting..." : "Delete"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
