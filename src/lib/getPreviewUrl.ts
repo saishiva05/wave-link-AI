@@ -6,16 +6,22 @@ import { supabase } from "@/integrations/supabase/client";
  * that the Google Docs viewer (and direct downloads) can actually fetch them.
  * Public URLs are returned as-is.
  */
+const PRIVATE_BUCKETS = ["cvs-bucket", "Update cv's"];
+
 export async function getPreviewUrl(fileUrl: string): Promise<string> {
   if (!fileUrl) return "";
-  const parts = fileUrl.split("/cvs-bucket/");
-  if (parts[1]) {
-    try {
-      const path = decodeURIComponent(parts[1]);
-      const { data } = await supabase.storage.from("cvs-bucket").createSignedUrl(path, 3600);
-      if (data?.signedUrl) return data.signedUrl;
-    } catch {
-      /* fall through */
+  for (const bucket of PRIVATE_BUCKETS) {
+    const marker = `/${bucket}/`;
+    const idx = fileUrl.indexOf(marker);
+    if (idx !== -1) {
+      try {
+        const path = decodeURIComponent(fileUrl.slice(idx + marker.length).split("?")[0]);
+        const { data } = await supabase.storage.from(bucket).createSignedUrl(path, 3600);
+        if (data?.signedUrl) return data.signedUrl;
+      } catch {
+        /* fall through */
+      }
+      break;
     }
   }
   return fileUrl;
