@@ -32,6 +32,7 @@ interface JobTableViewProps {
   onGenerateEmail: (job: ScrapedJob) => void;
   onViewATSResult: (job: ScrapedJob) => void;
   onApplyToJob: (job: ScrapedJob) => void;
+  onDeleteJob: (job: ScrapedJob) => void;
   atsAnalyses: Record<string, any[]>;
   updatedCVsMap: Record<string, any[]>;
   generatedEmailsMap: Record<string, any[]>;
@@ -101,7 +102,7 @@ const ApplyExternallyButton = ({ job }: { job: ScrapedJob }) => {
 
 const JobTableView = ({
   jobs, selectedIds, onToggleSelect, onSelectAll, allSelected,
-  onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, onApplyToJob, atsAnalyses,
+  onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, onApplyToJob, onDeleteJob, atsAnalyses,
   updatedCVsMap, generatedEmailsMap, jobApplicationsMap, sortField, sortDir, onSort,
 }: JobTableViewProps) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -172,6 +173,7 @@ const JobTableView = ({
                     onGenerateEmail={() => onGenerateEmail(job)}
                     onViewATSResult={() => onViewATSResult(job)}
                     onApplyToJob={() => onApplyToJob(job)}
+                    onDelete={() => onDeleteJob(job)}
                   />
                 );
               })}
@@ -185,13 +187,13 @@ const JobTableView = ({
 
 const JobExpandableRow = ({
   job, selected, isExpanded, hasATS, atsAnalyses: atsAnalysesForJob, updatedCVs, generatedEmails, jobApplications,
-  onToggle, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, onApplyToJob,
+  onToggle, onToggleSelect, onViewDetails, onRunATS, onUpdateCV, onGenerateEmail, onViewATSResult, onApplyToJob, onDelete,
 }: {
   job: ScrapedJob; selected: boolean; isExpanded: boolean; hasATS: boolean;
   atsAnalyses: any[]; updatedCVs: any[]; generatedEmails: any[]; jobApplications: any[];
   onToggle: () => void; onToggleSelect: () => void; onViewDetails: () => void;
   onRunATS: () => void; onUpdateCV: () => void; onGenerateEmail: () => void; onViewATSResult: () => void;
-  onApplyToJob: () => void;
+  onApplyToJob: () => void; onDelete: () => void;
 }) => {
   const { toast } = useToast();
   const [showEmails, setShowEmails] = useState(false);
@@ -332,7 +334,7 @@ const JobExpandableRow = ({
                 </button>
 
                 <div className="ml-auto">
-                  <button className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium text-destructive hover:bg-destructive/5 transition-colors">
+                  <button onClick={onDelete} className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium text-destructive hover:bg-destructive/5 transition-colors">
                     <Trash className="w-3 h-3" /> Delete
                   </button>
                 </div>
