@@ -29,10 +29,16 @@ export function getStorageObjectInfo(fileUrl: string): StorageObjectInfo | null 
 
   const objectPath = pathname.slice(markerIndex + marker.length);
   const segments = objectPath.split("/").filter(Boolean);
-  if (segments.length < 3) return null;
+  if (segments.length < 2) return null;
 
-  const bucket = decodeURIComponent(segments[1]);
-  const path = segments.slice(2).map((segment) => decodeURIComponent(segment)).join("/");
+  const visibilitySegment = segments[0];
+  const hasVisibilityPrefix = visibilitySegment === "public" || visibilitySegment === "sign";
+  const bucketIndex = hasVisibilityPrefix ? 1 : 0;
+  const pathIndex = bucketIndex + 1;
+  if (segments.length <= pathIndex) return null;
+
+  const bucket = decodeURIComponent(segments[bucketIndex]);
+  const path = segments.slice(pathIndex).map((segment) => decodeURIComponent(segment)).join("/");
   return bucket && path ? { bucket, path } : null;
 }
 
