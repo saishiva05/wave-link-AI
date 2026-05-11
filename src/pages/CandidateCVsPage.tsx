@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FileText, Download, Eye, Star, HardDrive, Calendar, Mail, Loader2, Upload, Trash2, Check } from "lucide-react";
+import { FileText, Download, Eye, Star, HardDrive, Calendar, Mail, Loader2, Upload, Trash2, Check, Sparkles, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useCandidateDashboard } from "@/hooks/useCandidateDashboard";
@@ -10,6 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
+import { downloadFile } from "@/lib/downloadFile";
+import { getPreviewUrl } from "@/lib/getPreviewUrl";
 
 function formatBytes(bytes: number) {
   if (bytes < 1024) return `${bytes} B`;
