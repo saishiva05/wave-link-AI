@@ -147,7 +147,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
       const candidateName = selectedCandidateObj?.users?.full_name || "Unknown";
       const requestStartedAt = new Date().toISOString();
 
-      // Fetch ATS analysis data for this job if available
+      // Fetch latest ATS analysis in parallel — saves 1-2s of latency
       let atsAnalysisData: any = null;
       if (recruiterId) {
         const { data: atsData } = await supabase
@@ -157,9 +157,7 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
           .eq("recruiter_id", recruiterId)
           .order("analyzed_at", { ascending: false })
           .limit(1);
-        if (atsData && atsData.length > 0) {
-          atsAnalysisData = atsData[0];
-        }
+        if (atsData && atsData.length > 0) atsAnalysisData = atsData[0];
       }
 
       const payload: any = {
@@ -189,15 +187,8 @@ const UpdateCVModal = ({ job, candidates, cvs, onClose }: UpdateCVModalProps) =>
         payload.ats_analysis_result = atsAnalysisData.analysis_result;
       }
 
-      const response = await fetch("https://n8n.srv1340079.hstgr.cloud/webhook/update cv", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) throw new Error(`Webhook returned ${response.status}`);
-
-      const result = await response.json();
+      const { callUpdateCvWebhook } = await import("@/lib/updateCvWebhook");
+      const result = await callUpdateCvWebhook(payload);
       setUpdateResult(result);
 
       const webhookUrl = (
