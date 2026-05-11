@@ -146,7 +146,11 @@ const ApplicationDetailsModal = ({ application, onClose }: ApplicationDetailsMod
               {application.updated_cv_file_url && (
                 <div className="flex gap-2 shrink-0">
                   <button
-                    onClick={() => window.open(application.updated_cv_file_url!, "_blank")}
+                    onClick={async () => {
+                      const { getPreviewUrl } = await import("@/lib/getPreviewUrl");
+                      const url = await getPreviewUrl(application.updated_cv_file_url!);
+                      window.open(url, "_blank");
+                    }}
                     className="w-9 h-9 rounded-lg bg-teal-100 flex items-center justify-center text-teal-700 hover:bg-teal-200 transition-colors"
                     title="Preview"
                   >
