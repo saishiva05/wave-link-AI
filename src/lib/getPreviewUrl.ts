@@ -1,27 +1,50 @@
 import { supabase } from "@/integrations/supabase/client";
 
+export interface StorageObjectInfo {
+  bucket: string;
+  path: string;
+}
+
 /**
  * Resolve a preview-friendly URL for a CV file.
  * Files in the private `cvs-bucket` are converted to a 1-hour signed URL so
  * that the Google Docs viewer (and direct downloads) can actually fetch them.
  * Public URLs are returned as-is.
  */
-const PRIVATE_BUCKETS = ["cvs-bucket", "Update cv's"];
+const SIGNED_URL_BUCKETS = ["cvs-bucket", "Update cv's"];
+
+export function getStorageObjectInfo(fileUrl: string): StorageObjectInfo | null {
+  if (!fileUrl) return null;
+
+  let pathname = fileUrl;
+  try {
+    pathname = new URL(fileUrl).pathname;
+  } catch {
+    /* support already-relative storage paths */
+  }
+
+  const marker = "/storage/v1/object/";
+  const markerIndex = pathname.indexOf(marker);
+  if (markerIndex === -1) return null;
+
+  const objectPath = pathname.slice(markerIndex + marker.length);
+  const segments = objectPath.split("/").filter(Boolean);
+  if (segments.length < 3) return null;
+
+  const bucket = decodeURIComponent(segments[1]);
+  const path = segments.slice(2).map((segment) => decodeURIComponent(segment)).join("/");
+  return bucket && path ? { bucket, path } : null;
+}
 
 export async function getPreviewUrl(fileUrl: string): Promise<string> {
   if (!fileUrl) return "";
-  for (const bucket of PRIVATE_BUCKETS) {
-    const marker = `/${bucket}/`;
-    const idx = fileUrl.indexOf(marker);
-    if (idx !== -1) {
-      try {
-        const path = decodeURIComponent(fileUrl.slice(idx + marker.length).split("?")[0]);
-        const { data } = await supabase.storage.from(bucket).createSignedUrl(path, 3600);
-        if (data?.signedUrl) return data.signedUrl;
-      } catch {
-        /* fall through */
-      }
-      break;
+  const storageObject = getStorageObjectInfo(fileUrl);
+  if (storageObject && SIGNED_URL_BUCKETS.includes(storageObject.bucket)) {
+    try {
+      const { data } = await supabase.storage.from(storageObject.bucket).createSignedUrl(storageObject.path, 3600);
+      if (data?.signedUrl) return data.signedUrl;
+    } catch {
+      /* fall through */
     }
   }
   return fileUrl;

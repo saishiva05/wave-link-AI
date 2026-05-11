@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FileText, Download, ExternalLink, X, User, Clock, Eye, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
+import { getPreviewUrl } from "@/lib/getPreviewUrl";
 
 interface UpdatedCV {
   updated_cv_id: string;
@@ -29,6 +30,15 @@ const formatBytes = (bytes: number | null) => {
 const UpdatedCVsBadge = ({ updatedCVs, compact = false }: UpdatedCVsBadgeProps) => {
   const [showModal, setShowModal] = useState(false);
   const [previewCV, setPreviewCV] = useState<UpdatedCV | null>(null);
+  const [previewUrl, setPreviewUrl] = useState("");
+
+  useEffect(() => {
+    if (!previewCV) {
+      setPreviewUrl("");
+      return;
+    }
+    getPreviewUrl(previewCV.updated_file_url).then(setPreviewUrl).catch(() => setPreviewUrl(previewCV.updated_file_url));
+  }, [previewCV]);
 
   if (!updatedCVs || updatedCVs.length === 0) return null;
 
@@ -96,11 +106,13 @@ const UpdatedCVsBadge = ({ updatedCVs, compact = false }: UpdatedCVsBadgeProps) 
               /* Preview View */
               <>
                 <div className="flex-1 overflow-hidden bg-muted/30">
-                  <iframe
-                    src={`https://docs.google.com/gview?url=${encodeURIComponent(previewCV.updated_file_url)}&embedded=true`}
-                    className="w-full h-full min-h-[60vh] border-0"
-                    title={`Preview of ${previewCV.updated_file_name}`}
-                  />
+                  {previewUrl && (
+                    <iframe
+                      src={`https://docs.google.com/gview?url=${encodeURIComponent(previewUrl)}&embedded=true`}
+                      className="w-full h-full min-h-[60vh] border-0"
+                      title={`Preview of ${previewCV.updated_file_name}`}
+                    />
+                  )}
                 </div>
                 <div className="px-6 py-4 border-t border-border shrink-0 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
@@ -114,7 +126,7 @@ const UpdatedCVsBadge = ({ updatedCVs, compact = false }: UpdatedCVsBadgeProps) 
                       <Download className="w-4 h-4" /> Download
                     </button>
                     <a
-                      href={previewCV.updated_file_url}
+                      href={previewUrl || previewCV.updated_file_url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-sm font-medium hover:bg-muted transition-colors"

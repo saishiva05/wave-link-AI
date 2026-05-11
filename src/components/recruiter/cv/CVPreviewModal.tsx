@@ -2,8 +2,8 @@ import { X, Download, ExternalLink, Calendar, HardDrive, User, Loader2 } from "l
 import { cn } from "@/lib/utils";
 import type { CVFile } from "@/hooks/useCVManagement";
 import { format } from "date-fns";
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
+import { getPreviewUrl } from "@/lib/getPreviewUrl";
 
 interface CVPreviewModalProps {
   cv: CVFile | null;
@@ -23,24 +23,12 @@ const CVPreviewModal = ({ cv, onClose, onDownload }: CVPreviewModalProps) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [error, setError] = useState(false);
 
-  // Generate a signed URL for preview
-  const getSignedUrl = async (fileUrl: string) => {
-    const urlParts = fileUrl.split("/cvs-bucket/");
-    if (urlParts[1]) {
-      const { data, error } = await supabase.storage
-        .from("cvs-bucket")
-        .createSignedUrl(urlParts[1], 3600); // 1 hour
-      if (!error && data?.signedUrl) return data.signedUrl;
-    }
-    return fileUrl;
-  };
-
   // Load preview URL when cv changes
-  useState(() => {
+  useEffect(() => {
     if (cv) {
       setLoading(true);
       setError(false);
-      getSignedUrl(cv.file_url).then((url) => {
+      getPreviewUrl(cv.file_url).then((url) => {
         setPreviewUrl(url);
         setLoading(false);
       }).catch(() => {
@@ -48,7 +36,7 @@ const CVPreviewModal = ({ cv, onClose, onDownload }: CVPreviewModalProps) => {
         setLoading(false);
       });
     }
-  });
+  }, [cv]);
 
   if (!cv) return null;
 
