@@ -76,6 +76,38 @@ export function useAdminRecruiters(page: number, perPage: number, search?: strin
   });
 }
 
+export function useAdminAdmins(page: number, perPage: number, search?: string) {
+  return useQuery({
+    queryKey: ["admin", "admins", page, perPage, search],
+    queryFn: async () => {
+      // Get all admin user_ids
+      const { data: roleRows, error: roleErr } = await supabase
+        .from("user_roles")
+        .select("user_id")
+        .eq("role", "admin");
+      if (roleErr) throw roleErr;
+      const adminUserIds = (roleRows || []).map((r) => r.user_id);
+      if (adminUserIds.length === 0) return { admins: [], total: 0 };
+
+      let query = supabase
+        .from("users")
+        .select("user_id, full_name, email, phone, is_active, last_login_at, created_at, avatar_url", { count: "exact" })
+        .in("user_id", adminUserIds);
+
+      if (search) {
+        query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%`);
+      }
+
+      query = query.order("created_at", { ascending: false });
+      query = query.range((page - 1) * perPage, page * perPage - 1);
+
+      const { data, error, count } = await query;
+      if (error) throw error;
+      return { admins: data || [], total: count || 0 };
+    },
+  });
+}
+
 export function useAdminChartData(range: string) {
   return useQuery({
     queryKey: ["admin", "charts", range],
