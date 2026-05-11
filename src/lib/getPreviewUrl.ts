@@ -12,7 +12,8 @@ export interface StorageObjectInfo {
  * Public URLs are returned as-is.
  */
 const SIGNED_URL_BUCKETS = ["cvs-bucket", "Update cv's"];
-const RESUME_EXTENSION_PATTERN = /\.(pdf|docx|doc)(?=$|[^a-z0-9])/i;
+const UUID_SUFFIX_PATTERN = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}";
+const RESUME_EXTENSION_PATTERN = new RegExp(`\\.(pdf|docx|doc)(?=$|[^a-z0-9]|${UUID_SUFFIX_PATTERN})`, "i");
 
 export function getResumeExtension(fileNameOrUrl: string): string | null {
   const match = fileNameOrUrl.match(RESUME_EXTENSION_PATTERN);
@@ -22,10 +23,11 @@ export function getResumeExtension(fileNameOrUrl: string): string | null {
 export function normalizeResumeFileName(fileName: string, fallback = "resume.pdf"): string {
   const trimmed = (fileName || "").trim() || fallback;
   const match = trimmed.match(RESUME_EXTENSION_PATTERN);
-  if (!match?.index) return trimmed.includes(".") ? trimmed : fallback;
+  if (match?.index === undefined) return /\.[a-z0-9]{2,5}$/i.test(trimmed) ? trimmed : fallback;
 
   const extension = match[1].toLowerCase();
-  return `${trimmed.slice(0, match.index)}.${extension}`;
+  const baseName = trimmed.slice(0, match.index).trim().replace(/[\s._-]+$/, "");
+  return `${baseName || "resume"}.${extension}`;
 }
 
 export function getStorageObjectInfo(fileUrl: string): StorageObjectInfo | null {
