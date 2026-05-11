@@ -85,18 +85,21 @@ export function useCandidateDashboard() {
         .eq("candidate_id", candidateId!)
         .order("applied_at", { ascending: false });
 
-      // Fetch updated CVs for this candidate's applications
-      const jobIds = (data || []).map((a: any) => a.job_id);
-      const cvIds = (data || []).map((a: any) => a.cv_id);
-      let updatedCVsMap: Record<string, any> = {};
-      if (jobIds.length > 0 && cvIds.length > 0) {
+      // Fetch updated CVs for this candidate's applications (key by job_id; pick most recent)
+      const jobIds = Array.from(new Set((data || []).map((a: any) => a.job_id))).filter(Boolean);
+      const updatedByJob: Record<string, any> = {};
+      const updatedByJobCv: Record<string, any> = {};
+      if (jobIds.length > 0) {
         const { data: ucvData } = await supabase
           .from("updated_cvs")
-          .select("cv_id, job_id, updated_file_name, updated_file_url")
+          .select("cv_id, job_id, updated_file_name, updated_file_url, created_at")
           .eq("candidate_id", candidateId!)
-          .in("job_id", jobIds);
+          .in("job_id", jobIds)
+          .order("created_at", { ascending: false });
         (ucvData || []).forEach((ucv: any) => {
-          updatedCVsMap[`${ucv.job_id}-${ucv.cv_id}`] = ucv;
+          const jcKey = `${ucv.job_id}-${ucv.cv_id}`;
+          if (!updatedByJobCv[jcKey]) updatedByJobCv[jcKey] = ucv;
+          if (!updatedByJob[ucv.job_id]) updatedByJob[ucv.job_id] = ucv;
         });
       }
 
@@ -117,8 +120,7 @@ export function useCandidateDashboard() {
           timeline.push({ status: "Application Submitted", date: a.applied_at });
         }
 
-        const ucvKey = `${a.job_id}-${a.cv_id}`;
-        const updatedCV = updatedCVsMap[ucvKey] || null;
+        const updatedCV = updatedByJobCv[`${a.job_id}-${a.cv_id}`] || updatedByJob[a.job_id] || null;
 
         return {
           application_id: a.application_id,
