@@ -1,4 +1,5 @@
-import { getPreviewUrl } from "./getPreviewUrl";
+import { getPreviewUrl, getStorageObjectInfo } from "./getPreviewUrl";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Download a file from a URL by fetching it as a blob first.
@@ -9,18 +10,34 @@ export async function downloadFile(url: string, fileName: string): Promise<void>
     fileName = fileName.replace(/\.[^.]+$/, "") + ".pdf";
     if (fileName === ".pdf") fileName = "document.pdf";
   }
-  const resolved = await getPreviewUrl(url).catch(() => url);
+  const storageObject = getStorageObjectInfo(url);
   try {
+    if (storageObject) {
+      const { data, error } = await supabase.storage.from(storageObject.bucket).download(storageObject.path);
+      if (error) throw error;
+      triggerDownload(data, fileName);
+      return;
+    }
+
+    const resolved = await getPreviewUrl(url).catch(() => url);
     const response = await fetch(resolved);
+    if (!response.ok) throw new Error("Download request failed");
     const blob = await response.blob();
-    const blobUrl = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = fileName;
-    a.click();
-    URL.revokeObjectURL(blobUrl);
+    triggerDownload(blob, fileName);
   } catch {
+    const resolved = await getPreviewUrl(url).catch(() => url);
     window.open(resolved, "_blank");
   }
+}
+
+function triggerDownload(blob: Blob, fileName: string) {
+  const blobUrl = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = blobUrl;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(blobUrl);
 }
 
