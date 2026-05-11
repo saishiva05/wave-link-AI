@@ -244,7 +244,7 @@ export type Database = {
           apply_started_at: string | null
           ats_analysis_id: string | null
           candidate_id: string
-          cv_id: string
+          cv_id: string | null
           external_application_id: string | null
           job_id: string
           recruiter_id: string
@@ -259,7 +259,7 @@ export type Database = {
           apply_started_at?: string | null
           ats_analysis_id?: string | null
           candidate_id: string
-          cv_id: string
+          cv_id?: string | null
           external_application_id?: string | null
           job_id: string
           recruiter_id: string
@@ -274,7 +274,7 @@ export type Database = {
           apply_started_at?: string | null
           ats_analysis_id?: string | null
           candidate_id?: string
-          cv_id?: string
+          cv_id?: string | null
           external_application_id?: string | null
           job_id?: string
           recruiter_id?: string
