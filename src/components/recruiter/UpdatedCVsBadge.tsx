@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FileText, Download, ExternalLink, X, User, Clock, Eye, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
-import { getPreviewUrl } from "@/lib/getPreviewUrl";
+import { getBrowserPreviewUrl, getPreviewUrl } from "@/lib/getPreviewUrl";
 
 interface UpdatedCV {
   updated_cv_id: string;
@@ -31,13 +31,30 @@ const UpdatedCVsBadge = ({ updatedCVs, compact = false }: UpdatedCVsBadgeProps) 
   const [showModal, setShowModal] = useState(false);
   const [previewCV, setPreviewCV] = useState<UpdatedCV | null>(null);
   const [previewUrl, setPreviewUrl] = useState("");
+  const [openUrl, setOpenUrl] = useState("");
 
   useEffect(() => {
     if (!previewCV) {
       setPreviewUrl("");
+      setOpenUrl("");
       return;
     }
-    getPreviewUrl(previewCV.updated_file_url).then(setPreviewUrl).catch(() => setPreviewUrl(previewCV.updated_file_url));
+    let objectUrl = "";
+    Promise.all([
+      getBrowserPreviewUrl(previewCV.updated_file_url, previewCV.updated_file_name),
+      getPreviewUrl(previewCV.updated_file_url),
+    ]).then(([preview, resolvedOpenUrl]) => {
+      objectUrl = preview.isObjectUrl ? preview.url : "";
+      setPreviewUrl(preview.url);
+      setOpenUrl(resolvedOpenUrl);
+    }).catch(() => {
+      setPreviewUrl("");
+      setOpenUrl(previewCV.updated_file_url);
+    });
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
   }, [previewCV]);
 
   if (!updatedCVs || updatedCVs.length === 0) return null;
@@ -108,7 +125,7 @@ const UpdatedCVsBadge = ({ updatedCVs, compact = false }: UpdatedCVsBadgeProps) 
                 <div className="flex-1 overflow-hidden bg-muted/30">
                   {previewUrl && (
                     <iframe
-                      src={`https://docs.google.com/gview?url=${encodeURIComponent(previewUrl)}&embedded=true`}
+                      src={previewUrl}
                       className="w-full h-full min-h-[60vh] border-0"
                       title={`Preview of ${previewCV.updated_file_name}`}
                     />
@@ -126,7 +143,7 @@ const UpdatedCVsBadge = ({ updatedCVs, compact = false }: UpdatedCVsBadgeProps) 
                       <Download className="w-4 h-4" /> Download
                     </button>
                     <a
-                      href={previewUrl || previewCV.updated_file_url}
+                      href={openUrl || previewCV.updated_file_url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-sm font-medium hover:bg-muted transition-colors"

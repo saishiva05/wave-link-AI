@@ -1,4 +1,4 @@
-import { getPreviewUrl, getStorageObjectInfo } from "./getPreviewUrl";
+import { getPreviewUrl, getStorageObjectInfo, normalizeResumeFileName } from "./getPreviewUrl";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
@@ -6,10 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
  * Resolves private storage URLs to short-lived signed URLs automatically.
  */
 export async function downloadFile(url: string, fileName: string): Promise<void> {
-  if (!fileName.toLowerCase().endsWith(".pdf")) {
-    fileName = fileName.replace(/\.[^.]+$/, "") + ".pdf";
-    if (fileName === ".pdf") fileName = "document.pdf";
-  }
+  fileName = normalizeResumeFileName(fileName, "resume.pdf");
   const storageObject = getStorageObjectInfo(url);
   try {
     if (storageObject) {

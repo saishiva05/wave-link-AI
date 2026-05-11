@@ -12,6 +12,21 @@ export interface StorageObjectInfo {
  * Public URLs are returned as-is.
  */
 const SIGNED_URL_BUCKETS = ["cvs-bucket", "Update cv's"];
+const RESUME_EXTENSION_PATTERN = /\.(pdf|docx|doc)(?=$|[^a-z0-9])/i;
+
+export function getResumeExtension(fileNameOrUrl: string): string | null {
+  const match = fileNameOrUrl.match(RESUME_EXTENSION_PATTERN);
+  return match?.[1]?.toLowerCase() || null;
+}
+
+export function normalizeResumeFileName(fileName: string, fallback = "resume.pdf"): string {
+  const trimmed = (fileName || "").trim() || fallback;
+  const match = trimmed.match(RESUME_EXTENSION_PATTERN);
+  if (!match?.index) return trimmed.includes(".") ? trimmed : fallback;
+
+  const extension = match[1].toLowerCase();
+  return `${trimmed.slice(0, match.index)}.${extension}`;
+}
 
 export function getStorageObjectInfo(fileUrl: string): StorageObjectInfo | null {
   if (!fileUrl) return null;
@@ -29,10 +44,16 @@ export function getStorageObjectInfo(fileUrl: string): StorageObjectInfo | null 
 
   const objectPath = pathname.slice(markerIndex + marker.length);
   const segments = objectPath.split("/").filter(Boolean);
-  if (segments.length < 3) return null;
+  if (segments.length < 2) return null;
 
-  const bucket = decodeURIComponent(segments[1]);
-  const path = segments.slice(2).map((segment) => decodeURIComponent(segment)).join("/");
+  const visibilitySegment = segments[0];
+  const hasVisibilityPrefix = visibilitySegment === "public" || visibilitySegment === "sign";
+  const bucketIndex = hasVisibilityPrefix ? 1 : 0;
+  const pathIndex = bucketIndex + 1;
+  if (segments.length <= pathIndex) return null;
+
+  const bucket = decodeURIComponent(segments[bucketIndex]);
+  const path = segments.slice(pathIndex).map((segment) => decodeURIComponent(segment)).join("/");
   return bucket && path ? { bucket, path } : null;
 }
 
@@ -48,6 +69,22 @@ export async function getPreviewUrl(fileUrl: string): Promise<string> {
     }
   }
   return fileUrl;
+}
+
+export async function getBrowserPreviewUrl(fileUrl: string, fileName: string): Promise<{ url: string; isObjectUrl: boolean }> {
+  const extension = getResumeExtension(fileName) || getResumeExtension(fileUrl);
+  const storageObject = getStorageObjectInfo(fileUrl);
+
+  if (extension === "pdf" && storageObject) {
+    const { data, error } = await supabase.storage.from(storageObject.bucket).download(storageObject.path);
+    if (!error && data) {
+      const pdfBlob = new Blob([data], { type: "application/pdf" });
+      return { url: URL.createObjectURL(pdfBlob), isObjectUrl: true };
+    }
+  }
+
+  const resolvedUrl = await getPreviewUrl(fileUrl);
+  return { url: googleViewerUrl(resolvedUrl), isObjectUrl: false };
 }
 
 /** Build the Google Docs viewer URL for a (publicly accessible) file URL. */

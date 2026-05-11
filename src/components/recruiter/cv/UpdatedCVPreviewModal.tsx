@@ -2,7 +2,7 @@ import { X, Download, ExternalLink, Loader2, Briefcase, User, Clock } from "luci
 import type { UpdatedCVFile } from "@/hooks/useCVManagement";
 import { formatDistanceToNow } from "date-fns";
 import { useEffect, useState } from "react";
-import { getPreviewUrl } from "@/lib/getPreviewUrl";
+import { getBrowserPreviewUrl, getPreviewUrl } from "@/lib/getPreviewUrl";
 
 interface UpdatedCVPreviewModalProps {
   ucv: UpdatedCVFile | null;
@@ -12,16 +12,30 @@ interface UpdatedCVPreviewModalProps {
 const UpdatedCVPreviewModal = ({ ucv, onClose }: UpdatedCVPreviewModalProps) => {
   const [loading, setLoading] = useState(true);
   const [previewUrl, setPreviewUrl] = useState("");
+  const [openUrl, setOpenUrl] = useState("");
 
   useEffect(() => {
     if (!ucv) return;
     setLoading(true);
-    getPreviewUrl(ucv.updated_file_url).then(setPreviewUrl).finally(() => setLoading(false));
+    setPreviewUrl("");
+    setOpenUrl("");
+    let objectUrl = "";
+
+    Promise.all([
+      getBrowserPreviewUrl(ucv.updated_file_url, ucv.updated_file_name),
+      getPreviewUrl(ucv.updated_file_url),
+    ]).then(([preview, resolvedOpenUrl]) => {
+      objectUrl = preview.isObjectUrl ? preview.url : "";
+      setPreviewUrl(preview.url);
+      setOpenUrl(resolvedOpenUrl);
+    }).finally(() => setLoading(false));
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
   }, [ucv]);
 
   if (!ucv) return null;
-
-  const googleViewerUrl = previewUrl ? `https://docs.google.com/gview?url=${encodeURIComponent(previewUrl)}&embedded=true` : "";
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={onClose}>
@@ -54,7 +68,7 @@ const UpdatedCVPreviewModal = ({ ucv, onClose }: UpdatedCVPreviewModalProps) => 
               <Download className="w-4 h-4" /> Download
             </button>
             <a
-              href={previewUrl || ucv.updated_file_url}
+              href={openUrl || ucv.updated_file_url}
               target="_blank"
               rel="noopener noreferrer"
               className="h-9 px-3 rounded-lg border border-border flex items-center gap-2 text-sm font-medium hover:bg-muted transition-colors"
@@ -80,9 +94,9 @@ const UpdatedCVPreviewModal = ({ ucv, onClose }: UpdatedCVPreviewModalProps) => 
               </div>
             </div>
           )}
-          {googleViewerUrl && (
+          {previewUrl && (
             <iframe
-              src={googleViewerUrl}
+              src={previewUrl}
               className="w-full h-full min-h-[500px] border-0"
               title={`Preview of ${ucv.updated_file_name}`}
               onLoad={() => setLoading(false)}
