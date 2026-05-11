@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Search, Plus, Globe, Calendar, Briefcase, Building, LayoutGrid, List,
-  Sparkles, Download, Trash, X, ChevronLeft, ChevronRight, Loader2, FileDown, Users,
+  Sparkles, Download, Trash, X, ChevronLeft, ChevronRight, Loader2, FileDown, Users, AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -13,6 +13,8 @@ import { ScrapedJob, mapDbJob } from "@/data/mockScrapedJobs";
 import { useScrapedJobs, useRecruiterCandidates, useRecruiterCVs, useJobATSAnalyses, useJobUpdatedCVs, useJobGeneratedEmails, useJobApplicationsMap } from "@/hooks/useRecruiterData";
 import ATSResultsView, { type ATSAnalysisResult } from "@/components/recruiter/ATSResultsView";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 import FilterDropdown from "@/components/recruiter/FilterDropdown";
 import JobTableView from "@/components/recruiter/JobTableView";
 import JobCardView from "@/components/recruiter/JobCardView";
@@ -95,6 +97,9 @@ const RecruiterScrapedJobs = () => {
   const [applyJob, setApplyJob] = useState<ScrapedJob | null>(null);
   const [batchATSOpen, setBatchATSOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [deleteJob, setDeleteJob] = useState<ScrapedJob | null>(null);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
 
   const { data, isLoading } = useScrapedJobs(recruiterId, {
