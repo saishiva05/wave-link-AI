@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { downloadFile } from "@/lib/downloadFile";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 
@@ -361,26 +362,13 @@ export function useCVManagement() {
 
   const handleDownload = useCallback(async (cv: CVFile) => {
     try {
-      const urlParts = cv.file_url.split("/cvs-bucket/");
-      if (urlParts[1]) {
-        const { data, error } = await supabase.storage.from("cvs-bucket").download(urlParts[1]);
-        if (error) throw error;
-        const url = URL.createObjectURL(data);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = cv.file_name;
-        a.click();
-        URL.revokeObjectURL(url);
-      } else {
-        window.open(cv.file_url, "_blank");
-      }
+      await downloadFile(cv.file_url, cv.file_name);
     } catch {
       toast({ title: "Download failed", description: "Could not download the file.", variant: "destructive" });
     }
   }, [toast]);
 
   const handleDownloadUpdated = useCallback(async (url: string, fileName: string) => {
-    const { downloadFile } = await import("@/lib/downloadFile");
     await downloadFile(url, fileName);
   }, []);
 
