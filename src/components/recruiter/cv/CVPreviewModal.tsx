@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import type { CVFile } from "@/hooks/useCVManagement";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { getPreviewUrl } from "@/lib/getPreviewUrl";
+import { getBrowserPreviewUrl, getPreviewUrl } from "@/lib/getPreviewUrl";
 
 interface CVPreviewModalProps {
   cv: CVFile | null;
@@ -21,6 +21,7 @@ function formatBytes(bytes: number | null) {
 const CVPreviewModal = ({ cv, onClose, onDownload }: CVPreviewModalProps) => {
   const [loading, setLoading] = useState(true);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [openUrl, setOpenUrl] = useState<string | null>(null);
   const [error, setError] = useState(false);
 
   // Load preview URL when cv changes
@@ -28,21 +29,30 @@ const CVPreviewModal = ({ cv, onClose, onDownload }: CVPreviewModalProps) => {
     if (cv) {
       setLoading(true);
       setError(false);
-      getPreviewUrl(cv.file_url).then((url) => {
-        setPreviewUrl(url);
+      setPreviewUrl(null);
+      setOpenUrl(null);
+      let objectUrl = "";
+
+      Promise.all([
+        getBrowserPreviewUrl(cv.file_url, cv.file_name),
+        getPreviewUrl(cv.file_url),
+      ]).then(([preview, resolvedOpenUrl]) => {
+        objectUrl = preview.isObjectUrl ? preview.url : "";
+        setPreviewUrl(preview.url);
+        setOpenUrl(resolvedOpenUrl);
         setLoading(false);
       }).catch(() => {
         setError(true);
         setLoading(false);
       });
+
+      return () => {
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+      };
     }
   }, [cv]);
 
   if (!cv) return null;
-
-  const googleViewerUrl = previewUrl
-    ? `https://docs.google.com/gview?url=${encodeURIComponent(previewUrl)}&embedded=true`
-    : null;
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={onClose}>
@@ -68,9 +78,9 @@ const CVPreviewModal = ({ cv, onClose, onDownload }: CVPreviewModalProps) => {
             >
               <Download className="w-4 h-4" /> Download
             </button>
-            {previewUrl && (
+            {openUrl && (
               <a
-                href={previewUrl}
+                href={openUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="h-9 px-3 rounded-lg border border-border flex items-center gap-2 text-sm font-medium hover:bg-muted transition-colors"
@@ -108,9 +118,9 @@ const CVPreviewModal = ({ cv, onClose, onDownload }: CVPreviewModalProps) => {
               </button>
             </div>
           )}
-          {!loading && !error && googleViewerUrl && (
+          {!loading && !error && previewUrl && (
             <iframe
-              src={googleViewerUrl}
+              src={previewUrl}
               className="w-full h-full min-h-[500px] border-0"
               title={`Preview of ${cv.file_name}`}
               onLoad={() => setLoading(false)}
