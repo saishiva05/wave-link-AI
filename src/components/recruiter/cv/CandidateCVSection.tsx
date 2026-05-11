@@ -6,6 +6,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { CVFile, UpdatedCVFile, CandidateGroup } from "@/hooks/useCVManagement";
 import { format, formatDistanceToNow } from "date-fns";
+import { getPreviewUrl } from "@/lib/getPreviewUrl";
 
 interface CandidateCVSectionProps {
   group: CandidateGroup;
@@ -178,15 +179,13 @@ const CandidateCVSection = ({
                       >
                         <Download className="w-4 h-4" />
                       </button>
-                      <a
-                        href={ucv.updated_file_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        onClick={async () => window.open(await getPreviewUrl(ucv.updated_file_url), "_blank")}
                         className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-muted text-muted-foreground transition-colors"
                         title="Open in New Tab"
                       >
                         <ExternalLink className="w-4 h-4" />
-                      </a>
+                      </button>
                     </div>
                   </div>
                 ))}
