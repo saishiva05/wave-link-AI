@@ -1,7 +1,8 @@
-import { X, Download, ExternalLink, ArrowLeft, Loader2, Briefcase, User, Clock } from "lucide-react";
+import { X, Download, ExternalLink, Loader2, Briefcase, User, Clock } from "lucide-react";
 import type { UpdatedCVFile } from "@/hooks/useCVManagement";
 import { formatDistanceToNow } from "date-fns";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getPreviewUrl } from "@/lib/getPreviewUrl";
 
 interface UpdatedCVPreviewModalProps {
   ucv: UpdatedCVFile | null;
@@ -10,10 +11,17 @@ interface UpdatedCVPreviewModalProps {
 
 const UpdatedCVPreviewModal = ({ ucv, onClose }: UpdatedCVPreviewModalProps) => {
   const [loading, setLoading] = useState(true);
+  const [previewUrl, setPreviewUrl] = useState("");
+
+  useEffect(() => {
+    if (!ucv) return;
+    setLoading(true);
+    getPreviewUrl(ucv.updated_file_url).then(setPreviewUrl).finally(() => setLoading(false));
+  }, [ucv]);
 
   if (!ucv) return null;
 
-  const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(ucv.updated_file_url)}&embedded=true`;
+  const googleViewerUrl = previewUrl ? `https://docs.google.com/gview?url=${encodeURIComponent(previewUrl)}&embedded=true` : "";
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={onClose}>
@@ -46,7 +54,7 @@ const UpdatedCVPreviewModal = ({ ucv, onClose }: UpdatedCVPreviewModalProps) => 
               <Download className="w-4 h-4" /> Download
             </button>
             <a
-              href={ucv.updated_file_url}
+              href={previewUrl || ucv.updated_file_url}
               target="_blank"
               rel="noopener noreferrer"
               className="h-9 px-3 rounded-lg border border-border flex items-center gap-2 text-sm font-medium hover:bg-muted transition-colors"
@@ -72,12 +80,14 @@ const UpdatedCVPreviewModal = ({ ucv, onClose }: UpdatedCVPreviewModalProps) => 
               </div>
             </div>
           )}
-          <iframe
-            src={googleViewerUrl}
-            className="w-full h-full min-h-[500px] border-0"
-            title={`Preview of ${ucv.updated_file_name}`}
-            onLoad={() => setLoading(false)}
-          />
+          {googleViewerUrl && (
+            <iframe
+              src={googleViewerUrl}
+              className="w-full h-full min-h-[500px] border-0"
+              title={`Preview of ${ucv.updated_file_name}`}
+              onLoad={() => setLoading(false)}
+            />
+          )}
         </div>
       </div>
     </div>
