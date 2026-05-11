@@ -181,6 +181,35 @@ const RecruiterScrapedJobs = () => {
     }
   };
 
+  const queryClient = useQueryClient();
+
+  const performJobDelete = async (jobIds: string[]) => {
+    if (jobIds.length === 0) return;
+    setIsDeleting(true);
+    try {
+      // Cascade-delete dependent rows that may not have ON DELETE CASCADE
+      await supabase.from("ats_analyses").delete().in("job_id", jobIds);
+      await supabase.from("updated_cvs").delete().in("job_id", jobIds);
+      await supabase.from("generated_emails").delete().in("job_id", jobIds);
+      await supabase.from("job_applications").delete().in("job_id", jobIds);
+      const { error } = await supabase.from("scraped_jobs").delete().in("job_id", jobIds);
+      if (error) throw error;
+      toast({ title: jobIds.length > 1 ? `${jobIds.length} jobs deleted` : "Job deleted" });
+      queryClient.invalidateQueries({ queryKey: ["recruiter", "scraped-jobs"] });
+      queryClient.invalidateQueries({ queryKey: ["recruiter", "job-ats"] });
+      queryClient.invalidateQueries({ queryKey: ["recruiter", "job-updated-cvs"] });
+      queryClient.invalidateQueries({ queryKey: ["recruiter", "job-generated-emails"] });
+      queryClient.invalidateQueries({ queryKey: ["recruiter", "job-applications-map"] });
+      setSelectedIds(new Set());
+    } catch (err: any) {
+      toast({ title: "Delete failed", description: err.message || "", variant: "destructive" });
+    } finally {
+      setIsDeleting(false);
+      setDeleteJob(null);
+      setBulkDeleteOpen(false);
+    }
+  };
+
   return (
     <>
       <JobDetailsModal job={detailJob} onClose={() => setDetailJob(null)} onRunATS={(j) => { setDetailJob(null); setAtsJob(j); }} />
