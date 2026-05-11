@@ -8,7 +8,7 @@ import { useCandidateDashboard } from "@/hooks/useCandidateDashboard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 
 function formatBytes(bytes: number) {
