@@ -332,7 +332,7 @@ const RecruiterScrapedJobs = () => {
                 {isExporting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />}
                 Export
               </Button>
-              <Button size="sm" variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-xs h-8"><Trash className="w-3 h-3" /></Button>
+              <Button size="sm" variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-xs h-8" onClick={() => setBulkDeleteOpen(true)}><Trash className="w-3 h-3" /> Delete</Button>
               <button onClick={() => setSelectedIds(new Set())} className="text-primary-foreground/70 hover:text-primary-foreground ml-1"><X className="w-4 h-4" /></button>
             </div>
           </motion.div>
@@ -369,6 +369,7 @@ const RecruiterScrapedJobs = () => {
               onViewDetails={setDetailJob} onRunATS={setAtsJob} onUpdateCV={setUpdateCVJob} onGenerateEmail={setEmailJob}
               onViewATSResult={handleViewATSResult}
               onApplyToJob={setApplyJob}
+              onDeleteJob={setDeleteJob}
               atsAnalyses={atsAnalyses}
               updatedCVsMap={updatedCVsMap}
               generatedEmailsMap={generatedEmailsMap}
