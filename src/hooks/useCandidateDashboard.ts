@@ -120,8 +120,7 @@ export function useCandidateDashboard() {
           timeline.push({ status: "Application Submitted", date: a.applied_at });
         }
 
-        const ucvKey = `${a.job_id}-${a.cv_id}`;
-        const updatedCV = updatedCVsMap[ucvKey] || null;
+        const updatedCV = updatedByJobCv[`${a.job_id}-${a.cv_id}`] || updatedByJob[a.job_id] || null;
 
         return {
           application_id: a.application_id,
