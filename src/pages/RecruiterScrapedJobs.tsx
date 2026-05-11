@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Search, Plus, Globe, Calendar, Briefcase, Building, LayoutGrid, List,
-  Sparkles, Download, Trash, X, ChevronLeft, ChevronRight, Loader2, FileDown, Users,
+  Sparkles, Download, Trash, X, ChevronLeft, ChevronRight, Loader2, FileDown, Users, AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -13,6 +13,8 @@ import { ScrapedJob, mapDbJob } from "@/data/mockScrapedJobs";
 import { useScrapedJobs, useRecruiterCandidates, useRecruiterCVs, useJobATSAnalyses, useJobUpdatedCVs, useJobGeneratedEmails, useJobApplicationsMap } from "@/hooks/useRecruiterData";
 import ATSResultsView, { type ATSAnalysisResult } from "@/components/recruiter/ATSResultsView";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 import FilterDropdown from "@/components/recruiter/FilterDropdown";
 import JobTableView from "@/components/recruiter/JobTableView";
 import JobCardView from "@/components/recruiter/JobCardView";
@@ -95,6 +97,9 @@ const RecruiterScrapedJobs = () => {
   const [applyJob, setApplyJob] = useState<ScrapedJob | null>(null);
   const [batchATSOpen, setBatchATSOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [deleteJob, setDeleteJob] = useState<ScrapedJob | null>(null);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
 
   const { data, isLoading } = useScrapedJobs(recruiterId, {
@@ -173,6 +178,35 @@ const RecruiterScrapedJobs = () => {
       toast({ title: "Export Failed", description: err.message, variant: "destructive" });
     } finally {
       setIsExporting(false);
+    }
+  };
+
+  const queryClient = useQueryClient();
+
+  const performJobDelete = async (jobIds: string[]) => {
+    if (jobIds.length === 0) return;
+    setIsDeleting(true);
+    try {
+      // Cascade-delete dependent rows that may not have ON DELETE CASCADE
+      await supabase.from("ats_analyses").delete().in("job_id", jobIds);
+      await supabase.from("updated_cvs").delete().in("job_id", jobIds);
+      await supabase.from("generated_emails").delete().in("job_id", jobIds);
+      await supabase.from("job_applications").delete().in("job_id", jobIds);
+      const { error } = await supabase.from("scraped_jobs").delete().in("job_id", jobIds);
+      if (error) throw error;
+      toast({ title: jobIds.length > 1 ? `${jobIds.length} jobs deleted` : "Job deleted" });
+      queryClient.invalidateQueries({ queryKey: ["recruiter", "scraped-jobs"] });
+      queryClient.invalidateQueries({ queryKey: ["recruiter", "job-ats"] });
+      queryClient.invalidateQueries({ queryKey: ["recruiter", "job-updated-cvs"] });
+      queryClient.invalidateQueries({ queryKey: ["recruiter", "job-generated-emails"] });
+      queryClient.invalidateQueries({ queryKey: ["recruiter", "job-applications-map"] });
+      setSelectedIds(new Set());
+    } catch (err: any) {
+      toast({ title: "Delete failed", description: err.message || "", variant: "destructive" });
+    } finally {
+      setIsDeleting(false);
+      setDeleteJob(null);
+      setBulkDeleteOpen(false);
     }
   };
 
@@ -298,7 +332,7 @@ const RecruiterScrapedJobs = () => {
                 {isExporting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />}
                 Export
               </Button>
-              <Button size="sm" variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-xs h-8"><Trash className="w-3 h-3" /></Button>
+              <Button size="sm" variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-xs h-8" onClick={() => setBulkDeleteOpen(true)}><Trash className="w-3 h-3" /> Delete</Button>
               <button onClick={() => setSelectedIds(new Set())} className="text-primary-foreground/70 hover:text-primary-foreground ml-1"><X className="w-4 h-4" /></button>
             </div>
           </motion.div>
@@ -335,6 +369,7 @@ const RecruiterScrapedJobs = () => {
               onViewDetails={setDetailJob} onRunATS={setAtsJob} onUpdateCV={setUpdateCVJob} onGenerateEmail={setEmailJob}
               onViewATSResult={handleViewATSResult}
               onApplyToJob={setApplyJob}
+              onDeleteJob={setDeleteJob}
               atsAnalyses={atsAnalyses}
               updatedCVsMap={updatedCVsMap}
               generatedEmailsMap={generatedEmailsMap}
@@ -401,6 +436,29 @@ const RecruiterScrapedJobs = () => {
           );
         })()}
       </div>
+
+      {(deleteJob || bulkDeleteOpen) && (
+        <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => !isDeleting && (deleteJob ? setDeleteJob(null) : setBulkDeleteOpen(false))}>
+          <div className="bg-card rounded-2xl shadow-2xl max-w-[420px] w-full p-6 text-center animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+              <AlertTriangle className="w-7 h-7 text-destructive" />
+            </div>
+            <h3 className="text-lg font-bold text-foreground mt-4">
+              {deleteJob ? "Delete this job?" : `Delete ${selectedIds.size} jobs?`}
+            </h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              This permanently removes the job along with its ATS analyses, generated emails, updated resumes and applications.
+            </p>
+            <div className="flex items-center gap-3 mt-6">
+              <Button variant="outline" className="flex-1" disabled={isDeleting} onClick={() => { setDeleteJob(null); setBulkDeleteOpen(false); }}>Cancel</Button>
+              <Button variant="destructive" className="flex-1" disabled={isDeleting} onClick={() => performJobDelete(deleteJob ? [deleteJob.id] : Array.from(selectedIds))}>
+                {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash className="w-4 h-4" />}
+                {isDeleting ? "Deleting..." : "Delete"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

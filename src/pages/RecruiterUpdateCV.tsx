@@ -170,15 +170,8 @@ const RecruiterUpdateCV = () => {
         platform_type: "manual",
       };
 
-      const response = await fetch("https://n8n.srv1340079.hstgr.cloud/webhook/update cv", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) throw new Error(`Webhook returned ${response.status}`);
-
-      const result = await response.json();
+      const { callUpdateCvWebhook } = await import("@/lib/updateCvWebhook");
+      const result = await callUpdateCvWebhook(payload);
 
       const webhookUrl = (
         result?.updated_file_url ||
