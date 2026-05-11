@@ -57,6 +57,7 @@ const CandidateCVsPage = () => {
     },
   });
 
+  const handleDownload = async (cv: typeof cvs[0]) => {
     try {
       const urlParts = cv.file_url.split("/cvs-bucket/");
       if (urlParts[1]) {
