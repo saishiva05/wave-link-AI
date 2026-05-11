@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import {
   LayoutDashboard, Users, BarChart3, FileText, Settings, HelpCircle, LogOut,
-  ChevronLeft, ChevronRight, X, GraduationCap, ClipboardCheck,
+  ChevronLeft, ChevronRight, X, GraduationCap, ClipboardCheck, ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WaveLynkLogo from "@/components/WaveLynkLogo";
@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 const mainMenuItems = [
   { title: "Dashboard", icon: LayoutDashboard, route: "/admin/dashboard" },
+  { title: "Admins", icon: ShieldCheck, route: "/admin/admins" },
   { title: "Recruiters", icon: Users, route: "/admin/recruiters" },
   { title: "Candidates", icon: GraduationCap, route: "/admin/candidates" },
   { title: "Applications", icon: ClipboardCheck, route: "/admin/applications" },

@@ -17,6 +17,7 @@ import NotFound from "./pages/NotFound";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminRecruiters from "./pages/AdminRecruiters";
+import AdminAdmins from "./pages/AdminAdmins";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminActivityLogs from "./pages/AdminActivityLogs";
 import AdminSettings from "./pages/AdminSettings";
@@ -81,6 +82,7 @@ const App = () => (
             >
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="recruiters" element={<AdminRecruiters />} />
+              <Route path="admins" element={<AdminAdmins />} />
               <Route path="candidates" element={<AdminCandidates />} />
               <Route path="applications" element={<AdminApplications />} />
               <Route path="analytics" element={<AdminAnalytics />} />
