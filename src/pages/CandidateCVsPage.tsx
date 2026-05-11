@@ -297,6 +297,67 @@ const CandidateCVsPage = () => {
           </div>
         )}
       </motion.div>
+
+      {/* AI-Optimized Resumes */}
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+        <div className="flex items-center gap-2 mb-3 mt-2">
+          <Sparkles className="w-5 h-5 text-primary" />
+          <h2 className="text-xl md:text-2xl font-bold text-foreground font-display">AI-Optimized Resumes</h2>
+          <span className="text-xs text-muted-foreground">({optimizedCVs.length})</span>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4">
+          Resumes your recruiter has tailored to specific job descriptions using AI.
+        </p>
+        {loadingOptimized ? (
+          <div className="flex items-center gap-2 text-muted-foreground py-6"><Loader2 className="w-4 h-4 animate-spin" /> Loading…</div>
+        ) : optimizedCVs.length === 0 ? (
+          <div className="bg-card border border-border rounded-xl p-8 text-center text-muted-foreground text-sm">
+            No AI-optimized resumes yet. Once your recruiter optimizes a resume for a job, it will appear here.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {optimizedCVs.map((ucv: any) => (
+              <div key={ucv.updated_cv_id} className="bg-card border border-primary/30 rounded-xl p-5 flex flex-col gap-3 hover:shadow-card hover:-translate-y-0.5 transition-all">
+                <div className="flex items-start gap-3">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <Sparkles className="w-6 h-6 text-primary" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-foreground truncate">{ucv.updated_file_name}</p>
+                    <p className="text-xs text-muted-foreground truncate">From: {ucv.original_file_name}</p>
+                  </div>
+                </div>
+                {ucv.job && (
+                  <div className="text-xs text-muted-foreground flex items-center gap-1.5 border-t border-border pt-2">
+                    <Briefcase className="w-3.5 h-3.5" />
+                    <span className="truncate"><span className="font-medium text-foreground">{ucv.job.job_title}</span> · {ucv.job.company_name}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Calendar className="w-3 h-3" /> {formatDistanceToNow(new Date(ucv.created_at), { addSuffix: true })}
+                </div>
+                <div className="flex items-center gap-2 mt-auto pt-2">
+                  <button
+                    onClick={async () => {
+                      const url = await getPreviewUrl(ucv.updated_file_url);
+                      window.open(url, "_blank");
+                    }}
+                    className="flex items-center gap-1.5 text-xs font-medium text-primary border border-primary px-3 py-1.5 rounded-md hover:bg-primary/5 transition-colors"
+                  >
+                    <Eye className="w-3.5 h-3.5" /> Preview
+                  </button>
+                  <button
+                    onClick={() => downloadFile(ucv.updated_file_url, ucv.updated_file_name)}
+                    className="flex items-center gap-1.5 text-xs font-medium text-primary-foreground bg-primary px-3 py-1.5 rounded-md hover:bg-primary/90 transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" /> Download
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </motion.div>
     </div>
   );
 };
