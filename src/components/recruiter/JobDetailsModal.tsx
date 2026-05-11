@@ -11,7 +11,9 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { getPlatformDisplayName } from "@/lib/platformBranding";
 import { supabase } from "@/integrations/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { highlightSkills } from "@/lib/highlightSkills";
+import { useAuth } from "@/hooks/useAuth";
 
 interface JobDetailsModalProps {
   job: ScrapedJob | null;
