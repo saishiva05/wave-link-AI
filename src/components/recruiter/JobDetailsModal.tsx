@@ -42,10 +42,30 @@ const timeAgo = (dateStr: string | undefined) => {
 const JobDetailsModal = ({ job, onClose, onRunATS }: JobDetailsModalProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { recruiterId } = useAuth();
   const [copied, setCopied] = useState(false);
   const [isEditingDesc, setIsEditingDesc] = useState(false);
   const [editedDesc, setEditedDesc] = useState("");
   const [isSavingDesc, setIsSavingDesc] = useState(false);
+
+  // Latest ATS analysis for this job — used to highlight matched/missing skills
+  const { data: ats } = useQuery({
+    queryKey: ["job-latest-ats", job?.id, recruiterId],
+    enabled: !!job && !!recruiterId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("ats_analyses")
+        .select("analysis_result")
+        .eq("job_id", job!.id)
+        .eq("recruiter_id", recruiterId!)
+        .order("analyzed_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      let r: any = data?.analysis_result;
+      if (Array.isArray(r) && r[0]?.text) r = r[0].text;
+      return r || null;
+    },
+  });
 
   if (!job) return null;
 
@@ -189,10 +209,28 @@ const JobDetailsModal = ({ job, onClose, onRunATS }: JobDetailsModalProps) => {
               ) : (
                 <div
                   className="text-sm text-muted-foreground leading-relaxed prose prose-sm dark:prose-invert max-w-none prose-headings:text-foreground prose-strong:text-foreground prose-li:text-muted-foreground prose-a:text-primary"
-                  dangerouslySetInnerHTML={{ __html: job.job_description }}
+                  dangerouslySetInnerHTML={{
+                    __html: highlightSkills(
+                      job.job_description,
+                      ats?.matched_skills || [],
+                      ats?.missing_skills || [],
+                    ),
+                  }}
                 />
               )}
             </div>
+            {(ats?.matched_skills?.length || ats?.missing_skills?.length) ? (
+              <div className="mt-2 flex items-center gap-3 text-[11px] text-muted-foreground">
+                <span className="inline-flex items-center gap-1">
+                  <span className="inline-block w-2.5 h-2.5 rounded-sm bg-success-100 border border-success-300" />
+                  Matched skills
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <span className="inline-block w-2.5 h-2.5 rounded-sm bg-warning-100 border border-warning-300" />
+                  Missing skills
+                </span>
+              </div>
+            ) : null}
           </div>
 
           {/* Apply URL */}
