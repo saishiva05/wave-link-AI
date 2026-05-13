@@ -673,6 +673,23 @@ export type Database = {
     }
     Functions: {
       get_candidate_id: { Args: { _user_id: string }; Returns: string }
+      get_candidate_updated_cvs: {
+        Args: never
+        Returns: {
+          candidate_id: string
+          company_name: string
+          created_at: string
+          cv_id: string
+          job_id: string
+          job_title: string
+          original_file_name: string
+          recruiter_id: string
+          updated_cv_id: string
+          updated_file_name: string
+          updated_file_size_bytes: number
+          updated_file_url: string
+        }[]
+      }
       get_recruiter_id: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
