@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { fetchCandidateUpdatedCVs } from "@/lib/candidateUpdatedCVs";
 
 export interface CandidateApplication {
   application_id: string;
@@ -85,23 +86,15 @@ export function useCandidateDashboard() {
         .eq("candidate_id", candidateId!)
         .order("applied_at", { ascending: false });
 
-      // Fetch updated CVs for this candidate's applications (key by job_id; pick most recent)
-      const jobIds = Array.from(new Set((data || []).map((a: any) => a.job_id))).filter(Boolean);
+      // Fetch updated CVs for this candidate (key by job_id; pick most recent)
       const updatedByJob: Record<string, any> = {};
       const updatedByJobCv: Record<string, any> = {};
-      if (jobIds.length > 0) {
-        const { data: ucvData } = await supabase
-          .from("updated_cvs")
-          .select("cv_id, job_id, updated_file_name, updated_file_url, created_at")
-          .eq("candidate_id", candidateId!)
-          .in("job_id", jobIds)
-          .order("created_at", { ascending: false });
-        (ucvData || []).forEach((ucv: any) => {
-          const jcKey = `${ucv.job_id}-${ucv.cv_id}`;
-          if (!updatedByJobCv[jcKey]) updatedByJobCv[jcKey] = ucv;
-          if (!updatedByJob[ucv.job_id]) updatedByJob[ucv.job_id] = ucv;
-        });
-      }
+      const updatedCVs = await fetchCandidateUpdatedCVs();
+      updatedCVs.forEach((ucv) => {
+        const jcKey = `${ucv.job_id}-${ucv.cv_id}`;
+        if (!updatedByJobCv[jcKey]) updatedByJobCv[jcKey] = ucv;
+        if (!updatedByJob[ucv.job_id]) updatedByJob[ucv.job_id] = ucv;
+      });
 
       if (error) throw error;
 

@@ -12,6 +12,7 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { downloadFile } from "@/lib/downloadFile";
 import { getPreviewUrl } from "@/lib/getPreviewUrl";
+import { fetchCandidateUpdatedCVs } from "@/lib/candidateUpdatedCVs";
 
 function formatBytes(bytes: number) {
   if (bytes < 1024) return `${bytes} B`;
@@ -37,24 +38,7 @@ const CandidateCVsPage = () => {
   const { data: optimizedCVs = [], isLoading: loadingOptimized } = useQuery({
     queryKey: ["candidate", "updated_cvs", candidateId],
     enabled: !!candidateId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("updated_cvs")
-        .select("updated_cv_id, updated_file_name, updated_file_url, original_file_name, created_at, job_id")
-        .eq("candidate_id", candidateId!)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      const jobIds = Array.from(new Set((data || []).map((d) => d.job_id).filter(Boolean)));
-      const jobsMap: Record<string, { job_title: string; company_name: string }> = {};
-      if (jobIds.length) {
-        const { data: jobs } = await supabase
-          .from("scraped_jobs")
-          .select("job_id, job_title, company_name")
-          .in("job_id", jobIds as string[]);
-        (jobs || []).forEach((j: any) => { jobsMap[j.job_id] = { job_title: j.job_title, company_name: j.company_name }; });
-      }
-      return (data || []).map((d: any) => ({ ...d, job: jobsMap[d.job_id] }));
-    },
+    queryFn: fetchCandidateUpdatedCVs,
   });
 
   const handleDownload = async (cv: typeof cvs[0]) => {
