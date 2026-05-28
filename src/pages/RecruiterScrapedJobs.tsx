@@ -63,7 +63,7 @@ const applicantsOptions = [
 
 const applyTypeOptions = [
   { value: "", label: "All Apply Types" },
-  { value: "Easy_Apply", label: "Easy Apply" },
+  { value: "EASY_APPLY", label: "Easy Apply" },
   { value: "External", label: "External" },
 ];
 
