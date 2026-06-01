@@ -792,7 +792,7 @@ const LandingPage = () => {
                 <li><a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a></li>
                 <li><a href="#features" className="hover:text-primary transition-colors">Features</a></li>
                 <li><a href="#why-us" className="hover:text-primary transition-colors">Why Us</a></li>
-                <li><a href="#pricing" className="hover:text-primary transition-colors">Pricing</a></li>
+                <li><a href="#contact" className="hover:text-primary transition-colors">Contact</a></li>
               </ul>
             </div>
 
