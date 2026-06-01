@@ -109,33 +109,8 @@ const faqs = [
   { q: "Is my data safe?", a: "Yes. Enterprise-grade encryption. Your resume and data are only used to match you with jobs." },
 ];
 
-const pricingPlans = [
-  {
-    name: "Monthly Plan",
-    upfront: "$149",
-    postPlacement: "20%",
-    postPlacementLabel: "Of Annual CTC",
-    icon: DollarSign,
-    featured: false,
-  },
-  {
-    name: "Yearly Plan",
-    upfront: "$1,499",
-    postPlacement: "$0",
-    postPlacementLabel: "Zero Post Placement Fee",
-    badge: "Limited Slots",
-    icon: Crown,
-    featured: true,
-  },
-  {
-    name: "6 Months Plan",
-    upfront: "$899",
-    postPlacement: "12%",
-    postPlacementLabel: "Of Annual CTC",
-    icon: Gem,
-    featured: false,
-  },
-];
+const CONTACT_WEBHOOK_URL = "https://n8n.srv1340079.hstgr.cloud/webhook/35c28c6e-35bd-41fc-bed2-e69761e8c15c";
+
 
 const FAQAccordion = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
