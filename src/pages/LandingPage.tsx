@@ -158,6 +158,36 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [contactForm, setContactForm] = useState({ name: "", email: "", company: "", phone: "", message: "" });
+  const [contactSubmitting, setContactSubmitting] = useState(false);
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contactForm.name.trim() || !contactForm.email.trim() || !contactForm.message.trim()) {
+      toast.error("Please fill in your name, email, and message.");
+      return;
+    }
+    setContactSubmitting(true);
+    try {
+      const res = await fetch(CONTACT_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...contactForm,
+          subject: "Pricing inquiry from landing page",
+          source: "wavelynk-landing",
+          submitted_at: new Date().toISOString(),
+        }),
+      });
+      if (!res.ok) throw new Error(`Request failed (${res.status})`);
+      toast.success("Thanks! We'll get back to you with pricing details shortly.");
+      setContactForm({ name: "", email: "", company: "", phone: "", message: "" });
+    } catch (err: any) {
+      toast.error(err?.message || "Could not submit. Please try again.");
+    } finally {
+      setContactSubmitting(false);
+    }
+  };
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
