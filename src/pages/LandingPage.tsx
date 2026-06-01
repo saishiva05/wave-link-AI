@@ -171,7 +171,7 @@ const LandingPage = () => {
     { href: "#how-it-works", label: "How It Works" },
     { href: "#features", label: "Features" },
     { href: "#why-us", label: "Why Us" },
-    { href: "#pricing", label: "Pricing" },
+    { href: "#contact", label: "Contact" },
     { href: "#faq", label: "FAQ" },
   ];
 
