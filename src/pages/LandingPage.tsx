@@ -610,95 +610,106 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* ═══════════ PRICING SECTION ═══════════ */}
-      <section id="pricing" className="py-28 relative overflow-hidden">
+      {/* ═══════════ CONTACT / PRICING SECTION ═══════════ */}
+      <section id="contact" className="py-28 relative overflow-hidden">
         <div className="absolute inset-0 bg-accent/20" />
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-16">
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-12">
             <motion.div variants={scaleIn} custom={0} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
-              <DollarSign className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary">INVEST IN MOMENTUM</span>
+              <MessageSquare className="w-4 h-4 text-primary" />
+              <span className="text-sm font-semibold text-primary">GET IN TOUCH</span>
             </motion.div>
             <motion.h2 variants={fadeUp} custom={1} className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4">
-              Pricing{" "}
-              <span className="text-primary italic">Plans</span>
+              Contact{" "}
+              <span className="text-primary italic">Us</span>
             </motion.h2>
             <motion.p variants={fadeUp} custom={2} className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Choose the plan that fits your career timeline. All plans include AI-powered job matching and dedicated recruiter support.
+              For pricing plans, please fill out the contact form below and our team will reach out with details tailored to your needs.
             </motion.p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto items-stretch">
-            {pricingPlans.map((plan, i) => (
-              <motion.div
-                key={plan.name}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                custom={i}
-                whileHover={{ y: -8 }}
-                className={`relative p-8 rounded-3xl border transition-all duration-500 ${
-                  plan.featured
-                    ? "border-primary/50 bg-card shadow-glow scale-105 z-10 ring-1 ring-primary/20"
-                    : "border-border bg-card/50"
-                }`}
-              >
-                {plan.badge && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-bold shadow-lg">
-                    ⚡ {plan.badge}
-                  </div>
-                )}
-
-                <div className="text-center">
-                  <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                    <plan.icon className={`w-7 h-7 ${plan.featured ? "text-primary" : "text-primary/70"}`} />
-                  </div>
-                  <h3 className="font-display text-xl font-bold text-foreground mb-6">{plan.name}</h3>
-
-                  <div className="mb-6">
-                    <p className="text-muted-foreground text-xs uppercase tracking-widest mb-2">Upfront Fee</p>
-                    <p className="font-display text-4xl md:text-5xl font-black text-foreground">{plan.upfront}</p>
-                  </div>
-
-                  <div className="w-full h-px bg-border my-6" />
-
-                  <div className="mb-8">
-                    <p className="text-muted-foreground text-xs uppercase tracking-widest mb-2">Post Placement Fee</p>
-                    <p className={`font-display text-3xl md:text-4xl font-black ${plan.featured ? "text-primary" : "text-foreground"}`}>
-                      {plan.postPlacement}
-                    </p>
-                    <p className="text-muted-foreground text-sm mt-1">{plan.postPlacementLabel}</p>
-                  </div>
-
-                  <Button
-                    size="lg"
-                    onClick={() => navigate("/login")}
-                    className={`w-full h-12 font-bold rounded-xl ${
-                      plan.featured
-                        ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg"
-                        : "bg-accent text-accent-foreground hover:bg-accent/80 border border-border"
-                    }`}
-                  >
-                    Get Started
-                  </Button>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.p
+          <motion.form
+            onSubmit={handleContactSubmit}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeUp}
-            custom={0}
-            className="text-center text-muted-foreground text-sm mt-10"
+            custom={3}
+            className="max-w-3xl mx-auto bg-card border border-border rounded-3xl p-6 md:p-10 shadow-card space-y-5"
           >
-            💡 Students can use the platform 100% free. Pricing applies to recruiter & enterprise partnerships.
-          </motion.p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">Full Name <span className="text-destructive">*</span></label>
+                <input
+                  type="text"
+                  required
+                  maxLength={100}
+                  value={contactForm.name}
+                  onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                  placeholder="Jane Doe"
+                  className="w-full h-12 px-4 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">Email <span className="text-destructive">*</span></label>
+                <input
+                  type="email"
+                  required
+                  maxLength={255}
+                  value={contactForm.email}
+                  onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                  placeholder="jane@company.com"
+                  className="w-full h-12 px-4 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">Company</label>
+                <input
+                  type="text"
+                  maxLength={150}
+                  value={contactForm.company}
+                  onChange={(e) => setContactForm({ ...contactForm, company: e.target.value })}
+                  placeholder="Acme Inc."
+                  className="w-full h-12 px-4 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">Phone</label>
+                <input
+                  type="tel"
+                  maxLength={30}
+                  value={contactForm.phone}
+                  onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                  placeholder="+1 (555) 123-4567"
+                  className="w-full h-12 px-4 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">Message <span className="text-destructive">*</span></label>
+              <textarea
+                required
+                maxLength={2000}
+                rows={5}
+                value={contactForm.message}
+                onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                placeholder="Tell us about your hiring needs or which pricing plan you're interested in..."
+                className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-y"
+              />
+            </div>
+            <Button
+              type="submit"
+              size="lg"
+              disabled={contactSubmitting}
+              className="w-full h-12 font-bold rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg disabled:opacity-60"
+            >
+              {contactSubmitting ? "Sending..." : "Send Message"}
+              {!contactSubmitting && <ArrowRight className="ml-2 w-5 h-5" />}
+            </Button>
+          </motion.form>
         </div>
       </section>
+
 
       {/* ═══════════ FAQ SECTION ═══════════ */}
       <section id="faq" className="py-28 relative">
